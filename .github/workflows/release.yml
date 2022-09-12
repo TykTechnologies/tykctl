@@ -1,6 +1,5 @@
 name: goreleaser
 on:
-  pull_request:
   push:
     tags:
       - '*'
@@ -24,6 +23,7 @@ jobs:
           distribution: goreleaser
           version: latest
           args: release --rm-dist
+          workdir: ./ara-client-sdk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution

@@ -37,6 +37,10 @@ to quickly create a Cobra application.`,
 		///then select the default organization
 		orgs, _, err := client.OrganisationsApi.GetOrgs(cmd.Context())
 		if err != nil {
+			cmd.Println(orgs.Error_)
+			cmd.Println(orgs.Status)
+			cmd.Println(orgs.Payload)
+			cmd.Println(orgs.Status)
 			cmd.Println(err)
 			return
 		}

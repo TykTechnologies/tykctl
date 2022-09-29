@@ -53,8 +53,14 @@ to quickly create a Cobra application.`,
 			cmd.Println(err)
 			return
 		}
-		cmd.Println(fmt.Sprintf("%s has been set a the default org", selectedOrg.Name))
+
 		viper.Set("org", selectedOrg.UID)
+		if err = viper.WriteConfig(); err != nil {
+			log.Println("error writing to config file")
+			return
+
+		}
+		cmd.Println(fmt.Sprintf("%s has been set a the default org", selectedOrg.Name))
 		if len(selectedOrg.Teams) == 0 {
 			cmd.Println("You have not created a team yet")
 			return

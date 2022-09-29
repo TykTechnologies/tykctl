@@ -12,7 +12,7 @@ import (
 
 // deploymentsCmd represents the deployments command
 var deploymentsCmd = &cobra.Command{
-	Use:   "deployments",
+	Use:   "deployment",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:

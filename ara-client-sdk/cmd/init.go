@@ -70,7 +70,7 @@ to quickly create a Cobra application.`,
 			cmd.Println(err)
 			return
 		}
-		viper.Set("tid", selectedTeam.UID)
+		viper.Set("team", selectedTeam.UID)
 		cmd.Println(fmt.Sprintf("%s has been set a the default team", selectedTeam.Name))
 		if err = viper.WriteConfig(); err != nil {
 			log.Println("error writing to config file")

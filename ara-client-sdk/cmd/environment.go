@@ -28,11 +28,10 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(environmentCmd)
-
 	environmentCmd.PersistentFlags().String("org", "", "The organization")
 	environmentCmd.PersistentFlags().StringP("format", "f", "table", "Format you want to use can be table,json")
-	viper.BindPFlag("org", teamCmd.PersistentFlags().Lookup("org"))
-	environmentCmd.PersistentFlags().String("team", "", "The organization")
+	viper.BindPFlag("org", environmentCmd.PersistentFlags().Lookup("org"))
+	environmentCmd.PersistentFlags().String("team", "", "The team")
 	viper.BindPFlag("team", environmentCmd.PersistentFlags().Lookup("team"))
 
 	// Here you will define your flags and configuration settings.

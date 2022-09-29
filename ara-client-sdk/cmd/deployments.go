@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
 )
@@ -22,12 +23,19 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("deployments called")
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deploymentsCmd)
-
+	deploymentsCmd.PersistentFlags().String("org", "", "The organization")
+	deploymentsCmd.PersistentFlags().StringP("format", "f", "table", "Format you want to use can be table,json")
+	viper.BindPFlag("org", deploymentsCmd.PersistentFlags().Lookup("org"))
+	deploymentsCmd.PersistentFlags().String("team", "", "The team")
+	viper.BindPFlag("team", deploymentsCmd.PersistentFlags().Lookup("team"))
+	environmentCmd.PersistentFlags().String("env", "", "The environment")
+	viper.BindPFlag("env", environmentCmd.PersistentFlags().Lookup("env"))
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

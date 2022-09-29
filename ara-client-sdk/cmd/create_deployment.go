@@ -5,7 +5,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"ara-client-sdk/swagger-gen"
 	"fmt"
+	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
 )
@@ -21,7 +23,51 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		org := viper.GetString("org")
+		if len(org) == 0 {
+			cmd.Println("organization is required")
+			return
+		}
+		team := viper.GetString("team")
+		if len(team) == 0 {
+			cmd.Println("team to add this deployment to is required")
+			return
+		}
+		env := viper.GetString("env")
+		if len(team) == 0 {
+			cmd.Println("environment is needed")
+			return
+		}
+		kind, err := cmd.Flags().GetString("kind")
+		if err != nil {
+			cmd.Println(err)
+			return
+		}
+		if len(kind) == 0 {
+			cmd.Println("kind is required")
+			return
+		}
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			cmd.Println(err)
+			return
+		}
+
 		fmt.Println("createDeployment called")
+		deployment := swagger.Deployment{
+			Kind: kind,
+
+			Name: name,
+
+			//ZoneCode:     "",
+		}
+		deploy, _, err := client.DeploymentsApi.CreateDeployment(cmd.Context(), deployment, org, team, env)
+		if err != nil {
+			cmd.Println(err)
+
+			return
+		}
+		cmd.Printf("Deployment %s created successfully", deploy.Payload.UID)
 
 	},
 }
@@ -37,5 +83,8 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// createDeploymentCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	createDeploymentCmd.Flags().StringP("kind", "k", "Home", "Help message for toggle")
+	createDeploymentCmd.Flags().StringP("name", "n", "", "name to give the new team")
+	createDeploymentCmd.MarkFlagRequired("name")
+	createDeploymentCmd.MarkFlagRequired("kind")
 }

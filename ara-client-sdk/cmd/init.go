@@ -71,12 +71,28 @@ to quickly create a Cobra application.`,
 			return
 		}
 		viper.Set("team", selectedTeam.UID)
-		cmd.Println(fmt.Sprintf("%s has been set a the default team", selectedTeam.Name))
 		if err = viper.WriteConfig(); err != nil {
 			log.Println("error writing to config file")
 			return
 
 		}
+		cmd.Println(fmt.Sprintf("%s has been set a the default team", selectedTeam.Name))
+		if len(selectedTeam.Loadouts) == 0 {
+			cmd.Println("You have not created an environment yet")
+			return
+		}
+		selectedEnv, err := envPrompt(selectedTeam.Loadouts)
+		if err != nil {
+			cmd.Println(err)
+			return
+		}
+		viper.Set("env", selectedEnv.UID)
+		if err = viper.WriteConfig(); err != nil {
+			log.Println("error writing to config file")
+			return
+
+		}
+		cmd.Println(fmt.Sprintf("%s has been set a the default enviroment", selectedEnv.Name))
 		//login if user has not logged in
 
 		//log.Println(run)
@@ -98,6 +114,24 @@ func init() {
 	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
+func envPrompt(loadouts []swagger.Loadout) (*swagger.Loadout, error) {
+	allEnv := make([]string, len(loadouts))
+	for index, env := range loadouts {
+		allEnv[index] = fmt.Sprintf("%s - (%d-Deployments)", env.Name, len(env.Deployments))
+
+	}
+	envPrompt := promptui.Select{
+		Label: "Select your default environment",
+		Items: allEnv,
+	}
+	index, _, err := envPrompt.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &loadouts[index], err
+
+}
 func teamsPrompt(teams []swagger.Team) (*swagger.Team, error) {
 	allTeams := make([]string, len(teams))
 	for index, team := range teams {

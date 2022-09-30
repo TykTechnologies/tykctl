@@ -5,6 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"ara-client-sdk/swagger-gen"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -38,4 +39,15 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// orgCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func parseError(err error) string {
+	message := err.Error()
+	if myerr, ok := err.(swagger.GenericSwaggerError); ok {
+		message = string(myerr.Body())
+		// handle myerr
+	}
+
+	return message
+
 }

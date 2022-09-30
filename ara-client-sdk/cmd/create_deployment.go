@@ -53,19 +53,28 @@ to quickly create a Cobra application.`,
 			return
 		}
 
+		zone := viper.GetString("zone")
+
 		fmt.Println("createDeployment called")
 		deployment := swagger.Deployment{
 			Kind: kind,
 
 			Name: name,
 
-			//ZoneCode:     "",
+			ZoneCode: zone,
 		}
+
 		deploy, _, err := client.DeploymentsApi.CreateDeployment(cmd.Context(), deployment, org, team, env)
 		if err != nil {
-			cmd.Println(err)
+			message := err.Error()
+			if myerr, ok := err.(swagger.GenericSwaggerError); ok {
+				message = string(myerr.Body())
+				// handle myerr
+			}
 
+			cmd.Println(message)
 			return
+
 		}
 		cmd.Printf("Deployment %s created successfully", deploy.Payload.UID)
 
@@ -84,7 +93,9 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	createDeploymentCmd.Flags().StringP("kind", "k", "Home", "Help message for toggle")
+	createDeploymentCmd.MarkFlagRequired("kind")
 	createDeploymentCmd.Flags().StringP("name", "n", "", "name to give the new team")
 	createDeploymentCmd.MarkFlagRequired("name")
-	createDeploymentCmd.MarkFlagRequired("kind")
+	createDeploymentCmd.Flags().StringP("zone", "z", "", "zone you want to deploy into")
+	viper.BindPFlag("zone", createDeploymentCmd.PersistentFlags().Lookup("zone"))
 }

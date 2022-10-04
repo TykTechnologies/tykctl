@@ -28,9 +28,9 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(deploymentsCmd)
+	cloudCmd.AddCommand(deploymentsCmd)
 	deploymentsCmd.PersistentFlags().String("org", "", "The organization")
-	deploymentsCmd.PersistentFlags().StringP("format", "f", "table", "Format you want to use can be table,json")
+	deploymentsCmd.PersistentFlags().StringP("output", "o", "table", "Format you want to use can be table,json")
 	viper.BindPFlag("org", deploymentsCmd.PersistentFlags().Lookup("org"))
 	deploymentsCmd.PersistentFlags().String("team", "", "The team")
 	viper.BindPFlag("team", deploymentsCmd.PersistentFlags().Lookup("team"))

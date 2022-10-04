@@ -28,14 +28,14 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(teamCmd)
+	cloudCmd.AddCommand(teamCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	teamCmd.PersistentFlags().String("org", "", "The organization")
-	teamCmd.PersistentFlags().StringP("format", "f", "table", "Format you want to use can be table,json")
+	teamCmd.PersistentFlags().StringP("output", "o", "table", "Format you want to use can be table,json")
 	viper.BindPFlag("org", teamCmd.PersistentFlags().Lookup("org"))
 	///teamCmd.MarkPersistentFlagRequired("org")
 

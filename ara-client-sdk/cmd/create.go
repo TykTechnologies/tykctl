@@ -5,12 +5,12 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/internal"
-	"ara-client-sdk/swagger-gen"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
+	"tykcli/internal"
+	"tykcli/swagger-gen"
 )
 
 // createCmd represents the create command

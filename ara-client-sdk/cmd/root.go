@@ -5,9 +5,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/swagger-gen"
 	"fmt"
 	"os"
+	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -18,7 +18,7 @@ var client *swagger.APIClient
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ara-client-sdk",
+	Use:   "tykctl",
 	Short: "A brief description of your application",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
@@ -47,7 +47,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ara-client-sdk.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tykcli.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -67,7 +67,7 @@ func initConfig() {
 		// Search config in home directory with name ".ara-client-sdk" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".ara-client-sdk")
+		viper.SetConfigName(".tykctl")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

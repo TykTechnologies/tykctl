@@ -5,11 +5,11 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/internal"
 	"encoding/json"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
+	"tykcli/internal"
 )
 
 // listCmd represents the list command
@@ -24,8 +24,8 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		org := viper.GetString("org")
-
 		if len(org) == 0 {
+			cmd.Println("organization is required")
 			return
 		}
 		teams, _, err := client.TeamsApi.GetTeams(cmd.Context(), org)

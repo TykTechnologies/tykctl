@@ -5,10 +5,10 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/swagger-gen"
 	"context"
 	"fmt"
 	"github.com/spf13/viper"
+	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
 )

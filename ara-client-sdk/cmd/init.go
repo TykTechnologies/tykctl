@@ -5,12 +5,12 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/swagger-gen"
 	"fmt"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
+	"tykcli/swagger-gen"
 )
 
 // initCmd represents the init command
@@ -94,6 +94,7 @@ to quickly create a Cobra application.`,
 		}
 		cmd.Println(fmt.Sprintf("%s has been set a the default enviroment", selectedEnv.Name))
 		//login if user has not logged in
+		cmd.Println("The cli is now initialized you can start creating deployment")
 
 		//log.Println(run)
 

@@ -5,8 +5,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/swagger-gen"
 	"fmt"
+	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
 )
@@ -29,7 +29,7 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(orgCmd)
-
+	orgCmd.PersistentFlags().StringP("format", "f", "table", "Format you want to use can be table,json")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

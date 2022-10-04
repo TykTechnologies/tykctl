@@ -34,7 +34,7 @@ func init() {
 	viper.BindPFlag("org", deploymentsCmd.PersistentFlags().Lookup("org"))
 	deploymentsCmd.PersistentFlags().String("team", "", "The team")
 	viper.BindPFlag("team", deploymentsCmd.PersistentFlags().Lookup("team"))
-	environmentCmd.PersistentFlags().String("env", "", "The environment")
+	deploymentsCmd.PersistentFlags().String("env", "", "The environment")
 	viper.BindPFlag("env", environmentCmd.PersistentFlags().Lookup("env"))
 	// Here you will define your flags and configuration settings.
 

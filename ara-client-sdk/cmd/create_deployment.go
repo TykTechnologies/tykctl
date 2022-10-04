@@ -5,9 +5,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/swagger-gen"
 	"fmt"
 	"github.com/spf13/viper"
+	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
 )
@@ -53,8 +53,9 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		zone := viper.GetString("zone")
-
+		///zone := viper.GetString("zone")
+		zone, err := cmd.Flags().GetString("zone")
+		cmd.Println(zone)
 		fmt.Println("createDeployment called")
 		deployment := swagger.Deployment{
 			Kind: kind,
@@ -97,5 +98,5 @@ func init() {
 	createDeploymentCmd.Flags().StringP("name", "n", "", "name to give the new team")
 	createDeploymentCmd.MarkFlagRequired("name")
 	createDeploymentCmd.Flags().StringP("zone", "z", "", "zone you want to deploy into")
-	viper.BindPFlag("zone", createDeploymentCmd.PersistentFlags().Lookup("zone"))
+	///viper.BindPFlag("zone", createDeploymentCmd.PersistentFlags().Lookup("zone"))
 }

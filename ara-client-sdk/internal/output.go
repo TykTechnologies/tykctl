@@ -1,13 +1,13 @@
 package internal
 
 import (
-	"ara-client-sdk/swagger-gen"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
+	"tykcli/swagger-gen"
 
 	"github.com/olekukonko/tablewriter"
 )
@@ -39,6 +39,33 @@ func ShowJson(body []byte) {
 	}
 
 	fmt.Println(prettyJSON.String())
+}
+
+func PrintOrganizationTable(orgs []swagger.Organisation) {
+	headers := []string{"Name", "Teams"}
+	data := make([][]string, 0)
+	for _, org := range orgs {
+		orgData := []string{
+			org.Name, strconv.Itoa(len(org.Teams)),
+		}
+		data = append(data, orgData)
+
+	}
+	ShowTable(headers, data)
+}
+
+func PrintDeploymentInTable(deployments []swagger.Deployment) {
+	headers := []string{"Name", "State", "Control plane name", "Region", "Version", "Environment", "Team"}
+	data := make([][]string, 0)
+	for _, deployment := range deployments {
+		deploymentData := []string{
+			deployment.Name, deployment.State, "", deployment.ZoneCode, deployment.BundleVersion, deployment.LoadoutName, deployment.TeamName,
+		}
+		data = append(data, deploymentData)
+
+	}
+	ShowTable(headers, data)
+
 }
 
 func PrintTeamInTable(teams []swagger.Team) {

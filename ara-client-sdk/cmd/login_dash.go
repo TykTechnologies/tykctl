@@ -5,7 +5,6 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/internal"
 	"errors"
 	"fmt"
 	"github.com/manifoldco/promptui"
@@ -15,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"net/mail"
+	"tykcli/internal"
 )
 
 // loginCmd represents the login command
@@ -35,7 +35,9 @@ func init() {
 	loginCmd.Flags().StringP("email", "e", "", "User email for auth")
 	loginCmd.Flags().StringP("password", "p", "", "User password for auth")
 	loginCmd.Flags().String("ba-user", "", "Basic auth user")
+	viper.BindPFlag("ba-user", loginCmd.Flags().Lookup("ba-user"))
 	loginCmd.Flags().String("ba-pass", "", "Basic auth password")
+	viper.BindPFlag("ba-pass", loginCmd.Flags().Lookup("ba-pass"))
 	loginCmd.Flags().String("dashboard", "https://dash.ara-staging.tyk.technology", "Url to connect to the dashboard")
 	viper.BindPFlag("dashboard", loginCmd.Flags().Lookup("dashboard"))
 
@@ -102,16 +104,10 @@ func loginViaDashboard(cmd *cobra.Command, args []string) error {
 		cmd.Println(err)
 		return err
 	}
-	username, err := cmd.Flags().GetString("ba-user")
-	if err != nil {
-		cmd.Println(err)
-		return err
-	}
-	userpass, err := cmd.Flags().GetString("ba-pass")
-	if err != nil {
-		cmd.Println(err)
-		return err
-	}
+	username := viper.GetString("ba-user")
+
+	userpass := viper.GetString("ba-pass")
+
 	if len(username) > 0 && len(userpass) > 0 {
 		req.SetBasicAuth(username, userpass)
 	}
@@ -161,6 +157,7 @@ func loginViaDashboard(cmd *cobra.Command, args []string) error {
 		cmd.PrintErrf("Couldn't write config: %s\n", err.Error())
 		return err
 	}
+
 	cmd.Println("Authentication successful")
 	return nil
 	///if email is empty then prompt for an email
@@ -193,6 +190,7 @@ func passwordPrompt() (string, error) {
 	passPrompt := promptui.Prompt{
 		Label:    "Enter dashboard user password",
 		Validate: validateNotEmpty,
+		Mask:     '*',
 		//Mask:     '*',
 	}
 

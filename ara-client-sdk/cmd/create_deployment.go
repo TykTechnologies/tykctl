@@ -52,10 +52,7 @@ to quickly create a Cobra application.`,
 			cmd.Println(err)
 			return
 		}
-
-		///zone := viper.GetString("zone")
-		zone, err := cmd.Flags().GetString("zone")
-		cmd.Println(zone)
+		zone := viper.GetString("zone")
 		fmt.Println("createDeployment called")
 		deployment := swagger.Deployment{
 			Kind: kind,
@@ -98,5 +95,5 @@ func init() {
 	createDeploymentCmd.Flags().StringP("name", "n", "", "name to give the new team")
 	createDeploymentCmd.MarkFlagRequired("name")
 	createDeploymentCmd.Flags().StringP("zone", "z", "", "zone you want to deploy into")
-	///viper.BindPFlag("zone", createDeploymentCmd.PersistentFlags().Lookup("zone"))
+	viper.BindPFlag("zone", createDeploymentCmd.Flags().Lookup("zone"))
 }

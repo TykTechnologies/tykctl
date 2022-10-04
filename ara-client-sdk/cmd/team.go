@@ -13,8 +13,9 @@ import (
 
 // teamCmd represents the team command
 var teamCmd = &cobra.Command{
-	Use:   "team",
-	Short: "A brief description of your command",
+	ValidArgs: []string{"list", "create"},
+	Use:       "team",
+	Short:     "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 

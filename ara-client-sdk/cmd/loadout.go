@@ -5,11 +5,11 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/internal"
 	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
 	"log"
+	"tykcli/internal"
 )
 
 // loadoutCmd represents the loadout command

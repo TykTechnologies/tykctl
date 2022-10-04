@@ -5,7 +5,11 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"encoding/json"
 	"github.com/spf13/cobra"
+	"log"
+	"tykcli/internal"
+	"tykcli/swagger-gen"
 )
 
 // orgListCmd represents the orgList command
@@ -21,14 +25,32 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		orgs, _, err := client.OrganisationsApi.GetOrgs(cmd.Context())
 		if err != nil {
-			cmd.Println(err)
+			message := err.Error()
+			if myerr, ok := err.(swagger.GenericSwaggerError); ok {
+				message = string(myerr.Body())
+				// handle myerr
+			}
+			cmd.Println(message)
 			return
 		}
-		if len(orgs.Payload.Organisations) > 0 {
-			cmd.Println(orgs.Payload.Organisations[0].UID)
-
+		f, err := cmd.Flags().GetString("format")
+		if err != nil {
+			cmd.Println(err)
+			cmd.Println("wrong output format sent")
+			return
 		}
-		cmd.Println(len(orgs.Payload.Organisations))
+		if f == "json" {
+			marshal, err := json.Marshal(&orgs.Payload.Organisations)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			internal.ShowJson(marshal)
+
+			return
+		}
+		internal.PrintOrganizationInTable(orgs.Payload.Organisations)
+
 	},
 }
 

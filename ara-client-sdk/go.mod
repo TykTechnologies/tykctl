@@ -1,4 +1,4 @@
-module ara-client-sdk
+module tykcli
 
 go 1.18
 

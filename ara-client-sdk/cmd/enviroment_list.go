@@ -5,14 +5,17 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"encoding/json"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"log"
+	"tykcli/internal"
 	"tykcli/swagger-gen"
 )
 
-// createTeamCmd represents the createTeam command
-var createTeamCmd = &cobra.Command{
-	Use:   "create",
+// enviromentListCmd represents the enviromentList command
+var enviromentListCmd = &cobra.Command{
+	Use:   "list",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -26,42 +29,46 @@ to quickly create a Cobra application.`,
 			cmd.Println("organization is required")
 			return
 		}
-		teamName, err := cmd.Flags().GetString("name")
+		loadouts, _, err := client.LoadoutsApi.GetOrgLoadouts(cmd.Context(), org)
 		if err != nil {
-
-			cmd.Println(err)
+			message := err.Error()
+			if myerr, ok := err.(swagger.GenericSwaggerError); ok {
+				message = string(myerr.Body())
+				// handle myerr
+			}
+			cmd.Println(message)
 			return
 		}
-
-		if len(teamName) == 0 {
-			cmd.Println("Team name is required")
-			return
-		}
-		cmd.Println(teamName)
-		team := swagger.Team{
-			Name: teamName,
-		}
-		teams, _, err := client.TeamsApi.CreateTeam(cmd.Context(), team, org)
+		f, err := cmd.Flags().GetString("format")
 		if err != nil {
-
 			cmd.Println(err)
+			cmd.Println("wrong output format sent")
 			return
 		}
-		cmd.Printf("Team %s created successfully", teams.Payload.UID)
+		if f == "json" {
+			marshal, err := json.Marshal(&loadouts.Payload.Loadouts)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			internal.ShowJson(marshal)
+
+			return
+		}
+		internal.PrintLoadOutInTable(loadouts.Payload.Loadouts)
 	},
 }
 
 func init() {
-	teamCmd.AddCommand(createTeamCmd)
-	createTeamCmd.Flags().StringP("name", "n", "", "name to give the new team")
-	createTeamCmd.MarkFlagRequired("name")
+	environmentCmd.AddCommand(enviromentListCmd)
+
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// createTeamCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// enviromentListCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// createTeamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// enviromentListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

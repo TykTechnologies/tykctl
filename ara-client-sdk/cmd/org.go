@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
 )
@@ -28,7 +29,7 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(orgCmd)
-
+	orgCmd.PersistentFlags().StringP("format", "f", "table", "Format you want to use can be table,json")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
@@ -38,4 +39,15 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// orgCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func parseError(err error) string {
+	message := err.Error()
+	if myerr, ok := err.(swagger.GenericSwaggerError); ok {
+		message = string(myerr.Body())
+		// handle myerr
+	}
+
+	return message
+
 }

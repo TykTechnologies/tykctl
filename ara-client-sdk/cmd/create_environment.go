@@ -5,9 +5,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"ara-client-sdk/swagger-gen"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"tykcli/swagger-gen"
 )
 
 // createEnvironmentCmd represents the createEnvironment command
@@ -65,6 +65,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// createEnvironmentCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	createEnvironmentCmd.Flags().StringP("name", "n", "", "name to give the new enviroment")
+	createEnvironmentCmd.Flags().StringP("name", "n", "", "name to give the new environment")
 	createEnvironmentCmd.MarkFlagRequired("name")
 }

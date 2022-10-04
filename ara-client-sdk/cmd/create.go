@@ -28,7 +28,7 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			log.Fatal("error reading name")
 		}
-		f, err := cmd.Flags().GetString("format")
+		f, err := cmd.Flags().GetString("output")
 		if err != nil {
 			fmt.Println("wrong output format sent")
 			return
@@ -69,7 +69,7 @@ func init() {
 
 	createCmd.Flags().StringP("name", "n", "name", "name of the organization to create")
 
-	createCmd.Flags().StringP("format", "f", "table", "Format you want to use can be table,json")
+	createCmd.Flags().StringP("output", "o", "table", "Format you want to use can be table,json")
 
 	//err := createCmd.MarkPersistentFlagRequired("name")
 	///if err != nil {

@@ -34,7 +34,7 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		f, err := cmd.Flags().GetString("format")
+		f, err := cmd.Flags().GetString("output")
 		if err != nil {
 			cmd.Println(err)
 			cmd.Println("wrong output format sent")

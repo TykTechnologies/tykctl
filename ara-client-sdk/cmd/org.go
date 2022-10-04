@@ -28,7 +28,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(orgCmd)
+	cloudCmd.AddCommand(orgCmd)
 	orgCmd.PersistentFlags().StringP("output", "o", "table", "Format you want to use can be table,json")
 	// Here you will define your flags and configuration settings.
 

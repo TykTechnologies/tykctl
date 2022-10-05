@@ -17,17 +17,29 @@ import (
 	"tykcli/internal"
 )
 
+const loginDesc = `
+This command will login into your cloud account and set the token in your config file.
+
+Note: The token will only last for 30 minute you will need to login again after 30 minutes.
+
+You will be prompted to provide your email and  password to login.
+
+When using the cloud service you should always run this command first as each command will require a token.
+
+For the staging server you will also need to provide nginx basic auth.
+
+Sample usage:
+tykctl cloud login --ba-pass=<use this only is staging> --ba-pass=<use this in staging>
+
+`
+
 // loginCmd represents the login command
 var loginCmd = &cobra.Command{
-	Use:   "login",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	RunE: loginViaDashboard,
+	Use:     "login",
+	Short:   "Login into tyk cloud",
+	Long:    loginDesc,
+	Example: `tykctl cloud login --ba-pass=<use this only is staging> --ba-pass=<use this in staging>`,
+	RunE:    loginViaDashboard,
 }
 
 func init() {

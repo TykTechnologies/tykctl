@@ -11,16 +11,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const enviromentDesc = `
+This command is the parent command for all environment operations.
+
+It has subcommands to:
+ 1. Create an environment: tykctl environment create --name="environment name"
+ 2. Fetch all environments in an org: tykctl environment list --org=<orgID>
+
+`
+
 // environmentCmd represents the environment command
 var environmentCmd = &cobra.Command{
 	Use:   "environment",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Create,list and delete environment",
+	Long:  enviromentDesc,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("environment called")
 	},

@@ -14,16 +14,28 @@ import (
 	"tykcli/swagger-gen"
 )
 
+const listDeploymentDesc = `
+This command will list all the deployment belonging to an organization
+
+You will need to pass the org whose deployment you want to get.
+If you don't pass the org we will use the one in your config file.
+
+You can either get the data as json or in a table.
+
+Use the --output<table,json> flag to change the format default is table.
+
+Sample usage: 
+
+tykctl cloud deployment list --org=<organization id> --output=<json/table>
+
+`
+
 // deploymentListCmd represents the deploymentList command
 var deploymentListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "This will list all the deployment belonging to an environment",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:     "list",
+	Short:   "Fetch all deployment in an organization",
+	Long:    listDeploymentDesc,
+	Example: `tykctl cloud deployment list --org=<orgID> --output=<json/table>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		org := viper.GetString("org")
 		if len(org) == 0 {

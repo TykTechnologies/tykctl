@@ -15,6 +15,8 @@ import (
 const createDeploymentDesc = ` 
 This command creates a Home or a Edge Gateway.
 
+NOTE: This does not deploy the deployment it just create it.You can use the deploy command to deploy the created deployment.
+
 You must pass the organization,team,zone and environment you want deploy this deployment.
 
 NOTE: For the home deployment you have to select the you home zone as the deployment zone.

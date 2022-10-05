@@ -67,6 +67,7 @@ var createDeploymentCmd = &cobra.Command{
 			return
 		}
 		zone := viper.GetString("zone")
+
 		fmt.Println("createDeployment called")
 		deployment := swagger.Deployment{
 			Kind: kind,
@@ -76,7 +77,7 @@ var createDeploymentCmd = &cobra.Command{
 			ZoneCode: zone,
 		}
 
-		deploy, _, err := client.DeploymentsApi.CreateDeployment(cmd.Context(), deployment, org, team, env)
+		deployRsponse, _, err := client.DeploymentsApi.CreateDeployment(cmd.Context(), deployment, org, team, env)
 		if err != nil {
 			message := err.Error()
 			if myerr, ok := err.(swagger.GenericSwaggerError); ok {
@@ -88,7 +89,23 @@ var createDeploymentCmd = &cobra.Command{
 			return
 
 		}
-		cmd.Printf("Deployment %s created successfully", deploy.Payload.UID)
+		cmd.Printf("Deployment %s created successfully", deployRsponse.Payload.UID)
+
+		shouldDeploy, err := cmd.Flags().GetBool("deploy")
+		if err != nil {
+			cmd.Println(err)
+			return
+		}
+		if shouldDeploy {
+			deployRes, err := deploy(cmd.Context(), org, team, env, deployRsponse.Payload.UID)
+			if err != nil {
+				message := parseError(err)
+				cmd.Println(message)
+				return
+			}
+			cmd.Printf("%s deployment has started", deployRes.Payload.UID)
+		}
+		//here deploy
 
 	},
 }
@@ -110,4 +127,5 @@ func init() {
 	createDeploymentCmd.MarkFlagRequired("name")
 	createDeploymentCmd.Flags().StringP("zone", "z", "", "zone you want to deploy into")
 	viper.BindPFlag("zone", createDeploymentCmd.Flags().Lookup("zone"))
+	createDeploymentCmd.Flags().BoolP("deploy", "d", false, "deploy the deployment after creation")
 }

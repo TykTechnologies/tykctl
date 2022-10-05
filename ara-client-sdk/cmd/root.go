@@ -17,7 +17,7 @@ var cfgFile string
 var client *swagger.APIClient
 
 const rootDesc = `
-Tykctl is a cli to be used to interact with all tyk components (tyk cloud,tyk gateway and tyk dashboard).
+Tykctl is a cli that can be used to interact with all tyk components (tyk cloud,tyk gateway and tyk dashboard).
 
 The cli is grouped into services.
 For example to use the tyk cloud services you should prefix all your subcommands with:

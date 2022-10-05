@@ -45,6 +45,8 @@ var initCmd = &cobra.Command{
 			return
 		}
 		///then select the default organization
+		s.Prefix = "fetching organizations "
+		s.Start()
 		orgs, _, err := client.OrganisationsApi.GetOrgs(cmd.Context())
 		if err != nil {
 			cmd.Println(orgs.Error_)
@@ -54,6 +56,7 @@ var initCmd = &cobra.Command{
 			cmd.Println(err)
 			return
 		}
+		s.Stop()
 		if len(orgs.Payload.Organisations) == 0 {
 			cmd.Println("You have not created any organization yet")
 			return

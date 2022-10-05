@@ -54,7 +54,10 @@ var createEnvironmentCmd = &cobra.Command{
 		loadOut := swagger.Loadout{
 			Name: envName,
 		}
+		s.Prefix = "creating environment "
+		s.Start()
 		loadout, _, err := client.LoadoutsApi.CreateLoadout(cmd.Context(), loadOut, org, team)
+		s.Stop()
 		if err != nil {
 			cmd.Println(err)
 			return

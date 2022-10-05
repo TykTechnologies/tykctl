@@ -54,7 +54,10 @@ var createTeamCmd = &cobra.Command{
 		team := swagger.Team{
 			Name: teamName,
 		}
+		s.Prefix = "creating teams "
+		s.Start()
 		teams, _, err := client.TeamsApi.CreateTeam(cmd.Context(), team, org)
+		s.Stop()
 		if err != nil {
 
 			cmd.Println(err)

@@ -29,9 +29,10 @@ tyckctl cloud team create --name="first team" --org=<org uuid>
 
 // createTeamCmd represents the createTeam command
 var createTeamCmd = &cobra.Command{
-	Use:   "create",
-	Short: "create a team",
-	Long:  createTeamDesc,
+	Use:     "create",
+	Short:   "create a team",
+	Long:    createTeamDesc,
+	Example: `tyckctl cloud team create --name="first team" --org=<org uuid>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		org := viper.GetString("org")
 		if len(org) == 0 {

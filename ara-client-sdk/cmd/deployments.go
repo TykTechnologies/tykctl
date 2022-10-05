@@ -11,16 +11,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const deploymentDesc = `
+This command has subcommand to create,deploy,restart and fetch deployments.
+
+Supported subcommand: 
+    - tykctl cloud deployment list
+    - tykctl cloud deployment create
+
+Most of the subcommand will require the orgID and teamID flags.
+
+This can also be set in the config file by running:
+
+tykctl cloud init.
+
+`
+
 // deploymentsCmd represents the deployments command
 var deploymentsCmd = &cobra.Command{
 	Use:   "deployment",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Parent command for all deployment actions",
+	Long:  deploymentDesc,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("deployments called")
 

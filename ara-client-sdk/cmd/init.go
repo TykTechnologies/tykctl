@@ -13,16 +13,26 @@ import (
 	"tykcli/swagger-gen"
 )
 
+const initDesc = `
+This command will initialize the cli and set default in the config file.
+
+Before using this command you will need to login with:
+tykctl cloud login 
+
+Use this command to:
+1. Set the default organization.
+2. Set the default team
+3. Set the default environment.
+4. Set your zone and home region.
+
+This command should ideally be run after the login command.
+`
+
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "initialization the cli",
+	Long:  initDesc,
 	Run: func(cmd *cobra.Command, args []string) {
 		token := viper.GetString("token")
 		if len(token) == 0 {

@@ -13,16 +13,24 @@ import (
 	"tykcli/swagger-gen"
 )
 
-// enviromentListCmd represents the enviromentList command
-var enviromentListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+const enviromentListDesc = `
+This command will fetch all the environment in an organization.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+You must pass the --org.If it is not passed we will use the default org set in your config file.
+
+We support json and table as the output format.To set the output format use the --output<json/table> flag.
+
+Sample usage of this command:
+
+tckctl cloud environment list --org=<orgID> --output=<json/table>
+
+`
+
+var enviromentListCmd = &cobra.Command{
+	Use:     "list",
+	Short:   "Fetch all environments in an organization.",
+	Long:    enviromentListDesc,
+	Example: `tckctl cloud environment list --org=<orgID> --output=<json/table>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		org := viper.GetString("org")
 		if len(org) == 0 {

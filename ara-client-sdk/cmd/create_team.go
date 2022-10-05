@@ -10,16 +10,28 @@ import (
 	"tykcli/swagger-gen"
 )
 
+const createTeamDesc = `
+This command will create a team.
+
+You have to pass the name you want to give the team and org in which you want to create the team.
+
+If the org is not provided we will use the one you set in the config file.
+
+To set a default team in the config file run:
+
+tykctl cloud init
+
+Sample usage for this command:
+
+tyckctl cloud team create --name="first team" --org=<org uuid>
+
+`
+
 // createTeamCmd represents the createTeam command
 var createTeamCmd = &cobra.Command{
 	Use:   "create",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "create a team",
+	Long:  createTeamDesc,
 	Run: func(cmd *cobra.Command, args []string) {
 		org := viper.GetString("org")
 		if len(org) == 0 {

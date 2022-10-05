@@ -10,16 +10,26 @@ import (
 	"tykcli/swagger-gen"
 )
 
+const createEnvDec = `
+This command create an environment in a team.
+
+You must pass the name of the environment.
+
+You must also set the org and team you want to create this environment in.
+
+If you don't pass the org and team we will use the one set in the config file.
+
+Sample usage:
+
+tyk cloud environment create --name="staging"
+`
+
 // createEnvironmentCmd represents the createEnvironment command
 var createEnvironmentCmd = &cobra.Command{
-	Use:   "create",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:     "create",
+	Short:   "create an environment",
+	Long:    createEnvDec,
+	Example: `tyk cloud environment create --name="staging"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		org := viper.GetString("org")
 		if len(org) == 0 {
@@ -55,7 +65,6 @@ to quickly create a Cobra application.`,
 
 func init() {
 	environmentCmd.AddCommand(createEnvironmentCmd)
-
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

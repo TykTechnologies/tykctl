@@ -76,8 +76,10 @@ var createDeploymentCmd = &cobra.Command{
 
 			ZoneCode: zone,
 		}
-
+		s.Prefix = "creating deployment "
+		s.Start()
 		deployRsponse, _, err := client.DeploymentsApi.CreateDeployment(cmd.Context(), deployment, org, team, env)
+		s.Stop()
 		if err != nil {
 			message := err.Error()
 			if myerr, ok := err.(swagger.GenericSwaggerError); ok {
@@ -97,7 +99,10 @@ var createDeploymentCmd = &cobra.Command{
 			return
 		}
 		if shouldDeploy {
+			s.Prefix = "deploying deployment "
+			s.Start()
 			deployRes, err := deploy(cmd.Context(), org, team, env, deployRsponse.Payload.UID)
+			s.Stop()
 			if err != nil {
 				message := parseError(err)
 				cmd.Println(message)

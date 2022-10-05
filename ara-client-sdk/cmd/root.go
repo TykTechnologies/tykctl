@@ -6,7 +6,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/briandowns/spinner"
 	"os"
+	"time"
 	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
@@ -15,6 +17,7 @@ import (
 
 var cfgFile string
 var client *swagger.APIClient
+var s *spinner.Spinner
 
 const rootDesc = `
 Tykctl is a cli that can be used to interact with all tyk components (tyk cloud,tyk gateway and tyk dashboard).
@@ -47,7 +50,8 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
+	s = spinner.New(spinner.CharSets[36], 100*time.Millisecond)
+	s.Color("white")
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
@@ -85,6 +89,7 @@ func initConfig() {
 }
 
 func createClient() *swagger.APIClient {
+
 	config := &swagger.Configuration{
 		BasePath:      viper.GetString("controller"),
 		DefaultHeader: map[string]string{},

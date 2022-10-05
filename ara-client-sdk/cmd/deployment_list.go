@@ -42,8 +42,10 @@ var deploymentListCmd = &cobra.Command{
 			cmd.Println("organization is required")
 			return
 		}
-
+		s.Prefix = "fetching deployments "
+		s.Start()
 		deployment, _, err := client.OrganisationsApi.GetDeploymentsForOrg(cmd.Context(), org)
+		s.Stop()
 		if err != nil {
 			message := err.Error()
 			if myerr, ok := err.(swagger.GenericSwaggerError); ok {

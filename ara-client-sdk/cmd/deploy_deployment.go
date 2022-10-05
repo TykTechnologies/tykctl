@@ -59,8 +59,10 @@ var deployDeploymentCmd = &cobra.Command{
 		if err != nil {
 			return
 		}
+		s.Prefix = "deploying deployments "
+		s.Start()
 		deployment, err := deploy(cmd.Context(), org, team, env, deploymentId)
-
+		s.Stop()
 		if err != nil {
 			cmd.Println(parseError(err))
 			return

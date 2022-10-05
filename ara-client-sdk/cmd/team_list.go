@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
+	"time"
 	"tykcli/internal"
 )
 
@@ -38,7 +39,11 @@ var listCmd = &cobra.Command{
 			cmd.Println("organization is required")
 			return
 		}
+		s.Prefix = "fetching teams "
+		s.Start()
+		time.Sleep(time.Second * 10)
 		teams, _, err := client.TeamsApi.GetTeams(cmd.Context(), org)
+		s.Stop()
 		if err != nil {
 			cmd.Println(err)
 			return

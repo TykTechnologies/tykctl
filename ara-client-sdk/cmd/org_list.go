@@ -34,7 +34,10 @@ var orgListCmd = &cobra.Command{
 	Long:    orgListDesc,
 	Example: "tykctl cloud org list --output<json/table>",
 	Run: func(cmd *cobra.Command, args []string) {
+		s.Prefix = "fetching organizations "
+		s.Start()
 		orgs, _, err := client.OrganisationsApi.GetOrgs(cmd.Context())
+		s.Stop()
 		if err != nil {
 			message := err.Error()
 			if myerr, ok := err.(swagger.GenericSwaggerError); ok {

@@ -124,11 +124,14 @@ func loginViaDashboard(cmd *cobra.Command, args []string) error {
 		req.SetBasicAuth(username, userpass)
 	}
 	client := &http.Client{}
+	s.Prefix = "login in "
+	s.Start()
 	resp, err := client.Do(req)
 	if err != nil {
 		cmd.Println(err)
 		return err
 	}
+	s.Stop()
 	if resp.StatusCode != 200 {
 		cmd.PrintErrf("Login failed: %d\n", resp.StatusCode)
 		if resp.Body != nil {

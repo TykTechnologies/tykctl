@@ -37,7 +37,10 @@ var enviromentListCmd = &cobra.Command{
 			cmd.Println("organization is required")
 			return
 		}
+		s.Prefix = "fetching environments "
+		s.Start()
 		loadouts, _, err := client.LoadoutsApi.GetOrgLoadouts(cmd.Context(), org)
+		s.Stop()
 		if err != nil {
 			message := err.Error()
 			if myerr, ok := err.(swagger.GenericSwaggerError); ok {

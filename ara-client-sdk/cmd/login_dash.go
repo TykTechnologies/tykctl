@@ -43,7 +43,7 @@ var loginCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(loginCmd)
+	cloudCmd.AddCommand(loginCmd)
 	loginCmd.Flags().StringP("email", "e", "", "User email for auth")
 	loginCmd.Flags().StringP("password", "p", "", "User password for auth")
 	loginCmd.Flags().String("ba-user", "", "Basic auth user")

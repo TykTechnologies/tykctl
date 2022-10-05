@@ -12,16 +12,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const createDeploymentDesc = ` 
+This command creates a Home or a Edge Gateway.
+
+You must pass the organization,team,zone and environment you want deploy this deployment.
+
+NOTE: For the home deployment you have to select the you home zone as the deployment zone.
+
+If you do not pass the org,zone or environment we will use the ones on your config file.You can set the default org,team and environment by running:
+
+tykctl cloud init
+
+Sample usage for this command
+
+tykctl cloud deployment create --name="test deployment" --kind="Home"
+
+`
+
 // createDeploymentCmd represents the createDeployment command
 var createDeploymentCmd = &cobra.Command{
 	Use:   "create",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "create a deployment",
+	Long:  createDeploymentDesc,
 	Run: func(cmd *cobra.Command, args []string) {
 		org := viper.GetString("org")
 		if len(org) == 0 {

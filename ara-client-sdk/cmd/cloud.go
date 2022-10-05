@@ -5,18 +5,32 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
+const CloudDesc = `
+All the cloud operations use this as the parent command.
+
+It has the subcommand to do all the cloud operations such as creating a team,login and initialize the cloud.
+
+To do anything on the cloud you need to first login:
+
+tykctl cloud login 
+
+You can also set the default parameters to your config by running:
+
+tykctl cloud init
+
+`
+
 // cloudCmd represents the cloud command
 var cloudCmd = &cobra.Command{
-	Use:   "cloud",
-	Short: "All the operation for the tyk cloud",
-	Long:  `This is the parent command for all the tyk cloud commands.This include teams,deployments and environments.`,
+	Use:     "cloud",
+	Short:   "All the operation for the tyk cloud",
+	Example: "tykctl cloud org list",
+	Long:    CloudDesc,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("cloud called")
+
 	},
 }
 

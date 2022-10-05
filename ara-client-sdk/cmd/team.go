@@ -11,17 +11,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const teamDesc = `
+This command is the parent command to all team operations.
+
+The supported commands are:
+1. tykctl cloud team list -fetch all org teams
+2. tykctl cloud team create -create a team in an org.
+
+All subcommands require an org id.If it is not passed we use the default one in the config file.
+
+To set the default org run :
+tykctl cloud init
+
+`
+
 // teamCmd represents the team command
 var teamCmd = &cobra.Command{
 	ValidArgs: []string{"list", "create"},
 	Use:       "team",
-	Short:     "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short:     "Create,list teams in an organization",
+	Long:      teamDesc,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("team called")
 	},

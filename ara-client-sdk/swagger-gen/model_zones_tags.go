@@ -10,6 +10,6 @@ package swagger
 
 type ZonesTags struct {
 	Capabilities []string `json:"Capabilities,omitempty"`
-	ConnStr string `json:"ConnStr,omitempty"`
-	Token string `json:"Token,omitempty"`
+	ConnStr      string   `json:"ConnStr,omitempty"`
+	Token        string   `json:"Token,omitempty"`
 }

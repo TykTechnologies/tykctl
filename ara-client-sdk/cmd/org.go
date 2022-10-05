@@ -5,25 +5,25 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
 )
 
 // orgCmd represents the org command
+const orgDesc = `
+This is the parent command for all action that can be done to an organization.
+
+The list of subcommand supported by this command are:
+1. tykctl cloud org list - list all you organizations.
+`
+
 var orgCmd = &cobra.Command{
 	Use:   "org",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Parent command for all org actions",
+	Long:  orgDesc,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		fmt.Println("org called")
 	},
 }
 

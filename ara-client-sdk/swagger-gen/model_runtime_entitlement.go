@@ -10,8 +10,8 @@ package swagger
 
 // Broadly based around AWS EC2 instance types in Phase 1: https://aws.amazon.com/ec2/instance-types/ Further abstractions based on other platforms (GCP, Azure, Alibaba, et al) will be forthcoming.
 type RuntimeEntitlement struct {
-	Allowed int64 `json:"Allowed,omitempty"`
-	Consumed int64 `json:"Consumed,omitempty"`
-	Name string `json:"Name,omitempty"`
-	Values *map[string]interface{} `json:"Values,omitempty"`
+	Allowed  int64                   `json:"Allowed,omitempty"`
+	Consumed int64                   `json:"Consumed,omitempty"`
+	Name     string                  `json:"Name,omitempty"`
+	Values   *map[string]interface{} `json:"Values,omitempty"`
 }

@@ -9,7 +9,7 @@
 package swagger
 
 type AdminOrg struct {
-	Name string `json:"Name,omitempty"`
-	OID string `json:"OID,omitempty"`
+	Name      string `json:"Name,omitempty"`
+	OID       string `json:"OID,omitempty"`
 	StorageID string `json:"StorageID,omitempty"`
 }

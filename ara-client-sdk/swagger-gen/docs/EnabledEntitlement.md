@@ -1,6 +1,7 @@
 # EnabledEntitlement
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Enabled** | **bool** |  | [optional] [default to null]

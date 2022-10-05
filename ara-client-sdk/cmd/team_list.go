@@ -13,15 +13,25 @@ import (
 )
 
 // listCmd represents the list command
-var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+const teamListDesc = `
+This command will fetch and list all the teams in an organization.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+You must pass the --org flag.If it is not passed we will use the default one set in the config file.
+
+The output can be either json or table. Default is table.
+To change the format use --output=<json/table> flag.
+
+Sample usage:
+
+tykctl team list --org=<orgID> --output=<json/table>
+
+`
+
+var listCmd = &cobra.Command{
+	Use:     "list",
+	Short:   "Fetch all teams in an organization",
+	Long:    teamListDesc,
+	Example: `tykctl team list --org=<orgID> --output=<json/table>`,
 	Run: func(cmd *cobra.Command, args []string) {
 		org := viper.GetString("org")
 		if len(org) == 0 {

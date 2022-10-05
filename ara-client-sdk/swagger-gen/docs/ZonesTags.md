@@ -1,6 +1,7 @@
 # ZonesTags
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Capabilities** | **[]string** |  | [optional] [default to null]

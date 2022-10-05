@@ -11,5 +11,5 @@ package swagger
 // OrgTotalUsage returns throughput usage of the organisation
 type OrgTotalUsage struct {
 	OrgID string `json:"OrgID,omitempty"`
-	Total int64 `json:"Total,omitempty"`
+	Total int64  `json:"Total,omitempty"`
 }

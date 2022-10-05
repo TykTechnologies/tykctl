@@ -1,6 +1,7 @@
 # EntitlementPlans
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Plans** | [**[]EntitlementPlan**](EntitlementPlan.md) | A list of plans | [optional] [default to null]

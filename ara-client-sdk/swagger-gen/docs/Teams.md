@@ -1,6 +1,7 @@
 # Teams
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Teams** | [**[]Team**](Team.md) |  | [optional] [default to null]

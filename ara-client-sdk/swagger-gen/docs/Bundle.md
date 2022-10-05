@@ -1,6 +1,7 @@
 # Bundle
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Changelog** | **string** |  | [optional] [default to null]

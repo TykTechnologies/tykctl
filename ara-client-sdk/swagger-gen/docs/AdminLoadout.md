@@ -1,6 +1,7 @@
 # AdminLoadout
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **LID** | **string** |  | [optional] [default to null]

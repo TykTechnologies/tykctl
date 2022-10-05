@@ -1,6 +1,7 @@
 # HealthReport
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **CPStatusMeta** | [**map[string]interface{}**](interface{}.md) |  | [optional] [default to null]

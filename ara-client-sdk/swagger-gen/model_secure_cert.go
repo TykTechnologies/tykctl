@@ -9,7 +9,7 @@
 package swagger
 
 type SecureCert struct {
-	CertFile string `json:"cert_file,omitempty"`
+	CertFile   string `json:"cert_file,omitempty"`
 	DomainName string `json:"domain_name,omitempty"`
-	KeyFile string `json:"key_file,omitempty"`
+	KeyFile    string `json:"key_file,omitempty"`
 }

@@ -9,7 +9,7 @@
 package swagger
 
 type CounterEntitlement struct {
-	Allowed int64 `json:"Allowed,omitempty"`
-	Consumed int64 `json:"Consumed,omitempty"`
-	Name string `json:"Name,omitempty"`
+	Allowed  int64  `json:"Allowed,omitempty"`
+	Consumed int64  `json:"Consumed,omitempty"`
+	Name     string `json:"Name,omitempty"`
 }

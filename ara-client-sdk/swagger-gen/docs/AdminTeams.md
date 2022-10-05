@@ -1,6 +1,7 @@
 # AdminTeams
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Teams** | [**[]AdminTeam**](AdminTeam.md) |  | [optional] [default to null]

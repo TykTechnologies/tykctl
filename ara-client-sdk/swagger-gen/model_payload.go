@@ -10,7 +10,7 @@ package swagger
 
 // Payload is the default response
 type Payload struct {
-	Error_ string `json:"Error,omitempty"`
+	Error_  string       `json:"Error,omitempty"`
 	Payload *interface{} `json:"Payload,omitempty"`
-	Status string `json:"Status,omitempty"`
+	Status  string       `json:"Status,omitempty"`
 }

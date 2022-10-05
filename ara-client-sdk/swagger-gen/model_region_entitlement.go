@@ -9,9 +9,9 @@
 package swagger
 
 type RegionEntitlement struct {
-	Allowed int64 `json:"Allowed,omitempty"`
-	Consumed int64 `json:"Consumed,omitempty"`
-	Name string `json:"Name,omitempty"`
+	Allowed     int64            `json:"Allowed,omitempty"`
+	Consumed    int64            `json:"Consumed,omitempty"`
+	Name        string           `json:"Name,omitempty"`
 	RegionUsage map[string]int64 `json:"RegionUsage,omitempty"`
-	UsedRegions []string `json:"UsedRegions,omitempty"`
+	UsedRegions []string         `json:"UsedRegions,omitempty"`
 }

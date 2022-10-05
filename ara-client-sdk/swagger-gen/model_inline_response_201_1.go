@@ -9,7 +9,7 @@
 package swagger
 
 type InlineResponse2011 struct {
-	Error_ string `json:"Error,omitempty"`
-	Payload *Team `json:"Payload,omitempty"`
-	Status string `json:"Status,omitempty"`
+	Error_  string `json:"Error,omitempty"`
+	Payload *Team  `json:"Payload,omitempty"`
+	Status  string `json:"Status,omitempty"`
 }

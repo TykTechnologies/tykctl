@@ -1,6 +1,7 @@
 # SecureCert
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **CertFile** | **string** |  | [optional] [default to null]

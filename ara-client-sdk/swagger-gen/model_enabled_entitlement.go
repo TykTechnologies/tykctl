@@ -9,7 +9,7 @@
 package swagger
 
 type EnabledEntitlement struct {
-	Enabled bool `json:"Enabled,omitempty"`
-	Name string `json:"Name,omitempty"`
-	UsedCounter int64 `json:"UsedCounter,omitempty"`
+	Enabled     bool   `json:"Enabled,omitempty"`
+	Name        string `json:"Name,omitempty"`
+	UsedCounter int64  `json:"UsedCounter,omitempty"`
 }

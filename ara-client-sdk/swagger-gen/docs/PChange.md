@@ -1,6 +1,7 @@
 # PChange
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **New** | **string** | New password | [optional] [default to null]

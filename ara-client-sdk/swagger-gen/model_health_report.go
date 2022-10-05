@@ -9,10 +9,10 @@
 package swagger
 
 type HealthReport struct {
-	CPStatusMeta map[string]interface{} `json:"CPStatusMeta,omitempty"`
-	ControlPlaneStatus string `json:"ControlPlaneStatus,omitempty"`
-	ServerID string `json:"ServerID,omitempty"`
-	Status string `json:"Status,omitempty"`
-	StorageStatus string `json:"StorageStatus,omitempty"`
-	StoreStatusMeta map[string]interface{} `json:"StoreStatusMeta,omitempty"`
+	CPStatusMeta       map[string]interface{} `json:"CPStatusMeta,omitempty"`
+	ControlPlaneStatus string                 `json:"ControlPlaneStatus,omitempty"`
+	ServerID           string                 `json:"ServerID,omitempty"`
+	Status             string                 `json:"Status,omitempty"`
+	StorageStatus      string                 `json:"StorageStatus,omitempty"`
+	StoreStatusMeta    map[string]interface{} `json:"StoreStatusMeta,omitempty"`
 }

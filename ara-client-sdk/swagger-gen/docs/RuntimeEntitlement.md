@@ -1,6 +1,7 @@
 # RuntimeEntitlement
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Allowed** | **int64** |  | [optional] [default to null]

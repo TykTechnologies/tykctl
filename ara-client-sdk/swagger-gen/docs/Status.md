@@ -1,6 +1,7 @@
 # Status
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **CurrentState** | **string** |  | [optional] [default to null]

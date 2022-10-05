@@ -1,6 +1,7 @@
 # OrgTotalUsage
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **OrgID** | **string** |  | [optional] [default to null]

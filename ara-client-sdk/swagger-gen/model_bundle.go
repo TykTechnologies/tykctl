@@ -9,8 +9,8 @@
 package swagger
 
 type Bundle struct {
-	Changelog string `json:"Changelog,omitempty"`
+	Changelog  string            `json:"Changelog,omitempty"`
 	Components map[string]string `json:"Components,omitempty"`
-	Deprecated bool `json:"Deprecated,omitempty"`
-	Version string `json:"Version,omitempty"`
+	Deprecated bool              `json:"Deprecated,omitempty"`
+	Version    string            `json:"Version,omitempty"`
 }

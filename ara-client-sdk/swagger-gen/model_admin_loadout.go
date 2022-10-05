@@ -9,8 +9,8 @@
 package swagger
 
 type AdminLoadout struct {
-	LID string `json:"LID,omitempty"`
+	LID  string `json:"LID,omitempty"`
 	Name string `json:"Name,omitempty"`
-	OID string `json:"OID,omitempty"`
-	TID string `json:"TID,omitempty"`
+	OID  string `json:"OID,omitempty"`
+	TID  string `json:"TID,omitempty"`
 }

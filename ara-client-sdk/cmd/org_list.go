@@ -13,15 +13,26 @@ import (
 )
 
 // orgListCmd represents the orgList command
-var orgListCmd = &cobra.Command{
-	Use:   "list",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+const orgListDesc = `
+This command will list all your organizations.
+
+Currently you can only be part of one organization hence we will return a single organization.
+
+Sample command usage:
+tykctl cloud org list --output<json/table>
+
+You can get the output either in table or json format.The default is table format.
+
+user the --output flag to change the format.
+
+`
+
+var orgListCmd = &cobra.Command{
+	Use:     "list",
+	Short:   "List all your organizations.",
+	Long:    orgListDesc,
+	Example: "tykctl cloud org list --output<json/table>",
 	Run: func(cmd *cobra.Command, args []string) {
 		orgs, _, err := client.OrganisationsApi.GetOrgs(cmd.Context())
 		if err != nil {

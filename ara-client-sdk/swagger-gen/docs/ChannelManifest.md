@@ -1,6 +1,7 @@
 # ChannelManifest
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Bundles** | [**[]Bundle**](Bundle.md) |  | [optional] [default to null]

@@ -1,13 +1,24 @@
 # tykctl
-Tykctl is a cli that can be used to interact with all tyk components (tyk cloud,tyk gateway and tyk dashboard).
 
-The cli is grouped into services.
-For example to use the tyk cloud services you should prefix all your subcommands with:
-tykcli cloud <subcommand here>
 
-## Commands and usage
+Tykctl is a WIP CLI.
+The plan is to have one CLI to interact with all Tyk components and services, tyk cloud, tyk gateway, tyk dashboard for start. 
 
-### tyk cloud login - login  into the tyk cloud dashboard
+We decided to start with Tyk cloud, as such this is the only service `tykctl` supports at the moment.
+
+The CLI is grouped into services.
+For example to use the tyk cloud options you should prefix all your subcommands with: `tykcli cloud <subcommand and arguments go here>`
+
+## Bianries
+
+## Build locally on your own
+
+
+## Tyk cloud usage
+
+### Commands and usage
+
+#### tyk cloud login - login  into the tyk cloud dashboard
 This command will login into your cloud account and set the token in your config file.
 
 Note: The token will only last for 30 minute you will need to login again after 30 minutes.

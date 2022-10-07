@@ -55,10 +55,10 @@ func PrintOrganizationTable(orgs []swagger.Organisation) {
 }
 
 func PrintDeploymentInTable(deployments []swagger.Deployment) {
-	headers := []string{"Name", "State", "Control plane name", "Region", "Version", "Environment", "Team"}
+	headers := []string{"ID", "Name", "State", "Control plane name", "Region", "Version", "Environment", "Team"}
 	data := make([][]string, 0)
 	for _, deployment := range deployments {
-		deploymentData := []string{
+		deploymentData := []string{deployment.UID,
 			deployment.Name, deployment.State, "", deployment.ZoneCode, deployment.BundleVersion, deployment.LoadoutName, deployment.TeamName,
 		}
 		data = append(data, deploymentData)

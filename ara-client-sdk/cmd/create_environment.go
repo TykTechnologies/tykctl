@@ -5,9 +5,9 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"tykcli/swagger-gen"
 )
 
 const createEnvDec = `

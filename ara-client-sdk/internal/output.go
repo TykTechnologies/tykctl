@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"log"
 	"os"
 	"strconv"
-	"tykcli/swagger-gen"
 
 	"github.com/olekukonko/tablewriter"
 )

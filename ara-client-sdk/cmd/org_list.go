@@ -6,10 +6,10 @@ package cmd
 
 import (
 	"encoding/json"
+	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/spf13/cobra"
 	"log"
-	"tykcli/internal"
-	"tykcli/swagger-gen"
 )
 
 // orgListCmd represents the orgList command

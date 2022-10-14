@@ -5,8 +5,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"tykcli/swagger-gen"
-
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/spf13/cobra"
 )
 

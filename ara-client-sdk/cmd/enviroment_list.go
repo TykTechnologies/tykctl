@@ -6,11 +6,11 @@ package cmd
 
 import (
 	"encoding/json"
+	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
-	"tykcli/internal"
-	"tykcli/swagger-gen"
 )
 
 const enviromentListDesc = `

@@ -7,8 +7,8 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/spf13/viper"
-	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
 )

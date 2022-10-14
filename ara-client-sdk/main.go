@@ -4,7 +4,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 */
 package main
 
-import "tykcli/cmd"
+import "github.com/TykTechnologies/tykctl/cmd"
 
 func main() {
 	cmd.Execute()

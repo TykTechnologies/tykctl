@@ -6,11 +6,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
-	"tykcli/swagger-gen"
 )
 
 const initDesc = `

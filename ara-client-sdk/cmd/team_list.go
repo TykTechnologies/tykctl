@@ -6,11 +6,11 @@ package cmd
 
 import (
 	"encoding/json"
+	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
 	"time"
-	"tykcli/internal"
 )
 
 // listCmd represents the list command

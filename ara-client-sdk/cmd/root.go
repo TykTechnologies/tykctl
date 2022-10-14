@@ -6,10 +6,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/briandowns/spinner"
 	"os"
 	"time"
-	"tykcli/swagger-gen"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

@@ -7,6 +7,8 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,8 +16,6 @@ import (
 	"log"
 	"net/http"
 	"net/mail"
-	"tykcli/internal"
-	"tykcli/swagger-gen"
 )
 
 const loginDesc = `

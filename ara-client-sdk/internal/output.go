@@ -69,7 +69,7 @@ func PrintDeploymentInTable(deployments []swagger.Deployment) {
 }
 
 func PrintTeamInTable(teams []swagger.Team) {
-	headers := []string{"Name", "ID", "Organization", "Frozen"}
+	headers := []string{"Name", "ID", "Organisation", "Frozen"}
 	data := make([][]string, 0)
 	for _, team := range teams {
 		teamData := []string{

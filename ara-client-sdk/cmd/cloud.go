@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"os"
 )
 
 const CloudDesc = `
@@ -30,7 +31,10 @@ var cloudCmd = &cobra.Command{
 	Example: "tykctl cloud org list",
 	Long:    CloudDesc,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		if len(args) == 0 {
+			cmd.Help()
+			os.Exit(0)
+		}
 	},
 }
 

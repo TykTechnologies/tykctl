@@ -28,5 +28,5 @@ jobs:
       - name: Upload assets
         uses: actions/upload-artifact@v3
         with:
-          name: aractl
+          name: tykctl
           path: dist/*

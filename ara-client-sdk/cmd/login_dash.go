@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"net/mail"
 	"tykcli/internal"
+	"tykcli/swagger-gen"
 )
 
 const loginDesc = `
@@ -38,7 +39,7 @@ var loginCmd = &cobra.Command{
 	Use:     "login",
 	Short:   "Login into tyk cloud",
 	Long:    loginDesc,
-	Example: `tykctl cloud login --ba-pass=<use this only is staging> --ba-pass=<use this in staging>`,
+	Example: `tykctl cloud login --ba-pass=<use this only in staging> --ba-pass=<use this only in staging>`,
 	RunE:    loginViaDashboard,
 }
 
@@ -50,7 +51,7 @@ func init() {
 	viper.BindPFlag("ba-user", loginCmd.Flags().Lookup("ba-user"))
 	loginCmd.Flags().String("ba-pass", "", "Basic auth password")
 	viper.BindPFlag("ba-pass", loginCmd.Flags().Lookup("ba-pass"))
-	loginCmd.Flags().String("dashboard", "https://dash.ara-staging.tyk.technology", "Url to connect to the dashboard")
+	loginCmd.Flags().String("dashboard", "https://dashboard.cloud-ara.tyk.io", "Url to connect to the dashboard")
 	viper.BindPFlag("dashboard", loginCmd.Flags().Lookup("dashboard"))
 
 	//loginCmd.MarkFlagRequired("dashboard")
@@ -123,6 +124,7 @@ func loginViaDashboard(cmd *cobra.Command, args []string) error {
 	if len(username) > 0 && len(userpass) > 0 {
 		req.SetBasicAuth(username, userpass)
 	}
+	log.Println(url)
 	client := &http.Client{}
 	s.Prefix = "login in "
 	s.Start()
@@ -138,6 +140,12 @@ func loginViaDashboard(cmd *cobra.Command, args []string) error {
 			b, err := io.ReadAll(resp.Body)
 			if err != nil {
 				log.Println(err)
+				message := err.Error()
+				if myerr, ok := err.(swagger.GenericSwaggerError); ok {
+					message = string(myerr.Body())
+					// handle myerr
+				}
+				cmd.Println(message)
 				return err
 			}
 			cmd.PrintErrf("Login failed: %s\n", string(b))

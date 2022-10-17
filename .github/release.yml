@@ -16,6 +16,7 @@ jobs:
         with:
           go-version: '1.18.6'
       - name: Run GoReleaser
+
         uses: goreleaser/goreleaser-action@v3
         with:
           # either 'goreleaser' (default) or 'goreleaser-pro'
@@ -23,6 +24,7 @@ jobs:
           version: latest
           args: release --rm-dist
           workdir: ./ara-client-sdk
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution

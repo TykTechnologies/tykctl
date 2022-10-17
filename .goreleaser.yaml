@@ -19,17 +19,16 @@ archives:
       386: i386
       amd64: x86_64
 brews:
-  - homepage: 'https://github.com/TykTechnologies/tykctl'
-    description: 'Tykctl homebrew'
-    folder: Formula
-    download_strategy: GitHubPrivateRepositoryReleaseDownloadStrategy
-    custom_require: "lib/private"
-    commit_author:
-      name: keith
-      email: keith.w@tyk.io
+  -
     tap:
       owner: TykTechnologies
       name: tykctl
+    download_strategy: GitHubPrivateRepositoryReleaseDownloadStrategy
+    custom_require: "lib/custom_download_strategy"
+    commit_author:
+      name: Keith Wachira
+      email: keith.w@tyk.io
+    folder: HomebrewFormula
 checksum:
   name_template: 'checksums.txt'
 snapshot:

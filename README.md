@@ -24,14 +24,26 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
        - MacOS 
     
   #### Build from source (Linux,macOS)
-     #### Requirements
-   - Working go enviroment- Some libraries used use generics hence you will need go version 1.18 or later.
+ 
+  #### Requirements
+   - Working go environment- Some libraries use generics hence you will need go version 1.18 or later.
    ```
-   - 
+     git clone git@github.com:TykTechnologies/tykctl.git
+     go build 
   ```
 
    
   ### Setting Up Autocompletion
+   - The cli generate shell completions for:
+     - Bash
+     - Zsh
+     - Fish
+     - PowerShell
+   - To know the shell you are using run:
+     `echo $0` in your terminal.
+   - To get the instruction on how to enable autocompletion run:
+     `tykctl completion <you shell name> --help`
+     
 
   ### Commands and usage
 

@@ -6,20 +6,20 @@ require_relative "lib/custom_download_strategy"
 class Tykctl < Formula
   desc ""
   homepage ""
-  version "0.0.12"
+  version "0.0.13"
 
   on_macos do
-    if Hardware::CPU.arm?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.12/tykctl_0.0.12_Darwin_arm64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
-      sha256 "ff39da5833d0761964fe37446f05f438775d5ba3f4c11e385d98ca0650fd9fe1"
+    if Hardware::CPU.intel?
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.13/tykctl_0.0.13_Darwin_x86_64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
+      sha256 "80930f58f8393374307497216bab6cf36ef294f898f78d80f481e4a5a1c6c82c"
 
       def install
         bin.install "tykctl"
       end
     end
-    if Hardware::CPU.intel?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.12/tykctl_0.0.12_Darwin_x86_64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
-      sha256 "e0ecf1112ab88446344b13acdf3a8ce47e2a033bb21f3453bdffa38362990e9e"
+    if Hardware::CPU.arm?
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.13/tykctl_0.0.13_Darwin_arm64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
+      sha256 "579bcea4125755fa935d8f1703ff69132ea6206719f9c5d6701a8cecffef9e00"
 
       def install
         bin.install "tykctl"
@@ -28,17 +28,17 @@ class Tykctl < Formula
   end
 
   on_linux do
-    if Hardware::CPU.intel?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.12/tykctl_0.0.12_Linux_x86_64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
-      sha256 "b18da2c164a456a32537eb95915fa52d5e9692e3b3b12da2ace0ed807b680b50"
+    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.13/tykctl_0.0.13_Linux_arm64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
+      sha256 "7e8fd74e4b58078a91c27fded796323a8a5b325f83758b89de7cbcdde3e02e08"
 
       def install
         bin.install "tykctl"
       end
     end
-    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.12/tykctl_0.0.12_Linux_arm64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
-      sha256 "386f520dbb2385683c93543797ea2c048f4ce0de9d30bb31ba62e43ba6b3c66b"
+    if Hardware::CPU.intel?
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.13/tykctl_0.0.13_Linux_x86_64.tar.gz", using: GitHubPrivateRepositoryReleaseDownloadStrategy
+      sha256 "3b68801921856fa5b0afc18775e3c0b97690c7063d26230e48ab8883e64c3b72"
 
       def install
         bin.install "tykctl"

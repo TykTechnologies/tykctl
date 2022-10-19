@@ -4,12 +4,15 @@ Tykctl is a WIP CLI. The plan is to have one CLI to interact with all Tyk compon
 
 We decided to start with Tyk cloud, as such this is the only service tykctl supports at the moment.
 
-The CLI is grouped into services. For example to use the tyk cloud service options you should prefix all your subcommands with: tykctl cloud <subcommand and arguments go here>
+The CLI is grouped into services. For example to use the tyk cloud service options you should prefix all your subcommands with: 
+
+`tykctl cloud <subcommand and arguments go here>`
 
 
 ### Installation
-  #### From Homebrew (recommended for macOS ) 
-- This is a private repo hence you will need to set HOMEBREW_GITHUB_API_TOKEN environment variable with a GitHub access token before running brew install.
+   
+   #### From Homebrew (recommended for macOS ) 
+ - This is a private repo hence you will need to set HOMEBREW_GITHUB_API_TOKEN environment variable with a GitHub personal access token before running brew install.
   ```shell
   export HOMEBREW_GITHUB_API_TOKEN=<Github access token here>
   brew tap TykTechnologies/tykctl https://github.com/TykTechnologies/tykctl
@@ -23,9 +26,10 @@ The CLI is grouped into services. For example to use the tyk cloud service optio
        - Linux
        - MacOS - Note for MacOS it recommended that you use brew for easier updates.
     
-  #### Build from source (Linux,macOS)
-
-     If you want to test the latest changes this is the best way to install tykctl.
+   #### Build from source (Linux,macOS)
+  
+  If you want to test the latest changes this is the best way to install tykctl.
+   
    ###### Requirements
 
    - Working go environment- Some libraries use generics hence you will need go version 1.18 or later.
@@ -33,7 +37,7 @@ The CLI is grouped into services. For example to use the tyk cloud service optio
      git clone git@github.com:TykTechnologies/tykctl.git
      go build 
   ```
-  ### Setting Up Autocompletion
+### Setting Up Autocompletion
    - The cli generate shell completions for:
      - Bash
      - Zsh
@@ -42,9 +46,10 @@ The CLI is grouped into services. For example to use the tyk cloud service optio
    - To know the shell you are using run:
      `echo $0` in your terminal.
    - To get the instruction on how to enable autocompletion run:
+   
      `tykctl completion <you shell name> --help`
 
-  ### Tyk Cloud Commands and usage
+  ## Tyk Cloud Commands and usage
    - The cli is divided into multiple tyk services.
    - At the moment the tyk cloud is the only supported service.
    - Commands should be prefixed by the services you are accessing:
@@ -53,7 +58,7 @@ The CLI is grouped into services. For example to use the tyk cloud service optio
      ```tykctl cloud team list```
   
   - Note you have to login first (tykctl cloud login) before you run any other commands to get a token that will be used to access the tyk cloud services.
-  - For tykctl we store the token in your configuration file.The default location of the config file is ($HOME/.tykctl.yaml).
+  - For tykctl we store the token in your configuration file.The default location of the config file is ($HOME/.tykctl.yaml).However you can pass a different location for your file.
    #### tykctl cloud login
    - Login to tyk cloud and it will return  a token that will be saved in your configuration file.
    - Usage:
@@ -178,7 +183,8 @@ The CLI is grouped into services. For example to use the tyk cloud service optio
        ```
    
    #### Deployment commands
-       - This are commands that help you interact with your home and gateway deployments.
+       
+   This are commands that help you interact with your home and gateway deployments.
        
    ##### tykctl cloud deployment create.
    - Create a deployment in a specified environment.

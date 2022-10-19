@@ -51,7 +51,7 @@ func init() {
 	viper.BindPFlag("ba-user", loginCmd.Flags().Lookup("ba-user"))
 	loginCmd.Flags().String("ba-pass", "", "Basic auth password")
 	viper.BindPFlag("ba-pass", loginCmd.Flags().Lookup("ba-pass"))
-	loginCmd.Flags().String("dashboard", "https://dashboard.cloud-ara.tyk.io", "Url to connect to the dashboard")
+	loginCmd.Flags().String("dashboard", "https://dash.ara-staging.tyk.technology", "Url to connect to the dashboard")
 	viper.BindPFlag("dashboard", loginCmd.Flags().Lookup("dashboard"))
 
 	//loginCmd.MarkFlagRequired("dashboard")

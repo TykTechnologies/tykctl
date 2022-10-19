@@ -66,73 +66,117 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
      --email string       The email address you used to sign up for a cloud account
      --password string    The password you used to sigh up for a cloud account.
      ```
-     #### tykctl cloud init
-      - It in initializes the cli and set your home region,your default organization and default team and set them to your config file.
-      - You need to login before you run this command.
-      - Usage:
+   #### tykctl cloud init
+     
+   - It in initializes the cli and set your home region,your default organization and default team and set them to your config file.
+   - You need to login before you run this command.
+   - Usage:
            
-         `tykctl cloud init [flag]`
-      - Flags:
+      `tykctl cloud init [flag]`
+     - Flags:
 
-          ```
-           -h, --help   help for the init
-           --config string   config file to store the (default is $HOME/.tykctl.yaml)
-        ```
-        
-      #### Org commands :
-
-        ##### tykctl cloud org list
-      - List all of your organization.The user has only one organization so in this case only one organization will be listed.
-      - Usage: 
-         
-          `tykctl cloud org list --output<json/table>`
-      - Flags :
          ```
-          -o, --output string   Format you want to use can be table,json (default "table")
-          -h, --help   help for this command
-           --config string   config file  to use (default is $HOME/.tykctl.yaml)
-        ```
+          -h, --help   help for the init
+          --config string   config file to store the (default is $HOME/.tykctl.yaml)
+       ```
         
-      #### Team commands
-      - This are the actions you can take on a team.
-      
-       ##### tykctl cloud team create
-        - This will create a team.
-        - Usage:
-     
-          tyckctl cloud team create --name="first team" --org=<org uuid>
-          
-          ```
-          --org string   The organization you want to create the team in.The default organization in your config file will be used.
-          
-          -h, --help          help for this command.
-         
-           -n, --name string   name you want to give to the organization you are creating
-         
-           -o, --output string  Format you want to use can be table,json (default "table")
+     #### Org commands :
 
-          --config string   config file (default is $HOME/.tykctl.yaml)
-           ```
-        ##### tykctl cloud team list
-        - This will list the teams in an organization.
-        - Usage:
-
-          `tykctl cloud team list [flags]`
+       ##### tykctl cloud org list
+     - List all of your organization.The user has only one organization so in this case only one organization will be listed.
+     - Usage: 
          
-        - Flags: 
+         `tykctl cloud org list --output<json/table>`
+     - Flags :
         ```
-        --org string      The  organization you belong to.If not passsed default org in your config will be used.
-        
+         -o, --output string   Format you want to use can be table,json (default "table")
          -h, --help   help for this command
+          --config string   config file  to use (default is $HOME/.tykctl.yaml)
+       ```
+        
+     #### Team commands
+     - This are the actions you can take on a team.
+      
+      ##### tykctl cloud team create
+       - This will create a team.
+       - Usage:
      
-        -o, --output string   Format you want to use can be table,json (default "table")
+         tyckctl cloud team create --name="first team" --org=<org uuid>
+          
+         ```
+         --org string   The organization you want to create the team in.The default organization in your config file will be used.
+          
+         -h, --help          help for this command.
+         
+          -n, --name string   name you want to give to the organization you are creating
+         
+          -o, --output string  Format you want to use can be table,json (default "table")
+
+         --config string   config file (default is $HOME/.tykctl.yaml)
+          ```
+       ##### tykctl cloud team list
+       - This will list the teams in an organization.
+       - Usage:
+
+         `tykctl cloud team list [flags]`
+         
+       - Flags: 
+       ```
+       --org string      The  organization you belong to.If not passsed default org in your config will be used.
+        
+        -h, --help   help for this command
+     
+       -o, --output string   Format you want to use can be table,json (default "table")
        
-        --config string   config file (default is $HOME/.tykctl.yaml)
+       --config string   config file (default is $HOME/.tykctl.yaml)
      ```
     
-   #### Enviroment commands
+   #### Environment commands
+   - This are the actions you can take on an environment.
+   - ##### tykctl cloud environment create
+    
+      - Create and environment in a specified team and organization.
+      - Usage: 
+   
+           `tykctl cloud environment create [flags]`
+      - 
+      - Flags: 
+       ```
+         -n, --name string   name to give the new environment (required)
+         
+         --org string      The organization to create this environment in. If omited it will use the one in the configuration file.(required)
+        
+         --team string     The team you want to create this environment in. (required)
+        
+         -h, --help          help for this command
+         
+          --config string   config file to use (default is $HOME/.tykctl.yaml)
+         
+         -o, --output string   Format you want to use can be table,json (default "table")
+     ```
+     
+   - ##### tykctl cloud environment list
+     
+     - This will list the environment in your organization.
+     - Usage:
+
+           `tykctl cloud environment list [flags] `
+     - Flags :
+          ```
+       --org string      The organization whose enviroment you want to list. (required)
+       
+       --team string     The team whose enviroments you want to list (required)
+      
+        -o, --output string   Format you want to use can be table,json (default "table") 
+       
+        --config string   config file (default is $HOME/.tykctl.yaml)
+       
+       -h, --help   help for this command
+       ```
    
    #### Deployment commands
-### Repository structure
+
+   
+   ### Repository structure
 
 

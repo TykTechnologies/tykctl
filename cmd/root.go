@@ -5,9 +5,11 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/briandowns/spinner"
+	"log"
 	"os"
 	"time"
 
@@ -49,6 +51,10 @@ func Execute() {
 }
 
 func init() {
+	err := createConfigFile()
+	if err != nil {
+		log.Fatal(err)
+	}
 	cobra.OnInitialize(initConfig)
 	s = spinner.New(spinner.CharSets[36], 100*time.Millisecond)
 	s.Color("white")
@@ -65,6 +71,8 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+
+	//cobra.CheckErr(err)
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -86,6 +94,27 @@ func initConfig() {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 	client = createClient()
+}
+
+func createConfigFile() error {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+	result := fmt.Sprintf("%s/%s", home, ".tykctl.yaml")
+	_, err = os.Stat(result)
+	if errors.Is(err, os.ErrNotExist) {
+		f, err := os.Create(result)
+		log.Println(err)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		return nil
+
+	}
+	return err
+
 }
 
 func createClient() *swagger.APIClient {

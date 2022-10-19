@@ -46,6 +46,29 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
      
 
   ### Commands and usage
+   - The cli is divided into multiple tyk services.
+   - At the moment the tyk cloud is the only supported service.
+   - Commands should be prefixed by the services you are accessing:
+   - For example to use the team command in tyk cloud you would write:
+        ```tykctl cloud team list```
+
+   #### tykctl cloud login
+   - Login to tyk cloud and it will return  a token that will be saved in your configuration file.
+   - Usage:
+      
+      `tykctl cloud login [flags]`
+   - Flags :
+     ```
+     --ba-pass string     Basic auth password to be used in staging server
+     --ba-user string     Basic auth user to be used in the staging server
+     --dashboard string   Url to connect to the dashboard (default "https://dashboard.cloud-ara.tyk.io")
+     --email string       The email address you used to sign up for a cloud account
+     --password string    The password you used to sigh up for a cloud account.
+     
+
+     
+     ```
+       
 
 
   ### Repository structure

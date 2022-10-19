@@ -7,6 +7,7 @@ package cmd
 import (
 	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 // orgCmd represents the org command
@@ -22,7 +23,10 @@ var orgCmd = &cobra.Command{
 	Short: "Parent command for all org actions",
 	Long:  orgDesc,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		if len(args) == 0 {
+			cmd.Help()
+			os.Exit(0)
+		}
 	},
 }
 

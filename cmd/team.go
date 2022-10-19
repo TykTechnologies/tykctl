@@ -5,8 +5,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -32,7 +32,10 @@ var teamCmd = &cobra.Command{
 	Short:     "Create,list teams in an organization",
 	Long:      teamDesc,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("team called")
+		if len(args) == 0 {
+			cmd.Help()
+			os.Exit(0)
+		}
 	},
 }
 

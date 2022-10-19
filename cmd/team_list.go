@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
-	"time"
 )
 
 // listCmd represents the list command
@@ -41,7 +40,7 @@ var listCmd = &cobra.Command{
 		}
 		s.Prefix = "fetching teams "
 		s.Start()
-		time.Sleep(time.Second * 10)
+
 		teams, _, err := client.TeamsApi.GetTeams(cmd.Context(), org)
 		s.Stop()
 		if err != nil {

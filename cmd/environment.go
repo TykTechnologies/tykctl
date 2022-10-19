@@ -5,8 +5,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -26,7 +26,10 @@ var environmentCmd = &cobra.Command{
 	Short: "Create,list and delete environment",
 	Long:  enviromentDesc,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("environment called")
+		if len(args) == 0 {
+			cmd.Help()
+			os.Exit(0)
+		}
 	},
 }
 

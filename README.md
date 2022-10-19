@@ -4,11 +4,11 @@ Tykctl is a WIP CLI. The plan is to have one CLI to interact with all Tyk compon
 
 We decided to start with Tyk cloud, as such this is the only service tykctl supports at the moment.
 
-The CLI is grouped into services. For example to use the tyk cloud options you should prefix all your subcommands with: tykctl cloud <subcommand and arguments go here>
+The CLI is grouped into services. For example to use the tyk cloud service options you should prefix all your subcommands with: tykctl cloud <subcommand and arguments go here>
 
 
 ### Installation
-  #### From Homebrew (macOS)
+  #### From Homebrew (recommended for macOS ) 
 - This is a private repo hence you will need to set HOMEBREW_GITHUB_API_TOKEN environment variable with a GitHub access token before running brew install.
   ```shell
   export HOMEBREW_GITHUB_API_TOKEN=<Github access token here>
@@ -21,18 +21,16 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
   - We do have prebuilt [ binaries here](https://github.com/TykTechnologies/tykctl/releases).Download the latest binary for your OS unzip it and store in `$GOPATH/bin` directory
     - Binaries offered:
        - Linux
-       - MacOS 
+       - MacOS - Note for MacOS it recommended that you use brew for easier updates.
     
   #### Build from source (Linux,macOS)
- 
-  #### Requirements
+     If you want to test the latest changes this is the best way to install tykctl.
+     ###### Requirements
    - Working go environment- Some libraries use generics hence you will need go version 1.18 or later.
    ```
      git clone git@github.com:TykTechnologies/tykctl.git
      go build 
   ```
-
-   
   ### Setting Up Autocompletion
    - The cli generate shell completions for:
      - Bash
@@ -43,16 +41,17 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
      `echo $0` in your terminal.
    - To get the instruction on how to enable autocompletion run:
      `tykctl completion <you shell name> --help`
-     
 
-  ### Commands and usage
+  ### Tyk Cloud Commands and usage
    - The cli is divided into multiple tyk services.
    - At the moment the tyk cloud is the only supported service.
    - Commands should be prefixed by the services you are accessing:
    - For example to use the team command in tyk cloud you would write:
         
      ```tykctl cloud team list```
-
+  
+  - Note you have to login first (tykctl cloud login) before you run any other commands to get a token that will be used to access the tyk cloud services.
+  - For tykctl we store the token in your configuration file.The default location of the config file is ($HOME/.tykctl.yaml).
    #### tykctl cloud login
    - Login to tyk cloud and it will return  a token that will be saved in your configuration file.
    - Usage:
@@ -68,8 +67,9 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
      ```
    #### tykctl cloud init
      
-   - It in initializes the cli and set your home region,your default organization and default team and set them to your config file.
+   - It in initializes the cli and set your home region,your default organization , default team and default environment and set them to your config file.
    - You need to login before you run this command.
+   - All commands that require org,team and env flag will use the default set in this step if you do not pass any of them.
    - Usage:
            
       `tykctl cloud init [flag]`
@@ -81,6 +81,7 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
        ```
         
      #### Org commands :
+       - These are the actions you can perform on an organization.
 
        ##### tykctl cloud org list
      - List all of your organization.The user has only one organization so in this case only one organization will be listed.
@@ -95,16 +96,16 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
        ```
         
      #### Team commands
-     - This are the actions you can take on a team.
+     - These are the actions you can take on a team.
       
       ##### tykctl cloud team create
-       - This will create a team.
+       - This will create a team with a given name.
        - Usage:
      
          tyckctl cloud team create --name="first team" --org=<org uuid>
           
          ```
-         --org string   The organization you want to create the team in.The default organization in your config file will be used.
+         --org string   The organization you want to create the team in.The default organization in your config file will be used. (required)
           
          -h, --help          help for this command.
          

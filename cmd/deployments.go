@@ -5,8 +5,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -32,7 +32,10 @@ var deploymentsCmd = &cobra.Command{
 	Short: "Parent command for all deployment actions",
 	Long:  deploymentDesc,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("deployments called")
+		if len(args) == 0 {
+			cmd.Help()
+			os.Exit(0)
+		}
 
 	},
 }

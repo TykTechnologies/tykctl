@@ -113,7 +113,26 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
 
           --config string   config file (default is $HOME/.tykctl.yaml)
            ```
-          
+        ##### tykctl cloud team list
+        - This will list the teams in an organization.
+        - Usage:
+
+          `tykctl cloud team list [flags]`
+         
+        - Flags: 
+        ```
+        --org string      The  organization you belong to.If not passsed default org in your config will be used.
+        
+         -h, --help   help for this command
+     
+        -o, --output string   Format you want to use can be table,json (default "table")
+       
+        --config string   config file (default is $HOME/.tykctl.yaml)
+     ```
+    
+   #### Enviroment commands
+   
+   #### Deployment commands
 ### Repository structure
 
 

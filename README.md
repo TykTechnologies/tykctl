@@ -17,15 +17,17 @@ The CLI is grouped into services. For example to use the tyk cloud service optio
   ```
   For instructions on how to get the [github access token please follow this guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 
-  #### Install our prebuilt binaries
+ #### Install our prebuilt binaries
   - We do have prebuilt [ binaries here](https://github.com/TykTechnologies/tykctl/releases).Download the latest binary for your OS unzip it and store in `$GOPATH/bin` directory
     - Binaries offered:
        - Linux
        - MacOS - Note for MacOS it recommended that you use brew for easier updates.
     
   #### Build from source (Linux,macOS)
+
      If you want to test the latest changes this is the best way to install tykctl.
-     ###### Requirements
+   ###### Requirements
+
    - Working go environment- Some libraries use generics hence you will need go version 1.18 or later.
    ```
      git clone git@github.com:TykTechnologies/tykctl.git

@@ -50,7 +50,8 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
    - At the moment the tyk cloud is the only supported service.
    - Commands should be prefixed by the services you are accessing:
    - For example to use the team command in tyk cloud you would write:
-        ```tykctl cloud team list```
+        
+     ```tykctl cloud team list```
 
    #### tykctl cloud login
    - Login to tyk cloud and it will return  a token that will be saved in your configuration file.
@@ -64,13 +65,74 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
      --dashboard string   Url to connect to the dashboard (default "https://dashboard.cloud-ara.tyk.io")
      --email string       The email address you used to sign up for a cloud account
      --password string    The password you used to sigh up for a cloud account.
-     
-
-     
      ```
+     #### tykctl cloud init
+      - It in initializes the cli and set your home region,your default organization and default team and set them to your config file.
+      - You need to login before you run this command.
+      - Usage:
+           
+         `tykctl cloud init [flag]`
+      - Flags:
+
+          ```
+           -h, --help   help for the init
+           --config string   config file to store the (default is $HOME/.tykctl.yaml)
+        ```
+        
+      #### Org commands :
+
+        ##### tykctl cloud org list
+      - List all of your organization.The user has only one organization so in this case only one organization will be listed.
+      - Usage: 
+         
+          `tykctl cloud org list --output<json/table>`
+      - Flags :
+         ```
+          -o, --output string   Format you want to use can be table,json (default "table")
+          -h, --help   help for this command
+           --config string   config file  to use (default is $HOME/.tykctl.yaml)
+        ```
+        
+      #### Team commands
+      - This are the actions you can take on a team.
+      
+       ##### tykctl cloud team create
+        - This will create a team.
+        - Usage:
+     
+          tyckctl cloud team create --name="first team" --org=<org uuid>
+          
+          ```
+          --org string   The organization you want to create the team in.The default organization in your config file will be used.
+          
+          -h, --help          help for this command.
+         
+           -n, --name string   name you want to give to the organization you are creating
+         
+           -o, --output string  Format you want to use can be table,json (default "table")
+
+          --config string   config file (default is $HOME/.tykctl.yaml)
+           ```
+        ##### tykctl cloud team list
+        - This will list the teams in an organization.
+        - Usage:
+
+          `tykctl cloud team list [flags]`
+         
+        - Flags: 
+        ```
+        --org string      The  organization you belong to.If not passsed default org in your config will be used.
+        
+         -h, --help   help for this command
+     
+        -o, --output string   Format you want to use can be table,json (default "table")
        
-
-
-  ### Repository structure
+        --config string   config file (default is $HOME/.tykctl.yaml)
+     ```
+    
+   #### Enviroment commands
+   
+   #### Deployment commands
+### Repository structure
 
 

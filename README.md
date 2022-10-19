@@ -175,8 +175,55 @@ The CLI is grouped into services. For example to use the tyk cloud options you s
        ```
    
    #### Deployment commands
+       - This are commands that help you interact with your home and gateway deployments.
+       
+   ##### tykctl cloud deployment create.
+   - Create a deployment in a specified environment.
+   - Usage: 
+     
+      `tykctl cloud deployment create [flags]`
+   - Flags:
+        ```
+      -d, --deploy        deploy the deployment after creation.By default the deployment is not deployed automaticaly
+      
+      -k, --kind string   The type of deployment you want to create (default "Home")
+     
+      --team string     The team in which you want to create the deployment. (required)
+      
+      -n, --name string   name to give the new deployment (required)
+      
+      -z, --zone string   zone you want to deploy into (required)
+     
+      --org string      The organization you want the deployment to reside.
+     
+      -o, --output string   Format you want to use can be table,json (default "table").
+     
+      -h, --help          help for this command.
 
+     ```
+   ##### tykctl cloud deployment list.
+      
+   - This will list all the deployment in a given environment.
+   - Usage:
+    
+      `tykctl cloud deployment list [flags]`
    
+   - Flags :
+
+      ```
+      -o, --output string   Format you want to use can be table,json (default "table")
+     
+      --config string   config file (default is $HOME/.tykctl.yaml)
+     
+     --env string      The environment whose deployment you want to list.
+     
+     --org string      The organization whose deployment you want to list. (required)
+     
+     --team string     The team whose deployment you want to list . (required)
+     
+     -h, --help   help for this command
+      ```
+      
    ### Repository structure
 
 

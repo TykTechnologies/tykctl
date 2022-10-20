@@ -23,7 +23,7 @@ type LoginClient interface {
 }
 
 func NewLoginCommand() *cobra.Command {
-	return NewCmd("login", "login").
+	return NewCmd("login").
 		WithLongDescription(loginDesc).
 		WithFlagAdder(false, addLoginFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {

@@ -19,7 +19,6 @@ type Builder interface {
 
 type builder struct {
 	cmd cobra.Command
-	key string
 }
 
 func (b *builder) WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Builder {
@@ -43,9 +42,9 @@ func (b *builder) AddFlags(flags []*Flag) Builder {
 
 // NewCmd Creates a new command builder
 // key is unique for each command and will be used for global flags
-func NewCmd(key, use string) Builder {
+func NewCmd(use string) Builder {
 	return &builder{
-		key: key,
+
 		cmd: cobra.Command{
 			Use: use,
 		},

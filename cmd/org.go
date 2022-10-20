@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -31,7 +30,7 @@ var orgCmd = &cobra.Command{
 }
 
 func init() {
-	cloudCmd.AddCommand(orgCmd)
+	///cloudCmd.AddCommand(orgCmd)
 	orgCmd.PersistentFlags().StringP("output", "o", "table", "Format you want to use can be table,json")
 	// Here you will define your flags and configuration settings.
 

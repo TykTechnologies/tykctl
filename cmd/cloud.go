@@ -1,12 +1,10 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"github.com/spf13/cobra"
-	"os"
 )
 
 const CloudDesc = `
@@ -24,7 +22,14 @@ tykctl cloud init
 
 `
 
-// cloudCmd represents the cloud command
+func NewCloudCommand() *cobra.Command {
+	return NewCmd("cloud", "cloud").
+		WithDescription("All the operation for the tyk cloud").
+		WithLongDescription(CloudDesc).Hidden().WithCommands(NewLoginCommand())
+
+}
+
+/*// cloudCmd represents the cloud command
 var cloudCmd = &cobra.Command{
 	Use:     "cloud",
 	Short:   "All the operation for the tyk cloud",
@@ -51,3 +56,4 @@ func init() {
 	// is called directly, e.g.:
 	// cloudCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
+*/

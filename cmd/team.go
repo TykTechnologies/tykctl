@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -40,7 +39,7 @@ var teamCmd = &cobra.Command{
 }
 
 func init() {
-	cloudCmd.AddCommand(teamCmd)
+	///cloudCmd.AddCommand(teamCmd)
 
 	// Here you will define your flags and configuration settings.
 

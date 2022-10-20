@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -115,7 +114,7 @@ var initCmd = &cobra.Command{
 }
 
 func init() {
-	cloudCmd.AddCommand(initCmd)
+	///cloudCmd.AddCommand(initCmd)
 
 	// Here you will define your flags and configuration settings.
 

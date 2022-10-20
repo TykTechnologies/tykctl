@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -34,7 +33,7 @@ var environmentCmd = &cobra.Command{
 }
 
 func init() {
-	cloudCmd.AddCommand(environmentCmd)
+	///cloudCmd.AddCommand(environmentCmd)
 	environmentCmd.PersistentFlags().String("org", "", "The organization")
 	environmentCmd.PersistentFlags().StringP("output", "o", "table", "Format you want to use can be table,json")
 	viper.BindPFlag("org", environmentCmd.PersistentFlags().Lookup("org"))

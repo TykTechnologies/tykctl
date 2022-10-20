@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -44,7 +43,7 @@ var loginCmd = &cobra.Command{
 }
 
 func init() {
-	cloudCmd.AddCommand(loginCmd)
+	///cloudCmd.AddCommand(loginCmd)
 	loginCmd.Flags().StringP("email", "e", "", "User email for auth")
 	loginCmd.Flags().StringP("password", "p", "", "User password for auth")
 	loginCmd.Flags().String("ba-user", "", "Basic auth user")
@@ -72,9 +71,7 @@ func loginViaDashboard(cmd *cobra.Command, args []string) error {
 		cmd.Println("dashboard url is required")
 		return errors.New("dashboard url is required")
 	}
-
 	url := fmt.Sprintf("%s/api/login", dash)
-	cmd.Println(url)
 	//check if email was passed as an argument
 	email, err := cmd.Flags().GetString("email")
 	if err != nil {

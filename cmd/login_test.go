@@ -53,26 +53,6 @@ func TestAddLoginFlags(t *testing.T) {
 	}
 	testFlags(t, cmd.Flags(), flags)
 }
-
-func testFlags(t *testing.T, f *flag.FlagSet, flags []Flag) {
-	t.Helper()
-	for _, tt := range flags {
-		t.Run(tt.Description, func(t *testing.T) {
-			l := f.Lookup(tt.Name)
-			if l == nil {
-				t.Errorf("expected to find flag %s found nil", tt.Name)
-			}
-			if l != nil {
-				testutil.Equal(t, tt.Description, tt.Value, l.Value.String())
-				testutil.Equal(t, tt.Description, tt.Shorthand, l.Shorthand)
-				testutil.Equal(t, tt.Description, tt.Default, l.DefValue)
-			}
-
-		})
-
-	}
-}
-
 func TestExtractToken(t *testing.T) {
 	var testModelList = []ExtractTestModel{
 		{
@@ -185,6 +165,66 @@ func TestDashboardLoginRequest(t *testing.T) {
 		})
 	}
 
+}
+
+func TestNewLoginCommand(t *testing.T) {
+	cmd := NewLoginCommand()
+	flags := []Flag{{
+		Description: "Test email address is passed to login command",
+		Name:        "email",
+		Shorthand:   "e",
+		Default:     "",
+		Value:       "",
+	}, {
+		Description: "Test password is passed to login command",
+		Name:        "password",
+		Shorthand:   "p",
+		Value:       "",
+		Default:     "",
+	},
+		{
+			Description: "Test ba-user is passed to login command",
+			Name:        "ba-user",
+			Shorthand:   "",
+			Value:       "",
+			Default:     "",
+		},
+		{
+			Description: "Test ba-pass is passed to login command",
+			Name:        "ba-pass",
+			Shorthand:   "",
+			Value:       "",
+			Default:     "",
+		},
+
+		{
+			Description: "Test dashboard is passed to login command",
+			Name:        "dashboard",
+			Shorthand:   "d",
+			Value:       dashboardUrl,
+			Default:     dashboardUrl,
+		},
+	}
+	testFlags(t, cmd.Flags(), flags)
+
+}
+func testFlags(t *testing.T, f *flag.FlagSet, flags []Flag) {
+	t.Helper()
+	for _, tt := range flags {
+		t.Run(tt.Description, func(t *testing.T) {
+			l := f.Lookup(tt.Name)
+			if l == nil {
+				t.Errorf("expected to find flag %s found nil", tt.Name)
+			}
+			if l != nil {
+				testutil.Equal(t, tt.Description, tt.Value, l.Value.String())
+				testutil.Equal(t, tt.Description, tt.Shorthand, l.Shorthand)
+				testutil.Equal(t, tt.Description, tt.Default, l.DefValue)
+			}
+
+		})
+
+	}
 }
 
 func extractTokenRequest(t *testing.T, model ExtractTestModel) {

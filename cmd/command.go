@@ -13,7 +13,7 @@ type Builder interface {
 	WithLongDescription(long string) Builder
 	WithCommands(cmds ...*cobra.Command) *cobra.Command
 	NoArgs(action func(context.Context, cobra.Command) error) *cobra.Command
-	AddFlags([]*Flag) Builder
+
 	WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Builder
 }
 
@@ -28,15 +28,6 @@ func (b *builder) WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Bui
 		adder(b.cmd.Flags())
 	}
 
-	return b
-}
-
-func (b *builder) AddFlags(flags []*Flag) Builder {
-	for _, f := range flags {
-		fl := f.flag()
-		b.cmd.Flags().AddFlag(fl)
-
-	}
 	return b
 }
 

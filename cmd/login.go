@@ -16,6 +16,15 @@ import (
 
 const (
 	dashboardUrl = "https://dash.ara-staging.tyk.technology"
+	loginDesc    = `
+        This command will login into your cloud account and set the token in your config file.
+        Note: The token will only last for 30 minute you will need to login again after 30 minutes.
+		You will be prompted to provide your email and  password to login.
+		When using the cloud service you should always run this command first as each command will require a token.
+		For the staging server you will also need to provide nginx basic auth.
+		Sample usage:
+		tykctl cloud login --ba-pass=<use this only is staging> --ba-pass=<use this in staging>
+`
 )
 
 type LoginClient interface {
@@ -38,46 +47,25 @@ func NewLoginCommand() *cobra.Command {
 
 }
 
-func login(cmd cobra.Command) error {
-	dashboard := viper.GetString("dashboard")
-	if util.StringIsEmpty(dashboard) {
-		return errors.New("dashboard url is required")
-	}
-	email, err := cmd.Flags().GetString("email")
-	if err != nil {
-		return err
-	}
-	err = util.ValidateEmail(email, "email address is required")
-	if err != nil {
-		return err
-	}
-	password, err := cmd.Flags().GetString("password")
-	if err != nil {
-		return err
-	}
-	if util.StringIsEmpty(password) {
-		return errors.New("password is required")
-	}
-	baUser := viper.GetString("ba-user")
-	baPass := viper.GetString("ba-pass")
-
-	err = getAndSaveToken(dashboard, email, password, baUser, baPass)
-	if err != nil {
-		return err
-	}
-	return err
-}
-
 // flags required by the login command.
 func addLoginFlags(f *pflag.FlagSet) {
 	f.StringP("email", "e", "", "email address you used to login into the dashboard")
-	f.StringP("password", "p", "", "email address you used to login into the dashboard")
+	f.StringP("password", "p", "", "password you used to login into the dashboard")
 	f.String("ba-user", "", "Basic auth user.This should only be used for staging server")
-	viper.BindPFlag("ba-user", loginCmd.Flags().Lookup("ba-user"))
+	err := viper.BindPFlag("ba-user", f.Lookup("ba-user"))
+	if err != nil {
+		panic(err)
+	}
 	f.String("ba-pass", "", "Basic auth password")
-	viper.BindPFlag("ba-pass", loginCmd.Flags().Lookup("ba-pass"))
-	f.String("dashboard", dashboardUrl, "Url to connect to the dashboard(Default is the staging url)")
-	viper.BindPFlag("dashboard", loginCmd.Flags().Lookup("dashboard"))
+	err = viper.BindPFlag("ba-pass", f.Lookup("ba-pass"))
+	if err != nil {
+		panic(err)
+	}
+	f.StringP("dashboard", "d", dashboardUrl, "Url to connect to the dashboard(Default is the staging url)")
+	err = viper.BindPFlag("dashboard", f.Lookup("dashboard"))
+	if err != nil {
+		panic(err)
+	}
 }
 
 // /dashboardLogin send a request to ara dashboard to get a token to use for login.
@@ -120,7 +108,7 @@ func extractToken(resp *http.Response) (string, error) {
 			return "", errors.New(message)
 		}
 
-		return "", errors.New(fmt.Sprintf("login failed: %s\n", string(b)))
+		return "", fmt.Errorf("login failed: %s\n", string(b))
 
 	} else if resp.StatusCode != 200 {
 		///
@@ -149,6 +137,38 @@ func extractToken(resp *http.Response) (string, error) {
 	return jwt, nil
 }
 
+// validate cli flags and pass them to login
+func login(cmd cobra.Command) error {
+	dashboard := viper.GetString("dashboard")
+	if util.StringIsEmpty(dashboard) {
+		return errors.New("dashboard url is required")
+	}
+	email, err := cmd.Flags().GetString("email")
+	if err != nil {
+		return err
+	}
+	err = util.ValidateEmail(email)
+	if err != nil {
+		return err
+	}
+	password, err := cmd.Flags().GetString("password")
+	if err != nil {
+		return err
+	}
+	if util.StringIsEmpty(password) {
+		return errors.New("password is required")
+	}
+	baUser := viper.GetString("ba-user")
+	baPass := viper.GetString("ba-pass")
+
+	err = getAndSaveToken(dashboard, email, password, baUser, baPass)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+// save token to configuration file
 func getAndSaveToken(url, email, password, basicUser, basicPassword string) error {
 	resp, err := dashboardLogin(url, email, password, basicUser, basicPassword)
 	if err != nil {
@@ -158,14 +178,10 @@ func getAndSaveToken(url, email, password, basicUser, basicPassword string) erro
 	if err != nil {
 		return err
 	}
-	return util.SaveToConfig("token", token)
+	return SaveToConfig("token", token)
 }
 
 type LoginBody struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
-}
-
-type Token struct {
-	Token string `json:"token"`
 }

@@ -6,19 +6,14 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/TykTechnologies/tykctl/swagger-gen"
-	"github.com/briandowns/spinner"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 	"log"
 	"os"
-	"time"
-
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var cfgFile string
-var client *swagger.APIClient
-var s *spinner.Spinner
 
 const rootDesc = `
 Tykctl is a cli that can be used to interact with all tyk components (tyk cloud,tyk gateway and tyk dashboard).
@@ -31,22 +26,27 @@ Currently we only support tyk cloud.
 
 `
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "tykctl",
-	Short: rootDesc,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+func NewRootCmd() *cobra.Command {
+	return NewCmd("tykctl").WithLongDescription(rootDesc).
+		WithDescription("access all tyk service via the cli").
+		WithFlagAdder(true, addGlobalPersistentFlags).
+		WithFlagAdder(false, addRootLocalFlags).
+		WithCommands(NewCloudCommand())
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
+	err := NewRootCmd().Execute()
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func addGlobalPersistentFlags(f *pflag.FlagSet) {
+	f.StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tykctl.yaml)")
+}
+
+func addRootLocalFlags(f *pflag.FlagSet) {
+	f.BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func init() {
@@ -55,24 +55,10 @@ func init() {
 		log.Fatal(err)
 	}
 	cobra.OnInitialize(initConfig)
-	s = spinner.New(spinner.CharSets[36], 100*time.Millisecond)
-	s.Color("white")
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tykctl.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	rootCmd.AddCommand(NewCloudCommand())
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-
 	//cobra.CheckErr(err)
 	if cfgFile != "" {
 		// Use config file from the flag.
@@ -94,9 +80,8 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
-	client = createClient()
-}
 
+}
 func createConfigFile() error {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -115,19 +100,5 @@ func createConfigFile() error {
 
 	}
 	return err
-
-}
-
-func createClient() *swagger.APIClient {
-
-	config := &swagger.Configuration{
-		BasePath:      viper.GetString("controller"),
-		DefaultHeader: map[string]string{},
-	}
-	///log.Printf(viper.GetString("token"))
-	token := fmt.Sprintf("Bearer %s", viper.GetString("token"))
-	///log.Println(token)
-	config.AddDefaultHeader("Authorization", token)
-	return swagger.NewAPIClient(config)
 
 }

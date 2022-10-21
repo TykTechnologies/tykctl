@@ -5,11 +5,68 @@ import (
 	"errors"
 	"fmt"
 	"github.com/TykTechnologies/tykctl/testutil"
+
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
+
+func TestAddLoginFlags(t *testing.T) {
+	cmd := NewCmd("test").WithFlagAdder(false, addLoginFlags).NoArgs(nil)
+	flags := []Flag{{
+		Description: "Test email address",
+		Name:        "email",
+		Shorthand:   "e",
+		Default:     "",
+		Value:       "",
+	}, {
+		Description: "Test password",
+		Name:        "password",
+		Shorthand:   "p",
+		Value:       "",
+		Default:     "",
+	},
+		{
+			Description: "Test ba-user",
+			Name:        "ba-user",
+			Shorthand:   "",
+			Value:       "",
+			Default:     "",
+		},
+		{
+			Description: "Test ba-pass",
+			Name:        "ba-pass",
+			Shorthand:   "",
+			Value:       "",
+			Default:     "",
+		},
+
+		{
+			Description: "Test dashboard",
+			Name:        "dashboard",
+			Shorthand:   "d",
+			Value:       dashboardUrl,
+			Default:     dashboardUrl,
+		},
+	}
+	for _, tt := range flags {
+		t.Run(tt.Description, func(t *testing.T) {
+			l := cmd.Flags().Lookup(tt.Name)
+			if l == nil {
+				t.Errorf("expected to find flag %s found nil", tt.Name)
+			}
+			if l != nil {
+				testutil.Equal(t, tt.Description, tt.Value, l.Value.String())
+				testutil.Equal(t, tt.Description, tt.Shorthand, l.Shorthand)
+				testutil.Equal(t, tt.Description, tt.Default, l.DefValue)
+			}
+
+		})
+
+	}
+
+}
 
 func TestExtractToken(t *testing.T) {
 	var testModelList = []ExtractTestModel{
@@ -74,13 +131,14 @@ func TestExtractToken(t *testing.T) {
 			Name:          "Test status code 404",
 			ShouldErr:     true,
 			ExpectedJwt:   "",
-			ExpectedError: errors.New(fmt.Sprintf("login failed: %s\n", string([]byte("")))),
+			ExpectedError: fmt.Errorf("login failed: %s\n", string([]byte(""))),
 			StatusCode:    404,
 		},
 	}
-
-	for _, model := range testModelList {
-		extractTokenRequest(t, model)
+	for _, tt := range testModelList {
+		t.Run(tt.Name, func(t *testing.T) {
+			extractTokenRequest(t, tt)
+		})
 	}
 
 }
@@ -88,32 +146,38 @@ func TestDashboardLoginRequest(t *testing.T) {
 	///url := "https://dash.ara-staging.tyk.technology"
 	var testModelList = []DashBoardTestingModel{
 		{
+			Description:   "Test All values Presents",
 			Email:         "itachi.w@tyk.io",
 			Password:      "ita.fg7574%¡",
 			BasicUser:     "iNUi3OpL",
 			BasicPassword: "N$.890TestThus",
 		},
 		{
+			Description:   "Test All values present",
 			Email:         "sasuke.w@tyk.io",
 			Password:      "suke.8%¡",
 			BasicUser:     "poy¡",
 			BasicPassword: "><<>[ddd][rt]",
 		},
 		{
+			Description:   "Test All values present",
 			Email:         "[][]{?/v.w@tyk.io",
 			Password:      "-[]fk•#",
 			BasicUser:     "po904873",
 			BasicPassword: "p#cb1djdk",
 		},
 		{
+			Description:   "Test Basic user and auth absent",
 			Email:         "[][]{?/v.w@tyk.io",
 			Password:      "-[]fk•#",
 			BasicUser:     "",
 			BasicPassword: "",
 		},
 	}
-	for _, model := range testModelList {
-		dashboardLoginRequestTest(t, model)
+	for _, tt := range testModelList {
+		t.Run(tt.Description, func(t *testing.T) {
+			dashboardLoginRequestTest(t, tt)
+		})
 	}
 
 }
@@ -198,6 +262,7 @@ func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
 }
 
 type DashBoardTestingModel struct {
+	Description   string
 	Email         string
 	Password      string
 	BasicUser     string

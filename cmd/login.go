@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/TykTechnologies/tykctl/swagger-gen"
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -100,14 +99,8 @@ func extractToken(resp *http.Response) (string, error) {
 		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			message := err.Error()
-			if myerr, ok := err.(swagger.GenericSwaggerError); ok {
-				message = string(myerr.Body())
-				// handle myerr
-			}
-
 			return "", errors.New(message)
 		}
-
 		return "", fmt.Errorf("login failed: %s\n", string(b))
 
 	} else if resp.StatusCode != 200 {

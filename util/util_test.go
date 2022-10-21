@@ -19,7 +19,7 @@ func TestStringIsEmpty(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "Test String Not empty",
+			name: "Test empty string",
 			args: args{
 				v: "",
 			},

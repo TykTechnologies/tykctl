@@ -84,6 +84,7 @@ func (b *builder) WithCommands(cmds ...*cobra.Command) *cobra.Command {
 }
 
 func (b *builder) NoArgs(action func(context.Context, cobra.Command) error) *cobra.Command {
+	b.cmd.Args = cobra.NoArgs
 	b.cmd.RunE = func(*cobra.Command, []string) error {
 		return action(b.cmd.Context(), b.cmd)
 	}

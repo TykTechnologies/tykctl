@@ -135,7 +135,6 @@ func extractTokenRequest(t *testing.T, model ExtractTestModel) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(response.StatusCode)
 
 	token, err := extractToken(response)
 	if err != nil && !model.ShouldErr {

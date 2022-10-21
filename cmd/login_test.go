@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/TykTechnologies/tykctl/testutil"
+	flag "github.com/spf13/pflag"
 
 	"io"
 	"net/http"
@@ -50,9 +51,14 @@ func TestAddLoginFlags(t *testing.T) {
 			Default:     dashboardUrl,
 		},
 	}
+	testFlags(t, cmd.Flags(), flags)
+}
+
+func testFlags(t *testing.T, f *flag.FlagSet, flags []Flag) {
+	t.Helper()
 	for _, tt := range flags {
 		t.Run(tt.Description, func(t *testing.T) {
-			l := cmd.Flags().Lookup(tt.Name)
+			l := f.Lookup(tt.Name)
 			if l == nil {
 				t.Errorf("expected to find flag %s found nil", tt.Name)
 			}
@@ -65,7 +71,6 @@ func TestAddLoginFlags(t *testing.T) {
 		})
 
 	}
-
 }
 
 func TestExtractToken(t *testing.T) {

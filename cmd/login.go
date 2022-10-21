@@ -60,11 +60,11 @@ func login(cmd cobra.Command) error {
 	}
 	baUser := viper.GetString("ba-user")
 	baPass := viper.GetString("ba-pass")
+
 	err = getAndSaveToken(dashboard, email, password, baUser, baPass)
 	if err != nil {
 		return err
 	}
-	///dashboardLogin(dashboard)
 	return err
 }
 
@@ -105,27 +105,26 @@ func dashboardLogin(url, email, password, basicUser, basicPassword string) (*htt
 	return response, err
 }
 
-func getAndSaveToken(url, email, password, basicUser, basicPassword string) error {
-	resp, err := dashboardLogin(url, email, password, basicUser, basicPassword)
-	if err != nil {
-		return nil
-	}
-	if resp.StatusCode != 200 {
-		if resp.Body != nil {
-			b, err := io.ReadAll(resp.Body)
-			if err != nil {
-				message := err.Error()
-				if myerr, ok := err.(swagger.GenericSwaggerError); ok {
-					message = string(myerr.Body())
-					// handle myerr
-				}
-
-				return errors.New(message)
+// /get the response from ara and extract the token returned.
+func extractToken(resp *http.Response) (string, error) {
+	if resp.StatusCode != 200 && resp.Body != nil {
+		///
+		b, err := io.ReadAll(resp.Body)
+		if err != nil {
+			message := err.Error()
+			if myerr, ok := err.(swagger.GenericSwaggerError); ok {
+				message = string(myerr.Body())
+				// handle myerr
 			}
 
-			return errors.New(fmt.Sprintf("Login failed: %s\n", string(b)))
-
+			return "", errors.New(message)
 		}
+
+		return "", errors.New(fmt.Sprintf("login failed: %s\n", string(b)))
+
+	} else if resp.StatusCode != 200 {
+		///
+		return "", errors.New("login failed")
 	}
 	var token string
 	var signature string
@@ -141,24 +140,25 @@ func getAndSaveToken(url, email, password, basicUser, basicPassword string) erro
 
 	}
 	if len(token) == 0 {
-		return errors.New("no token found")
+		return "", errors.New("no token found")
 	}
 	if signature == "" {
-		return errors.New("signature not found")
+		return "", errors.New("signature not found")
 	}
 	jwt := fmt.Sprintf("%s.%s", token, signature)
-	return SaveToConfig("token", jwt)
+	return jwt, nil
 }
 
-func SaveToConfig(key, token string) error {
-	viper.Set(key, token)
-	err := viper.WriteConfig()
+func getAndSaveToken(url, email, password, basicUser, basicPassword string) error {
+	resp, err := dashboardLogin(url, email, password, basicUser, basicPassword)
 	if err != nil {
-		message := fmt.Sprintf("Couldn't write config: %s\n", err.Error())
-		return errors.New(message)
+		return err
 	}
-	return err
-
+	token, err := extractToken(resp)
+	if err != nil {
+		return err
+	}
+	return util.SaveToConfig("token", token)
 }
 
 type LoginBody struct {

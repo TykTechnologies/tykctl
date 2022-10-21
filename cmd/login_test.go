@@ -2,12 +2,88 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/TykTechnologies/tykctl/testutil"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
+func TestExtractToken(t *testing.T) {
+	var testModelList = []ExtractTestModel{
+		{
+			Cookies: []*http.Cookie{{
+				Name:  "cookieAuthorisation",
+				Value: "hello",
+			}, {
+				Name:  "signature",
+				Value: "there",
+			},
+			},
+			Name:          "Test Jwt is Extracted",
+			ShouldErr:     false,
+			ExpectedJwt:   "hello.there",
+			ExpectedError: nil,
+			StatusCode:    200,
+		},
+
+		{
+			Cookies: []*http.Cookie{{
+				Name:  "cookieAuthorisation",
+				Value: "hello",
+			},
+			},
+			Name:          "Test empty signature cookie",
+			ShouldErr:     true,
+			ExpectedJwt:   "",
+			ExpectedError: errors.New("signature not found"),
+			StatusCode:    200,
+		},
+		{
+			Cookies: []*http.Cookie{{
+				Name:  "signature",
+				Value: "hello",
+			},
+			},
+			Name:          "Test empty cookieAuthorisation cookie",
+			ShouldErr:     true,
+			ExpectedJwt:   "",
+			ExpectedError: errors.New("no token found"),
+			StatusCode:    200,
+		},
+		{
+			Name:          "Test empty Cookies",
+			ShouldErr:     true,
+			ExpectedJwt:   "",
+			ExpectedError: errors.New("no token found"),
+			StatusCode:    200,
+		},
+
+		{
+			Cookies: []*http.Cookie{{
+				Name:  "cookieAuthorisation",
+				Value: "hello",
+			},
+				{
+					Name:  "signature",
+					Value: "there",
+				},
+			},
+			Name:          "Test status code 404",
+			ShouldErr:     true,
+			ExpectedJwt:   "",
+			ExpectedError: errors.New(fmt.Sprintf("login failed: %s\n", string([]byte("")))),
+			StatusCode:    404,
+		},
+	}
+
+	for _, model := range testModelList {
+		extractTokenRequest(t, model)
+	}
+
+}
 func TestDashboardLoginRequest(t *testing.T) {
 	///url := "https://dash.ara-staging.tyk.technology"
 	var testModelList = []DashBoardTestingModel{
@@ -40,6 +116,40 @@ func TestDashboardLoginRequest(t *testing.T) {
 		dashboardLoginRequestTest(t, model)
 	}
 
+}
+
+func extractTokenRequest(t *testing.T, model ExtractTestModel) {
+	/*resp := &http.Response{
+		StatusCode: 200,
+	}*/
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		for _, cookie := range model.Cookies {
+			http.SetCookie(w, cookie)
+		}
+		w.WriteHeader(model.StatusCode)
+
+	}))
+	defer s.Close()
+	response, err := mockHttp(s.URL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(response.StatusCode)
+
+	token, err := extractToken(response)
+	if err != nil && !model.ShouldErr {
+		t.Errorf("%s,expected nil error, found %s", model.Name, err)
+	}
+	if !testutil.EqualError(err, model.ExpectedError) {
+		t.Errorf("%s,expected %s error, found %s", model.Name, model.ExpectedError, err)
+	}
+	if err == nil && model.ShouldErr {
+		t.Errorf("%s,expected %s error, found nil", model.Name, err)
+	}
+	if token != model.ExpectedJwt {
+		t.Errorf("%s,expected %s token, found %s", model.Name, model.ExpectedJwt, token)
+	}
 }
 
 func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
@@ -93,4 +203,18 @@ type DashBoardTestingModel struct {
 	Password      string
 	BasicUser     string
 	BasicPassword string
+}
+
+type ExtractTestModel struct {
+	Cookies       []*http.Cookie
+	Name          string
+	ExpectedJwt   string
+	ShouldErr     bool
+	ExpectedError error
+	StatusCode    int
+}
+
+func mockHttp(url string) (*http.Response, error) {
+
+	return http.Get(url)
 }

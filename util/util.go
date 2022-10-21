@@ -2,6 +2,8 @@ package util
 
 import (
 	"errors"
+	"fmt"
+	"github.com/spf13/viper"
 	"net/mail"
 )
 
@@ -33,4 +35,15 @@ func ValidateNotEmpty(value string) error {
 		return errors.New("cannot be empty string")
 	}
 	return nil
+}
+
+func SaveToConfig(key, token string) error {
+	viper.Set(key, token)
+	err := viper.WriteConfig()
+	if err != nil {
+		message := fmt.Sprintf("Couldn't write config: %s\n", err.Error())
+		return errors.New(message)
+	}
+	return err
+
 }

@@ -25,5 +25,5 @@ tykctl cloud init
 func NewCloudCommand() *cobra.Command {
 	return NewCmd("cloud").
 		WithDescription("All the operation for the tyk cloud").
-		WithLongDescription(CloudDesc).WithCommands(NewLoginCommand())
+		WithLongDescription(CloudDesc).WithCommands(NewLoginCommand(), NewOrgCommand())
 }

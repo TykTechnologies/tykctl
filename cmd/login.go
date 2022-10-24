@@ -40,6 +40,8 @@ func NewLoginCommand() *cobra.Command {
 				cmd.Println(err)
 				return err
 			}
+			cmd.Println("Token saved successfully")
+
 			return err
 			///	return loginService.dashboardLogin()
 		})
@@ -155,9 +157,6 @@ func login(cmd cobra.Command) error {
 	baPass := viper.GetString("ba-pass")
 
 	err = getAndSaveToken(dashboard, email, password, baUser, baPass)
-	if err != nil {
-		return err
-	}
 	return err
 }
 
@@ -168,6 +167,7 @@ func getAndSaveToken(url, email, password, basicUser, basicPassword string) erro
 		return err
 	}
 	token, err := extractToken(resp)
+
 	if err != nil {
 		return err
 	}

@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	//TODO::Change this during production
 	dashboardUrl = "https://dash.ara-staging.tyk.technology"
 	loginDesc    = `
         This command will login into your cloud account and set the token in your config file.
@@ -26,10 +27,6 @@ const (
 `
 )
 
-type LoginClient interface {
-	Do(req *http.Request) (*http.Response, error)
-}
-
 func NewLoginCommand() *cobra.Command {
 	return NewCmd("login").
 		WithLongDescription(loginDesc).
@@ -40,21 +37,18 @@ func NewLoginCommand() *cobra.Command {
 				cmd.Println(err)
 				return err
 			}
-			return err
-			///	return loginService.dashboardLogin()
+			return nil
 		})
 
 }
 
 // flags required by the login command.
+// TODO:: Add function to loop
 func addLoginFlags(f *pflag.FlagSet) {
 	f.StringP("email", "e", "", "email address you used to login into the dashboard")
 	f.StringP("password", "p", "", "password you used to login into the dashboard")
 	f.String("ba-user", "", "Basic auth user.This should only be used for staging server")
 	err := viper.BindPFlag("ba-user", f.Lookup("ba-user"))
-	if err != nil {
-		panic(err)
-	}
 	f.String("ba-pass", "", "Basic auth password")
 	err = viper.BindPFlag("ba-pass", f.Lookup("ba-pass"))
 	if err != nil {
@@ -98,8 +92,7 @@ func extractToken(resp *http.Response) (string, error) {
 		///
 		b, err := io.ReadAll(resp.Body)
 		if err != nil {
-			message := err.Error()
-			return "", errors.New(message)
+			return "", err
 		}
 		return "", fmt.Errorf("login failed: %s\n", string(b))
 

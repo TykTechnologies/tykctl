@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/TykTechnologies/tykctl/testutil"
+	"github.com/stretchr/testify/assert"
+
 	flag "github.com/spf13/pflag"
 
 	"io"
@@ -214,12 +215,13 @@ func testFlags(t *testing.T, f *flag.FlagSet, flags []Flag) {
 		t.Run(tt.Description, func(t *testing.T) {
 			l := f.Lookup(tt.Name)
 			if l == nil {
+
 				t.Errorf("expected to find flag %s found nil", tt.Name)
 			}
 			if l != nil {
-				testutil.Equal(t, tt.Description, tt.Value, l.Value.String())
-				testutil.Equal(t, tt.Description, tt.Shorthand, l.Shorthand)
-				testutil.Equal(t, tt.Description, tt.Default, l.DefValue)
+				assert.Equal(t, tt.Value, l.Value.String(), tt.Description)
+				assert.Equal(t, tt.Shorthand, l.Shorthand, tt.Description)
+				assert.Equal(t, tt.Default, l.DefValue, tt.Description)
 			}
 
 		})
@@ -228,9 +230,6 @@ func testFlags(t *testing.T, f *flag.FlagSet, flags []Flag) {
 }
 
 func extractTokenRequest(t *testing.T, model ExtractTestModel) {
-	/*resp := &http.Response{
-		StatusCode: 200,
-	}*/
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		for _, cookie := range model.Cookies {
@@ -246,18 +245,14 @@ func extractTokenRequest(t *testing.T, model ExtractTestModel) {
 	}
 
 	token, err := extractToken(response)
-	if err != nil && !model.ShouldErr {
-		t.Errorf("%s,expected nil error, found %s", model.Name, err)
+	if !model.ShouldErr {
+		assert.NoError(t, err)
 	}
-	if !testutil.EqualError(err, model.ExpectedError) {
-		t.Errorf("%s,expected %s error, found %s", model.Name, model.ExpectedError, err)
+	if model.ShouldErr && model.ExpectedError != nil {
+		assert.Error(t, err, model.Name)
 	}
-	if err == nil && model.ShouldErr {
-		t.Errorf("%s,expected %s error, found nil", model.Name, err)
-	}
-	if token != model.ExpectedJwt {
-		t.Errorf("%s,expected %s token, found %s", model.Name, model.ExpectedJwt, token)
-	}
+	assert.Equal(t, model.ExpectedError, err, model.Name)
+	assert.Equal(t, model.ExpectedJwt, token, "wrong token returned")
 }
 
 func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {

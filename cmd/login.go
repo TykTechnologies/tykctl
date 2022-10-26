@@ -56,6 +56,9 @@ func addLoginFlags(f *pflag.FlagSet) {
 	f.StringP(password, "p", "", "password you used to login into the dashboard")
 	f.String(baUser, "", "Basic auth user.This should only be used for staging server")
 	err := viper.BindPFlag(baUser, f.Lookup(baUser))
+	if err != nil {
+		panic(err)
+	}
 	f.String(baPass, "", "Basic auth password")
 	err = viper.BindPFlag(baPass, f.Lookup(baPass))
 	if err != nil {

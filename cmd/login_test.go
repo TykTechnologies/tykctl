@@ -213,10 +213,7 @@ func testFlags(t *testing.T, f *flag.FlagSet, flags []Flag) {
 	for _, tt := range flags {
 		t.Run(tt.Description, func(t *testing.T) {
 			l := f.Lookup(tt.Name)
-			if l == nil {
-
-				t.Errorf("expected to find flag %s found nil", tt.Name)
-			}
+			assert.NotNil(t, l)
 			if l != nil {
 				assert.Equal(t, tt.Value, l.Value.String(), tt.Description)
 				assert.Equal(t, tt.Shorthand, l.Shorthand, tt.Description)
@@ -256,23 +253,12 @@ func extractTokenRequest(t *testing.T, model ExtractTestModel) {
 
 func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/api/login" {
-			t.Errorf("Expected to request '/api/login', got: %s", r.URL.Path)
-		}
-
-		if r.Header.Get("Content-Type") != "application/json" {
-			t.Errorf("Content-Type: application/json header, got: %s", r.Header.Get("Content-Type"))
-		}
+		assert.Equal(t, "/api/login", r.URL.Path)
+		assert.Equal(t, "application/json", r.Header.Get("Content-Type"))
 		username, password, _ := r.BasicAuth()
-		if username != model.BasicUser {
-			t.Errorf("Username wanted %s, got: %s", "itachi", username)
-		}
-		if password != model.BasicPassword {
-			t.Errorf("Password wanted %s, got: %s", model.BasicPassword, password)
-		}
-		if r.Body == nil {
-			t.Errorf("Body wanted  got nil")
-		}
+		assert.Equal(t, model.BasicUser, username)
+		assert.Equal(t, model.BasicPassword, password)
+		assert.NotNil(t, r.Body)
 		b, err := io.ReadAll(r.Body)
 		if err != nil {
 			t.Fatal(err)
@@ -282,13 +268,8 @@ func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if body.Email != model.Email {
-			t.Errorf("Email wanted %s, got: %s", model.Email, body.Email)
-		}
-		if body.Password != model.Password {
-			t.Errorf("Password wanted %s, got: %s", model.Password, body.Password)
-		}
-
+		assert.Equal(t, model.Email, body.Email)
+		assert.Equal(t, model.Password, body.Password)
 		w.WriteHeader(http.StatusOK)
 
 	}))

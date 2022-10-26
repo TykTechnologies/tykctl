@@ -126,8 +126,7 @@ func extractToken(resp *http.Response) (string, error) {
 	if signature == "" {
 		return "", errors.New("signature not found")
 	}
-	jwt := fmt.Sprintf("%s.%s", token, signature)
-	return jwt, nil
+	return fmt.Sprintf("%s.%s", token, signature), nil
 }
 
 // validate cli flags and pass them to login

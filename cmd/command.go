@@ -31,7 +31,7 @@ func NewCmd(use string) Builder {
 
 }
 
-// WithFlagAdder adds flags to a the cmd flags
+// WithFlagAdder adds flags to the cmd flags
 // if persistent is set to true the flags will be added as PersistentFlags
 // otherwise they will be added as local flags.
 func (b *builder) WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Builder {
@@ -75,7 +75,6 @@ func (b *builder) WithLongDescription(long string) Builder {
 func (b *builder) WithCommands(cmds ...*cobra.Command) *cobra.Command {
 	for _, cmd := range cmds {
 		b.cmd.AddCommand(cmd)
-
 	}
 	return &b.cmd
 }

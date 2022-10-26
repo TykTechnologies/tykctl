@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 
@@ -81,7 +80,7 @@ func TestExtractToken(t *testing.T) {
 			Name:          "Test empty signature cookie",
 			ShouldErr:     true,
 			ExpectedJwt:   "",
-			ExpectedError: errors.New("signature not found"),
+			ExpectedError: ErrSignatureNotFound,
 			StatusCode:    200,
 		},
 		{
@@ -93,14 +92,14 @@ func TestExtractToken(t *testing.T) {
 			Name:          "Test empty cookieAuthorisation cookie",
 			ShouldErr:     true,
 			ExpectedJwt:   "",
-			ExpectedError: errors.New("no token found"),
+			ExpectedError: ErrTokenNotFound,
 			StatusCode:    200,
 		},
 		{
 			Name:          "Test empty Cookies",
 			ShouldErr:     true,
 			ExpectedJwt:   "",
-			ExpectedError: errors.New("no token found"),
+			ExpectedError: ErrTokenNotFound,
 			StatusCode:    200,
 		},
 

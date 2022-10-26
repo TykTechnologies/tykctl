@@ -6,7 +6,6 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"log"
 	"os"
 )
 
@@ -47,9 +46,12 @@ func addGlobalPersistentFlags(f *pflag.FlagSet) {
 }
 
 func init() {
-	err := createConfigFile()
+	file := ".tykctl.yaml"
+	home, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal(err)
+		cobra.CheckErr(err)
 	}
+	err = CreateConfigFile(home, file)
+	cobra.CheckErr(err)
 	cobra.OnInitialize(initConfig)
 }

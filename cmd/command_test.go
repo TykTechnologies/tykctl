@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/TykTechnologies/tykctl/testutil"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,9 +14,7 @@ func TestNewCmdExample(t *testing.T) {
 
 func TestNewCmdWithMultipleExample(t *testing.T) {
 	expected := "testing double\n this is second linen\ncomment!"
-
 	cmd := NewCmd("").WithExample("testing double\n this is second linen").WithExample("comment!").NoArgs(nil)
-
 	assert.Equal(t, expected, cmd.Example)
 }
 
@@ -32,12 +29,10 @@ func TestNewCmdNoArgs(t *testing.T) {
 
 func TestNewCmdHidden(t *testing.T) {
 	cmd := NewCmd("hidden").NoArgs(nil)
-	assert.Equal(t, true, cmd.Hidden)
-	testutil.Equal(t, "test usage", false, cmd.Hidden)
+	assert.Equal(t, false, cmd.Hidden)
 	cmd = NewCmd("hidden").Hidden().NoArgs(nil)
 	assert.Equal(t, true, cmd.Hidden)
-
-	testutil.Equal(t, "test usage", "hidden", cmd.Use)
+	assert.Equal(t, "hidden", cmd.Use)
 }
 
 func TestNewCmdDescription(t *testing.T) {

@@ -1,3 +1,5 @@
+# NOTE: THE MAIN BRANCH CONTAINS CODE FOR THE POC FOR THE MVP CODE CHECK THE DEV BRANCH.
+
 # What is Tykctl
 
 Tykctl is a Work In Progress CLI. The plan is to have one CLI to interact with all Tyk components and services - Tyk Cloud, Tyk Gateway, Tyk Dashboard, etc.

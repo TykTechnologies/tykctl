@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
+	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
-	"log"
+	"net/http"
 )
 
 const orgListDesc = `
@@ -19,42 +19,68 @@ You can get the output either in table or json format.The default is table forma
 user the --output flag to change the format.
 `
 
-func NewOrgListCommand() *cobra.Command {
-	return NewCmd("list").
+var ErrorFetchingOrg = errors.New("error fetching organization")
+var ErrorGenericError = errors.New("error fetching data")
+
+const (
+	teamEntitlement        = "MaxTeamCount"
+	environmentEntitlement = "MaxLoadoutCount"
+	dashboardEntitlement   = "MaxDashboardCount"
+	gatewayEntitlement     = "MaxGatewayCount"
+)
+
+func NewOrgListCommand(client internal.CloudClient) *cobra.Command {
+	return NewCmd(list).
 		WithExample("tykctl cloud org list --output<json/table>").
 		WithLongDescription(orgListDesc).
 		NoArgs(func(ctx context.Context, command cobra.Command) error {
-			log.Println("this is to list organization")
-			getOrg(command.Context())
+			org, err := GetOrg(command.Context(), client)
+			if err != nil {
+				command.Println(err)
+				return err
+			}
+			CreateOrgHeaderAndRows(org)
 			return nil
 		})
 }
 
-func getOrg(ctx context.Context) {
-	config := &cloud.Configuration{
-		DefaultHeader: map[string]string{},
-		Servers: []cloud.ServerConfiguration{{
-			URL:         "https://controller-aws-eun1.ara-staging.tyk.technology:37001",
-			Description: "",
-		},
-		},
-	}
-	token := fmt.Sprintf("Bearer %s", viper.GetString("token"))
-	config.AddDefaultHeader("Authorization", token)
-	client := cloud.NewAPIClient(config)
-	org, res, err := client.OrganisationsApi.GetOrgs(ctx).Execute()
-	log.Println(res)
+// GetOrg fetches all organization that belongs to a user.
+func GetOrg(ctx context.Context, client internal.CloudClient) ([]cloud.Organisation, error) {
+	orgResponse, resp, err := client.GetOrgs(ctx)
 	if err != nil {
-		log.Println(res.Request.URL.String())
-		log.Println(res.Request.Header)
-		log.Println(org.GetError())
-		log.Println(err)
-		return
+		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
-	log.Println(org.Payload)
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrorFetchingOrg
+	}
+	if orgResponse.Status != statusOK {
+		return nil, errors.New(orgResponse.Error_)
+	}
+	if orgResponse.Payload == nil {
+		return nil, nil
+	}
+	return orgResponse.Payload.Organisations, nil
+}
+
+// CreateOrgHeaderAndRows will take a list of organization and return headers and rows to be used to draw tables.
+func CreateOrgHeaderAndRows(organizations []cloud.Organisation) ([]string, [][]string) {
+	header := []string{"Name", "ID", "Teams", "Environments", "Control planes", "Edge"}
+	rows := make([][]string, 0)
+	for _, organization := range organizations {
+		row := []string{
+			organization.Name, organization.UID, getEntitlements(organization.Entitlements.Counters, teamEntitlement),
+			getEntitlements(organization.Entitlements.Counters, environmentEntitlement), getEntitlements(organization.Entitlements.Counters, dashboardEntitlement),
+			getEntitlements(organization.Entitlements.Counters, gatewayEntitlement),
+		}
+		rows = append(rows, row)
+	}
+	return header, rows
 
 }
 
-func addOrgListFlags(f *pflag.FlagSet) {
-
+func getEntitlements(counter map[string]cloud.CounterEntitlement, key string) string {
+	if counterEntitlement, ok := counter[key]; ok {
+		return fmt.Sprintf("%d of %d", counterEntitlement.Consumed, counterEntitlement.Allowed)
+	}
+	return "- of -"
 }

@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	mock "github.com/TykTechnologies/tykctl/internal/mocks"
+	"github.com/golang/mock/gomock"
 	"testing"
 )
 
@@ -12,8 +14,10 @@ func TestNewRootCmd(t *testing.T) {
 		Default:     "false",
 		Value:       "false",
 	}}
-
-	cmd := NewRootCmd()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	m := mock.NewMockCloudClient(ctrl)
+	cmd := NewRootCmd(m)
 	testFlags(t, cmd.Flags(), flags)
 
 }

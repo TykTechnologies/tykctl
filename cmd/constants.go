@@ -1,5 +1,6 @@
-package main
+package cmd
 
-func main() {
-
-}
+const (
+	statusOK = "ok"
+	list     = "list"
+)

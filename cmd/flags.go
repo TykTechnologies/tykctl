@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"github.com/spf13/viper"
 )
@@ -14,13 +13,13 @@ type Flag struct {
 	Default     string
 }
 
+// SaveToConfig writes data to the config file provided by --config
 func SaveToConfig(key, token string) error {
 	viper.Set(key, token)
 	err := viper.WriteConfig()
 	if err != nil {
-		message := fmt.Sprintf("Couldn't write config: %s\n", err.Error())
-		return errors.New(message)
+		return fmt.Errorf("Couldn't write config: %s\n", err.Error())
 	}
-	return err
+	return nil
 
 }

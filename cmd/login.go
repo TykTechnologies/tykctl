@@ -11,9 +11,11 @@ import (
 	"github.com/spf13/viper"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 const (
+	//TODO::Change this during production
 	dashboardUrl = "https://dash.ara-staging.tyk.technology"
 	loginDesc    = `
         This command will login into your cloud account and set the token in your config file.
@@ -26,59 +28,62 @@ const (
 `
 )
 
-type LoginClient interface {
-	Do(req *http.Request) (*http.Response, error)
-}
+var ErrTokenNotFound = errors.New("no token found")
+var ErrLoginFailed = errors.New("login failed")
+var ErrSignatureNotFound = errors.New("signature not found")
+var ErrDashboardUrlIsRequired = errors.New("dashboard url is required")
+var ErrPasswordIsRequired = errors.New("password is required")
 
+// NewLoginCommand creates a new login command.
 func NewLoginCommand() *cobra.Command {
-	return NewCmd("login").
+	return NewCmd(login).
 		WithLongDescription(loginDesc).
 		WithFlagAdder(false, addLoginFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := login(cmd)
+			err := validateAndLogin(cmd)
 			if err != nil {
 				cmd.Println(err)
 				return err
 			}
-			cmd.Println("Token saved successfully")
-
-			return err
-			///	return loginService.dashboardLogin()
+			return nil
 		})
 
 }
 
-// flags required by the login command.
+// addLoginFlags add the flags required by the login command.
 func addLoginFlags(f *pflag.FlagSet) {
-	f.StringP("email", "e", "", "email address you used to login into the dashboard")
-	f.StringP("password", "p", "", "password you used to login into the dashboard")
-	f.String("ba-user", "", "Basic auth user.This should only be used for staging server")
-	err := viper.BindPFlag("ba-user", f.Lookup("ba-user"))
+	f.StringP(email, "e", "", "email address you used to login into the dashboard")
+	f.StringP(password, "p", "", "password you used to login into the dashboard")
+	f.String(baUser, "", "Basic auth user.This should only be used for staging server")
+	err := viper.BindPFlag(baUser, f.Lookup(baUser))
 	if err != nil {
 		panic(err)
 	}
-	f.String("ba-pass", "", "Basic auth password")
-	err = viper.BindPFlag("ba-pass", f.Lookup("ba-pass"))
+	f.String(baPass, "", "Basic auth password")
+	err = viper.BindPFlag(baPass, f.Lookup(baPass))
 	if err != nil {
 		panic(err)
 	}
-	f.StringP("dashboard", "d", dashboardUrl, "Url to connect to the dashboard(Default is the staging url)")
-	err = viper.BindPFlag("dashboard", f.Lookup("dashboard"))
+	f.StringP(dashboard, "d", dashboardUrl, "Url to connect to the dashboard(Default is the staging url)")
+	err = viper.BindPFlag(dashboard, f.Lookup(dashboard))
 	if err != nil {
 		panic(err)
 	}
 }
 
-// /dashboardLogin send a request to ara dashboard to get a token to use for login.
-func dashboardLogin(url, email, password, basicUser, basicPassword string) (*http.Response, error) {
+// dashboardLogin send a request to ara dashboard to get a token to use to authenticate all other requests.
+func dashboardLogin(baseUrl, email, password, basicUser, basicPassword string) (*http.Response, error) {
 	headers := map[string]string{
-		"Content-Type": "application/json",
+		contentType: applicationJson,
 	}
 	body := LoginBody{
 		Email:    email,
 		Password: password,
 	}
-	fullUrl := fmt.Sprintf("%s/api/login", url)
+	fullUrl, err := url.JoinPath(baseUrl, loginPath)
+	if err != nil {
+		return nil, err
+	}
 	req, err := internal.CreatePostRequest(fullUrl, body, headers)
 	if err != nil {
 		return nil, err
@@ -91,54 +96,51 @@ func dashboardLogin(url, email, password, basicUser, basicPassword string) (*htt
 	if err != nil {
 		return nil, err
 	}
-	return response, err
+	return response, nil
 }
 
-// /get the response from ara and extract the token returned.
+// extractToken takes the response from ara and extract the token returned.
 func extractToken(resp *http.Response) (string, error) {
-	if resp.StatusCode != 200 && resp.Body != nil {
-		///
+	if resp.StatusCode != http.StatusOK && resp.Body != nil {
 		b, err := io.ReadAll(resp.Body)
 		if err != nil {
-			message := err.Error()
-			return "", errors.New(message)
+			return "", err
 		}
 		return "", fmt.Errorf("login failed: %s\n", string(b))
 
-	} else if resp.StatusCode != 200 {
-		///
-		return "", errors.New("login failed")
+	} else if resp.StatusCode != http.StatusOK {
+		return "", ErrLoginFailed
+
 	}
 	var token string
-	var signature string
+	var cookieSignature string
 	for _, cookie := range resp.Cookies() {
 		switch cookie.Name {
-		case "cookieAuthorisation":
+		case cookieAuthorisation:
 			token = cookie.Value
 
-		case "signature":
+		case signature:
 
-			signature = cookie.Value
+			cookieSignature = cookie.Value
 		}
 
 	}
 	if len(token) == 0 {
-		return "", errors.New("no token found")
+		return "", ErrTokenNotFound
 	}
-	if signature == "" {
-		return "", errors.New("signature not found")
+	if cookieSignature == "" {
+		return "", ErrSignatureNotFound
 	}
-	jwt := fmt.Sprintf("%s.%s", token, signature)
-	return jwt, nil
+	return fmt.Sprintf("%s.%s", token, cookieSignature), nil
 }
 
-// validate cli flags and pass them to login
-func login(cmd cobra.Command) error {
-	dashboard := viper.GetString("dashboard")
+// validateAndLogin validate cli flags and pass them to login.
+func validateAndLogin(cmd cobra.Command) error {
+	dashboard := viper.GetString(dashboard)
 	if util.StringIsEmpty(dashboard) {
-		return errors.New("dashboard url is required")
+		return ErrDashboardUrlIsRequired
 	}
-	email, err := cmd.Flags().GetString("email")
+	email, err := cmd.Flags().GetString(email)
 	if err != nil {
 		return err
 	}
@@ -146,21 +148,23 @@ func login(cmd cobra.Command) error {
 	if err != nil {
 		return err
 	}
-	password, err := cmd.Flags().GetString("password")
+	password, err := cmd.Flags().GetString(password)
 	if err != nil {
 		return err
 	}
 	if util.StringIsEmpty(password) {
-		return errors.New("password is required")
+		return ErrPasswordIsRequired
 	}
-	baUser := viper.GetString("ba-user")
-	baPass := viper.GetString("ba-pass")
-
+	baUser := viper.GetString(baUser)
+	baPass := viper.GetString(baPass)
 	err = getAndSaveToken(dashboard, email, password, baUser, baPass)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-// save token to configuration file
+// getAndSaveToken token to configuration file.
 func getAndSaveToken(url, email, password, basicUser, basicPassword string) error {
 	resp, err := dashboardLogin(url, email, password, basicUser, basicPassword)
 	if err != nil {

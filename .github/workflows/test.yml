@@ -1,0 +1,23 @@
+name: Test the code and run sonal cloud
+
+on:
+  push:
+    branches:
+      - "*"
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v3
+        with:
+          stable: 'false'
+          go-version: '1.19'
+
+      - name: Testing
+        run: make tests
+      #- name: Check Test coverage with Sonar cloud
+        #uses: sonarsource/sonarcloud-github-action@master
+        #env:
+        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

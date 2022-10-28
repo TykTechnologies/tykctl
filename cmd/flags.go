@@ -13,7 +13,7 @@ type Flag struct {
 	Default     string
 }
 
-// SaveToConfig writes data to the config file provided by --config
+// SaveToConfig writes data to the config file provided by --config .
 func SaveToConfig(key, token string) error {
 	viper.Set(key, token)
 	err := viper.WriteConfig()

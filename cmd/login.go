@@ -15,7 +15,6 @@ import (
 )
 
 const (
-	//TODO::Change this during production
 	dashboardUrl = "https://dash.ara-staging.tyk.technology"
 	loginDesc    = `
         This command will login into your cloud account and set the token in your config file.
@@ -28,11 +27,13 @@ const (
 `
 )
 
-var ErrTokenNotFound = errors.New("no token found")
-var ErrLoginFailed = errors.New("login failed")
-var ErrSignatureNotFound = errors.New("signature not found")
-var ErrDashboardUrlIsRequired = errors.New("dashboard url is required")
-var ErrPasswordIsRequired = errors.New("password is required")
+var (
+	ErrTokenNotFound          = errors.New("no token found")
+	ErrLoginFailed            = errors.New("login failed")
+	ErrSignatureNotFound      = errors.New("signature not found")
+	ErrDashboardUrlIsRequired = errors.New("dashboard url is required")
+	ErrPasswordIsRequired     = errors.New("password is required")
+)
 
 // NewLoginCommand creates a new login command.
 func NewLoginCommand() *cobra.Command {

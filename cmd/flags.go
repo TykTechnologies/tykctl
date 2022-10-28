@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -11,6 +12,11 @@ type Flag struct {
 	Shorthand   string
 	Value       string
 	Default     string
+}
+
+func addOutPutFlags(f *pflag.FlagSet) {
+	f.StringP(outPut, "o", "table", "Format you want to use can be table,json")
+
 }
 
 // SaveToConfig writes data to the config file provided by --config

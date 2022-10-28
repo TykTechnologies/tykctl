@@ -15,4 +15,5 @@ const (
 	baPass              = "ba-pass"
 	token               = "token"
 	contentType         = "Content-Type"
+	outPut              = "output"
 )

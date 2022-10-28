@@ -15,7 +15,6 @@ import (
 )
 
 const (
-	//TODO::Change this during production
 	dashboardUrl = "https://dash.ara-staging.tyk.technology"
 	loginDesc    = `
         This command will login into your cloud account and set the token in your config file.

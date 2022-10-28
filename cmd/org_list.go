@@ -19,14 +19,9 @@ You can get the output either in table or json format.The default is table forma
 user the --output flag to change the format.
 `
 
-var ErrorFetchingOrg = errors.New("error fetching organization")
-var ErrorGenericError = errors.New("error fetching data")
-
-const (
-	teamEntitlement        = "MaxTeamCount"
-	environmentEntitlement = "MaxLoadoutCount"
-	dashboardEntitlement   = "MaxDashboardCount"
-	gatewayEntitlement     = "MaxGatewayCount"
+var (
+	ErrorFetchingOrg  = errors.New("error fetching organization")
+	ErrorGenericError = errors.New("error fetching data")
 )
 
 func NewOrgListCommand(client internal.CloudClient) *cobra.Command {

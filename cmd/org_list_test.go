@@ -98,7 +98,68 @@ func TestGetOrg(t *testing.T) {
 	}
 
 }
+func TestGetOrgById(t *testing.T) {
+	testCases := []struct {
+		name             string
+		mockHttpResponse *http.Response
+		mockResponse     cloud.InlineResponse2005
+		ExpectedError    error
+		mockError        error
+	}{
+		{
+			name:             "Check fetch org success",
+			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockResponse: cloud.InlineResponse2005{
+				Error_:  "",
+				Payload: &generateOrgs(1)[0],
+				Status:  "ok",
+			},
+			ExpectedError: nil,
+			mockError:     nil,
+		},
+		{
+			name:             "Test Status code 403 ",
+			mockHttpResponse: &http.Response{StatusCode: http.StatusForbidden},
+			mockResponse: cloud.InlineResponse2005{
+				Error_:  "I have an error here",
+				Payload: nil,
+				Status:  "error",
+			},
+			ExpectedError: ErrorFetchingOrg,
+			mockError:     nil,
+		},
+		{
+			name:             "Test response body status is not sucess",
+			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockResponse: cloud.InlineResponse2005{
+				Error_:  "i have an error here",
+				Payload: nil,
+				Status:  "error",
+			},
+			ExpectedError: errors.New("i have an error here"),
+			mockError:     nil,
+		},
+		{
+			name:             "Check when cloud returns an error",
+			mockResponse:     cloud.InlineResponse2005{},
+			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockError:        ErrorOutPutFormat,
+			ExpectedError:    ErrorOutPutFormat,
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			m := mock.NewMockCloudClient(ctrl)
+			m.EXPECT().GetOrgById(gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			organization, err := GetOrgById(context.Background(), m, "")
+			assert.Equal(t, organization, tt.mockResponse.Payload)
+			assert.Equal(t, tt.ExpectedError, err)
+		})
 
+	}
+}
 func TestGetEntitlements(t *testing.T) {
 	type args struct {
 		counter map[string]cloud.CounterEntitlement
@@ -218,7 +279,34 @@ func generateOrgs(size int) []cloud.Organisation {
 
 }
 
-func TestGetAndPrintOrganizations(t *testing.T) {
+func TestFetchAndPrintOrgById(t *testing.T) {
+	type args struct {
+		output        string
+		ExpectedError error
+	}
+	tests := []struct {
+		args args
+		name string
+	}{
+		{
+			name: "Test correct format is passed",
+			args: args{
+				output:        "yml",
+				ExpectedError: ErrorOutPutFormat,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			m := mock.NewMockCloudClient(ctrl)
+			err := FetchAndPrintOrgById(context.Background(), m, tt.args.output, "test")
+			assert.Equal(t, tt.args.ExpectedError, err)
+		})
+	}
+}
+func TestFetchAndPrintOrganizations(t *testing.T) {
 	type args struct {
 		ExpectedError error
 		output        string
@@ -240,7 +328,7 @@ func TestGetAndPrintOrganizations(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			err := GetAndPrintOrganizations(context.Background(), m, tt.args.output)
+			err := FetchAndPrintOrganizations(context.Background(), m, tt.args.output)
 			assert.Equal(t, tt.args.ExpectedError, err)
 
 		})

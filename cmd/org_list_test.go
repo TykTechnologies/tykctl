@@ -88,7 +88,7 @@ func TestGetOrg(t *testing.T) {
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
 			m.EXPECT().GetOrgs(gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
-			orgs, err := GetOrg(context.Background(), m)
+			orgs, err := GetOrgs(context.Background(), m)
 			assert.Equal(t, tt.ExpectedError, err)
 			if tt.mockResponse.Payload != nil {
 				assert.Equal(t, tt.mockResponse.Payload.Organisations, orgs)

@@ -23,4 +23,8 @@ const (
 	outPut                 = "output"
 	table                  = "table"
 	jsonFormat             = "json"
+	team                   = "team"
+	create                 = "create"
+	name                   = "name"
+	org                    = "org"
 )

@@ -10,4 +10,5 @@ import (
 type CloudClient interface {
 	GetOrgs(ctx context.Context) (cloud.InlineResponse20014, *http.Response, error)
 	GetOrgById(ctx context.Context, oid string) (cloud.InlineResponse2005, *http.Response, error)
+	CreateTeam(ctx context.Context, team cloud.Team, oid string) (cloud.InlineResponse2011, *http.Response, error)
 }

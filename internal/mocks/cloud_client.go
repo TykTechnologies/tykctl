@@ -36,6 +36,22 @@ func (m *MockCloudClient) EXPECT() *MockCloudClientMockRecorder {
 	return m.recorder
 }
 
+// CreateTeam mocks base method.
+func (m *MockCloudClient) CreateTeam(ctx context.Context, body cloud.Team, oid string) (cloud.InlineResponse2011, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTeam", ctx, body, oid)
+	ret0, _ := ret[0].(cloud.InlineResponse2011)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// CreateTeam indicates an expected call of CreateTeam.
+func (mr *MockCloudClientMockRecorder) CreateTeam(ctx, body, oid interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeam", reflect.TypeOf((*MockCloudClient)(nil).CreateTeam), ctx, body, oid)
+}
+
 // GetOrgById mocks base method.
 func (m *MockCloudClient) GetOrgById(ctx context.Context, oid string) (cloud.InlineResponse2005, *http.Response, error) {
 	m.ctrl.T.Helper()

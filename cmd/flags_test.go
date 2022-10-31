@@ -15,3 +15,15 @@ func TestAddOutPutFlags(t *testing.T) {
 	}}
 	testFlags(t, cmd.Flags(), flags)
 }
+
+func TestAddOrgFlag(t *testing.T) {
+	cmd := NewCmd("test").WithFlagAdder(true, addOrgFlag).NoArgs(nil)
+	flags := []Flag{{
+		Description: "Test org is added to persistent flags",
+		Name:        "org",
+		Shorthand:   "",
+		Value:       "",
+		Default:     "",
+	}}
+	testFlags(t, cmd.PersistentFlags(), flags)
+}

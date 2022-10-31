@@ -46,6 +46,15 @@ func (c *cloudSdkClient) GetOrgById(ctx context.Context, oid string) (cloud.Inli
 	return c.Client.OrganisationsApi.GetOrg(ctx, oid)
 }
 
+// CreateTeam create a team in an organization.
+func (c *cloudSdkClient) CreateTeam(ctx context.Context, team cloud.Team, oid string) (cloud.InlineResponse2011, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2011{}, nil, err
+	}
+	return c.Client.TeamsApi.CreateTeam(ctx, team, oid)
+}
+
 // AddBeforeExecuteFunc adds functions that should be executed before each client request
 // You can for example add a function that changes the baseurl here or set new headers.
 func (c *cloudSdkClient) AddBeforeExecuteFunc(beforeExecuteFunc ...func(*cloud.APIClient, *cloud.Configuration) error) {
@@ -54,7 +63,6 @@ func (c *cloudSdkClient) AddBeforeExecuteFunc(beforeExecuteFunc ...func(*cloud.A
 
 // runBeforeExecute will call all the functions in beforeExecute and return an error if any of them fails.
 func (c *cloudSdkClient) runBeforeExecute() error {
-
 	for _, f := range c.beforeExecute {
 		err := f(c.Client, c.Config)
 		if err != nil {

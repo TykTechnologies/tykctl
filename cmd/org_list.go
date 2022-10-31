@@ -22,6 +22,7 @@ user the --output flag to change the format.
 var (
 	ErrorFetchingOrg  = errors.New("error fetching organization")
 	ErrorGenericError = errors.New("error fetching data")
+	ErrorOutPutFormat = errors.New("output flag only allows table or json")
 )
 
 func NewOrgListCommand(client internal.CloudClient) *cobra.Command {
@@ -29,12 +30,30 @@ func NewOrgListCommand(client internal.CloudClient) *cobra.Command {
 		WithExample("tykctl cloud org fetch --output<json/table>").
 		WithLongDescription(orgListDesc).
 		MaximumArgs(1, func(ctx context.Context, command cobra.Command, args []string) error {
+
 			return nil
 		})
 }
 
-// GetOrg fetches all organization that belongs to a user.
-func GetOrg(ctx context.Context, client internal.CloudClient) ([]cloud.Organisation, error) {
+// GetAndPrintOrganizations send a prints our organizations either as json or as a table.
+func GetAndPrintOrganizations(ctx context.Context, client internal.CloudClient, output string) error {
+	if output != "table" && output != "json" {
+		return ErrorOutPutFormat
+	}
+	org, err := GetOrgs(ctx, client)
+	if err != nil {
+		return err
+	}
+	if output == "table" {
+		internal.Printable(CreateOrgHeaderAndRows(org))
+		return nil
+	}
+	return internal.PrintJson(org)
+
+}
+
+// GetOrgs fetches all organization that belongs to a user.
+func GetOrgs(ctx context.Context, client internal.CloudClient) ([]cloud.Organisation, error) {
 	orgResponse, resp, err := client.GetOrgs(ctx)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
@@ -57,8 +76,10 @@ func CreateOrgHeaderAndRows(organizations []cloud.Organisation) ([]string, [][]s
 	rows := make([][]string, 0)
 	for _, organization := range organizations {
 		row := []string{
-			organization.Name, organization.UID, getEntitlements(organization.Entitlements.Counters, teamEntitlement),
-			getEntitlements(organization.Entitlements.Counters, environmentEntitlement), getEntitlements(organization.Entitlements.Counters, dashboardEntitlement),
+			organization.Name, organization.UID,
+			getEntitlements(organization.Entitlements.Counters, teamEntitlement),
+			getEntitlements(organization.Entitlements.Counters, environmentEntitlement),
+			getEntitlements(organization.Entitlements.Counters, dashboardEntitlement),
 			getEntitlements(organization.Entitlements.Counters, gatewayEntitlement),
 		}
 		rows = append(rows, row)

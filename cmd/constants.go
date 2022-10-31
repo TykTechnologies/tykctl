@@ -20,4 +20,5 @@ const (
 	environmentEntitlement = "MaxLoadoutCount"
 	dashboardEntitlement   = "MaxDashboardCount"
 	gatewayEntitlement     = "MaxGatewayCount"
+	outPut                 = "output"
 )

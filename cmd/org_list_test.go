@@ -217,3 +217,32 @@ func generateOrgs(size int) []cloud.Organisation {
 	return organizations
 
 }
+
+func TestGetAndPrintOrganizations(t *testing.T) {
+	type args struct {
+		ExpectedError error
+		output        string
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "Test correct format is passed",
+			args: args{
+				ExpectedError: ErrorOutPutFormat,
+				output:        "yaml",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			m := mock.NewMockCloudClient(ctrl)
+			err := GetAndPrintOrganizations(context.Background(), m, tt.args.output)
+			assert.Equal(t, tt.args.ExpectedError, err)
+
+		})
+	}
+}

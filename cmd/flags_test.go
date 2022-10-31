@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_addOutPutFlags(t *testing.T) {
+func TestAddOutPutFlags(t *testing.T) {
 	cmd := NewCmd("test").WithFlagAdder(false, addOutPutFlags).NoArgs(nil)
 	flags := []Flag{{
 		Description: "Test output format is added",

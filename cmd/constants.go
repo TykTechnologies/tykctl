@@ -3,6 +3,7 @@ package cmd
 const (
 	statusOK               = "ok"
 	list                   = "list"
+	fetch                  = "fetch"
 	applicationJson        = "application/json"
 	loginPath              = "/api/login"
 	login                  = "login"

@@ -13,6 +13,7 @@ type Builder interface {
 	WithLongDescription(long string) Builder
 	WithCommands(cmds ...*cobra.Command) *cobra.Command
 	NoArgs(action func(context.Context, cobra.Command) error) *cobra.Command
+	MaximumArgs(maxArgCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command
 	WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Builder
 }
 
@@ -23,7 +24,6 @@ type builder struct {
 // NewCmd Creates a new command builder.
 func NewCmd(use string) Builder {
 	return &builder{
-
 		cmd: cobra.Command{
 			Use: use,
 		},
@@ -84,6 +84,15 @@ func (b *builder) NoArgs(action func(context.Context, cobra.Command) error) *cob
 	b.cmd.Args = cobra.NoArgs
 	b.cmd.RunE = func(*cobra.Command, []string) error {
 		return action(b.cmd.Context(), b.cmd)
+	}
+	return &b.cmd
+}
+
+// MaximumArgs fails if you pass args that are more than the specified maxArgCount.
+func (b *builder) MaximumArgs(maxArgCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command {
+	b.cmd.Args = cobra.MaximumNArgs(maxArgCount)
+	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
+		return action(b.cmd.Context(), b.cmd, args)
 	}
 	return &b.cmd
 }

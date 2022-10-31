@@ -25,16 +25,10 @@ var (
 )
 
 func NewOrgListCommand(client internal.CloudClient) *cobra.Command {
-	return NewCmd(list).
-		WithExample("tykctl cloud org list --output<json/table>").
+	return NewCmd(fetch).
+		WithExample("tykctl cloud org fetch --output<json/table>").
 		WithLongDescription(orgListDesc).
-		NoArgs(func(ctx context.Context, command cobra.Command) error {
-			org, err := GetOrg(command.Context(), client)
-			if err != nil {
-				command.Println(err)
-				return err
-			}
-			CreateOrgHeaderAndRows(org)
+		MaximumArgs(1, func(ctx context.Context, command cobra.Command, args []string) error {
 			return nil
 		})
 }

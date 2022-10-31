@@ -55,7 +55,7 @@ func NewOrgListCommand(client internal.CloudClient) *cobra.Command {
 
 // FetchAndPrintOrganizations send a prints our organizations either as json or as a table.
 func FetchAndPrintOrganizations(ctx context.Context, client internal.CloudClient, output string) error {
-	if output != table && output != json {
+	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
 	org, err := GetOrgs(ctx, client)
@@ -71,7 +71,7 @@ func FetchAndPrintOrganizations(ctx context.Context, client internal.CloudClient
 
 // FetchAndPrintOrgById send a prints a single organization either as json or as a table.
 func FetchAndPrintOrgById(ctx context.Context, client internal.CloudClient, output string, oid string) error {
-	if output != table && output != json {
+	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
 	organization, err := GetOrgById(ctx, client, oid)

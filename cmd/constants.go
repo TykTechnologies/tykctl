@@ -22,5 +22,5 @@ const (
 	gatewayEntitlement     = "MaxGatewayCount"
 	outPut                 = "output"
 	table                  = "table"
-	json                   = "json"
+	jsonFormat             = "json"
 )

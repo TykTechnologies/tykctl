@@ -18,12 +18,12 @@ type Flag struct {
 // it uses the default org set in you config file if it is not passed.
 func addOrgFlag(f *pflag.FlagSet) {
 	f.String(org, "", "The organization to use")
-	viper.BindPFlag(org, f.Lookup(org))
+	err := viper.BindPFlag(org, f.Lookup(org))
+	if err != nil {
+		panic(err)
+	}
 }
 
-func addNameFlag(f *pflag.FlagSet) {
-	f.StringP(name, "n", "", "name for the object you want to create")
-}
 func addOutPutFlags(f *pflag.FlagSet) {
 	f.StringP(outPut, "o", "table", "Format you want to use can be table,json")
 

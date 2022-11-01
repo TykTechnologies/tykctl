@@ -13,12 +13,23 @@ type Flag struct {
 	Value       string
 	Default     string
 }
+type BindFlag struct {
+	Name       string
+	Persistent bool
+}
 
 // addOrgFlag adds the org flag to the flags
 // it uses the default org set in you config file if it is not passed.
 func addOrgFlag(f *pflag.FlagSet) {
 	f.String(org, "", "The organization to use")
 	err := viper.BindPFlag(org, f.Lookup(org))
+	if err != nil {
+		panic(err)
+	}
+}
+func addTeamFlag(f *pflag.FlagSet) {
+	f.String(team, "", "The team to use")
+	err := viper.BindPFlag(team, f.Lookup(team))
 	if err != nil {
 		panic(err)
 	}

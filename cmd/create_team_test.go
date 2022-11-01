@@ -22,7 +22,7 @@ func TestCreateTeam(t *testing.T) {
 		expectedTeamResponse *cloud.Team
 	}{
 		{
-			name:                 "Check status Ok",
+			name:                 "Check status ok",
 			ExpectedError:        nil,
 			mockHttpResponse:     &http.Response{StatusCode: http.StatusCreated},
 			mockError:            nil,

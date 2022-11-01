@@ -13,4 +13,5 @@ type CloudClient interface {
 	CreateTeam(ctx context.Context, team cloud.Team, oid string) (cloud.InlineResponse2011, *http.Response, error)
 	GetTeamById(ctx context.Context, oid string, tid string) (cloud.InlineResponse2011, *http.Response, error)
 	GetTeams(ctx context.Context, oid string) (cloud.InlineResponse20017, *http.Response, error)
+	CreateEnv(ctx context.Context, env cloud.Loadout, orgId string, teamId string) (cloud.InlineResponse2012, *http.Response, error)
 }

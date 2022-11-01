@@ -20,21 +20,23 @@ var (
 )
 
 func NewCreateTeamCmd(client internal.CloudClient) *cobra.Command {
-	return NewCmd(create).WithFlagAdder(false, createTeamFlags).NoArgs(func(ctx context.Context, command cobra.Command) error {
-		org := viper.GetString("org")
-		teamName, err := command.Flags().GetString(name)
-		if err != nil {
-			command.Println(err)
-			return err
-		}
-		team, err := validateFlagsAndCreateTeam(ctx, client, teamName, org)
-		if err != nil {
-			command.Println(err)
-			return err
-		}
-		command.Println(fmt.Sprintf("team %s create successfully", team.UID))
-		return nil
-	})
+	return NewCmd(create).WithFlagAdder(false, createTeamFlags).
+		WithBindFlagOnPreRun([]BindFlag{{Name: "org", Persistent: false}}).
+		NoArgs(func(ctx context.Context, command cobra.Command) error {
+			org := viper.GetString(org)
+			teamName, err := command.Flags().GetString(name)
+			if err != nil {
+				command.Println(err)
+				return err
+			}
+			team, err := validateFlagsAndCreateTeam(ctx, client, teamName, org)
+			if err != nil {
+				command.Println(err)
+				return err
+			}
+			command.Println(fmt.Sprintf("team %s created successfully", team.UID))
+			return nil
+		})
 }
 
 // validateFlagsAndCreateTeam validate that org and name are not empty and send request to create a team.

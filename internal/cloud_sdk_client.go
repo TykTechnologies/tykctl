@@ -64,12 +64,22 @@ func (c *cloudSdkClient) GetTeamById(ctx context.Context, oid string, tid string
 	return c.Client.TeamsApi.GetTeam(ctx, oid, tid)
 }
 
+// GetTeams send request to get all teams for an organization.
 func (c *cloudSdkClient) GetTeams(ctx context.Context, oid string) (cloud.InlineResponse20017, *http.Response, error) {
 	err := c.runBeforeExecute()
 	if err != nil {
 		return cloud.InlineResponse20017{}, nil, err
 	}
 	return c.Client.TeamsApi.GetTeams(ctx, oid)
+}
+
+// CreateEnv create an environment in a given team.
+func (c *cloudSdkClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgId string, teamId string) (cloud.InlineResponse2012, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2012{}, nil, err
+	}
+	return c.Client.LoadoutsApi.CreateLoadout(ctx, env, orgId, teamId)
 }
 
 // AddBeforeExecuteFunc adds functions that should be executed before each client request

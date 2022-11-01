@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 type Builder interface {
@@ -15,6 +16,7 @@ type Builder interface {
 	NoArgs(action func(context.Context, cobra.Command) error) *cobra.Command
 	MaximumArgs(maxArgCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command
 	WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Builder
+	WithBindFlagOnPreRun(flags []BindFlag) Builder
 }
 
 type builder struct {
@@ -76,6 +78,28 @@ func (b *builder) WithCommands(cmds ...*cobra.Command) *cobra.Command {
 		b.cmd.AddCommand(cmd)
 	}
 	return &b.cmd
+}
+
+// WithBindFlagOnPreRun helps us bind flags before prerun
+// this hel us solve ths cobra issue https://github.com/spf13/viper/issues/233.
+func (b *builder) WithBindFlagOnPreRun(flags []BindFlag) Builder {
+	b.cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
+		for _, flag := range flags {
+			if flag.Persistent {
+				err := viper.BindPFlag(flag.Name, b.cmd.PersistentFlags().Lookup(flag.Name))
+				if err != nil {
+					return err
+				}
+			} else {
+				err := viper.BindPFlag(flag.Name, b.cmd.Flags().Lookup(flag.Name))
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}
+	return b
 }
 
 // NoArgs is for when you want to execute the cmd with zero args.

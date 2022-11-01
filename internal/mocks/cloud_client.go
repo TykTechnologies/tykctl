@@ -36,6 +36,22 @@ func (m *MockCloudClient) EXPECT() *MockCloudClientMockRecorder {
 	return m.recorder
 }
 
+// CreateEnv mocks base method.
+func (m *MockCloudClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgId, teamId string) (cloud.InlineResponse2012, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateEnv", ctx, env, orgId, teamId)
+	ret0, _ := ret[0].(cloud.InlineResponse2012)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// CreateEnv indicates an expected call of CreateEnv.
+func (mr *MockCloudClientMockRecorder) CreateEnv(ctx, env, orgId, teamId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEnv", reflect.TypeOf((*MockCloudClient)(nil).CreateEnv), ctx, env, orgId, teamId)
+}
+
 // CreateTeam mocks base method.
 func (m *MockCloudClient) CreateTeam(ctx context.Context, team cloud.Team, oid string) (cloud.InlineResponse2011, *http.Response, error) {
 	m.ctrl.T.Helper()

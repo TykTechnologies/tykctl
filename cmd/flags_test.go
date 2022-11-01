@@ -27,3 +27,15 @@ func TestAddOrgFlag(t *testing.T) {
 	}}
 	testFlags(t, cmd.PersistentFlags(), flags)
 }
+
+func TestAddTeamFlag(t *testing.T) {
+	cmd := NewCmd("test").WithFlagAdder(true, addTeamFlag).NoArgs(nil)
+	flags := []Flag{{
+		Description: "Test team is added to flags",
+		Name:        "team",
+		Shorthand:   "",
+		Value:       "",
+		Default:     "",
+	}}
+	testFlags(t, cmd.PersistentFlags(), flags)
+}

@@ -28,4 +28,5 @@ const (
 	create                 = "create"
 	name                   = "name"
 	org                    = "org"
+	environments           = "environments"
 )

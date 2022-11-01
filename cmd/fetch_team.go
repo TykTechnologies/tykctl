@@ -17,7 +17,9 @@ var (
 )
 
 func NewFetchTeamCmd(client internal.CloudClient) *cobra.Command {
-	return NewCmd(fetch).WithFlagAdder(false, addOutPutFlags).
+	return NewCmd(fetch).
+		WithFlagAdder(false, addOutPutFlags).
+		WithBindFlagOnPreRun([]BindFlag{{Name: "org", Persistent: false}}).
 		WithExample("tykctl cloud teams fetch --output<json/table>").
 		MaximumArgs(1, func(ctx context.Context, command cobra.Command, args []string) error {
 			outPut, err := command.Flags().GetString(outPut)

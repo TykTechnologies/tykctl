@@ -6,5 +6,5 @@ import (
 )
 
 func NewTeamCmd(client internal.CloudClient) *cobra.Command {
-	return NewCmd(team).WithFlagAdder(true, addOrgFlag).WithCommands(NewCreateTeamCmd(client))
+	return NewCmd(teams).WithFlagAdder(true, addOrgFlag).WithCommands(NewCreateTeamCmd(client), NewFetchTeamCmd(client))
 }

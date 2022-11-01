@@ -24,6 +24,7 @@ const (
 	table                  = "table"
 	jsonFormat             = "json"
 	team                   = "team"
+	teams                  = "teams"
 	create                 = "create"
 	name                   = "name"
 	org                    = "org"

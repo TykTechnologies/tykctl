@@ -55,6 +55,23 @@ func (c *cloudSdkClient) CreateTeam(ctx context.Context, team cloud.Team, oid st
 	return c.Client.TeamsApi.CreateTeam(ctx, team, oid)
 }
 
+// GetTeamById fetch a single team by its id.
+func (c *cloudSdkClient) GetTeamById(ctx context.Context, oid string, tid string) (cloud.InlineResponse2011, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2011{}, nil, err
+	}
+	return c.Client.TeamsApi.GetTeam(ctx, oid, tid)
+}
+
+func (c *cloudSdkClient) GetTeams(ctx context.Context, oid string) (cloud.InlineResponse20017, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse20017{}, nil, err
+	}
+	return c.Client.TeamsApi.GetTeams(ctx, oid)
+}
+
 // AddBeforeExecuteFunc adds functions that should be executed before each client request
 // You can for example add a function that changes the baseurl here or set new headers.
 func (c *cloudSdkClient) AddBeforeExecuteFunc(beforeExecuteFunc ...func(*cloud.APIClient, *cloud.Configuration) error) {

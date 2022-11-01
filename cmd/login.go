@@ -46,6 +46,7 @@ func NewLoginCommand() *cobra.Command {
 				cmd.Println(err)
 				return err
 			}
+			cmd.Println("Authentication successful")
 			return nil
 		})
 

@@ -153,7 +153,7 @@ func TestGetOrgById(t *testing.T) {
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
 			m.EXPECT().GetOrgById(gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
-			organization, err := GetOrgById(context.Background(), m, "")
+			organization, err := GetOrgById(context.Background(), m, "oid")
 			assert.Equal(t, organization, tt.mockResponse.Payload)
 			assert.Equal(t, tt.ExpectedError, err)
 		})

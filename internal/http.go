@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// CreatePostRequest takes a url,headers and a body and create a post request
+// CreatePostRequest takes a url,headers and a body and create a post request.
 func CreatePostRequest(url string, data interface{}, headers map[string]string) (*http.Request, error) {
 	b, err := json.Marshal(data)
 	if err != nil {

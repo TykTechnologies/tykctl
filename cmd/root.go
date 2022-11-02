@@ -4,8 +4,12 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+	"github.com/TykTechnologies/cloud-sdk/cloud"
+	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 	"os"
 )
 
@@ -22,16 +26,26 @@ Currently we only support tyk cloud.
 
 `
 
-func NewRootCmd() *cobra.Command {
+func NewRootCmd(client internal.CloudClient) *cobra.Command {
 	return NewCmd("tykctl").WithLongDescription(rootDesc).
 		WithDescription("access all tyk service via the cli").
 		WithFlagAdder(true, addGlobalPersistentFlags).
 		WithFlagAdder(false, addRootLocalFlags).
-		WithCommands(NewCloudCommand())
+		WithCommands(NewCloudCommand(client))
 }
 
 func Execute() {
-	err := NewRootCmd().Execute()
+
+	conf := cloud.Configuration{
+		DefaultHeader: map[string]string{},
+	}
+	sdkClient := internal.NewCloudSdkClient(&conf)
+	sdkClient.AddBeforeExecuteFunc(AddTokenAndBaseUrl)
+	rootCmd := NewRootCmd(sdkClient)
+	err := rootCmd.Execute()
+	if err != nil {
+		return
+	}
 	if err != nil {
 		os.Exit(1)
 	}
@@ -54,4 +68,14 @@ func init() {
 	err = CreateConfigFile(home, file)
 	cobra.CheckErr(err)
 	cobra.OnInitialize(initConfig)
+}
+
+// AddTokenAndBaseUrl will add a user token from the configuration file to each request header.
+func AddTokenAndBaseUrl(client *cloud.APIClient, conf *cloud.Configuration) error {
+	baseUrl := viper.GetString("controller")
+	client.ChangeBasePath(baseUrl)
+	token := fmt.Sprintf("Bearer %s", viper.GetString("token"))
+	conf.AddDefaultHeader("Authorization", token)
+	return nil
+
 }

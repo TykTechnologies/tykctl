@@ -158,7 +158,6 @@ func validateAndLogin(cmd cobra.Command) error {
 	}
 	baUser := viper.GetString(baUser)
 	baPass := viper.GetString(baPass)
-
 	err = getAndSaveToken(dashboard, email, password, baUser, baPass)
 	if err != nil {
 		return err
@@ -173,6 +172,7 @@ func getAndSaveToken(url, email, password, basicUser, basicPassword string) erro
 		return err
 	}
 	token, err := extractToken(resp)
+
 	if err != nil {
 		return err
 	}

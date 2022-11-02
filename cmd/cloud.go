@@ -4,6 +4,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -23,8 +24,8 @@ tykctl cloud init
 `
 
 // NewCloudCommand  creates the cloud service parent command.
-func NewCloudCommand() *cobra.Command {
+func NewCloudCommand(client internal.CloudClient) *cobra.Command {
 	return NewCmd("cloud").
 		WithDescription("All the operation for the tyk cloud").
-		WithLongDescription(CloudDesc).WithCommands(NewLoginCommand())
+		WithLongDescription(CloudDesc).WithCommands(NewLoginCommand(), NewOrgCommand(client))
 }

@@ -6,6 +6,10 @@ import (
 	"net/http"
 )
 
+var (
+	_ CloudClient = (*cloudSdkClient)(nil)
+)
+
 // CloudSdkClient should implement CloudClient as it will be used to make request to Ara.
 type cloudSdkClient struct {
 	Client *cloud.APIClient
@@ -31,6 +35,15 @@ func (c *cloudSdkClient) GetOrgs(ctx context.Context) (cloud.InlineResponse20014
 		return cloud.InlineResponse20014{}, nil, err
 	}
 	return c.Client.OrganisationsApi.GetOrgs(ctx)
+}
+
+// GetOrgById will get a single organization using its id.
+func (c *cloudSdkClient) GetOrgById(ctx context.Context, oid string) (cloud.InlineResponse2005, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2005{}, nil, err
+	}
+	return c.Client.OrganisationsApi.GetOrg(ctx, oid)
 }
 
 // AddBeforeExecuteFunc adds functions that should be executed before each client request

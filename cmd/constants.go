@@ -21,4 +21,6 @@ const (
 	dashboardEntitlement   = "MaxDashboardCount"
 	gatewayEntitlement     = "MaxGatewayCount"
 	outPut                 = "output"
+	table                  = "table"
+	jsonFormat             = "json"
 )

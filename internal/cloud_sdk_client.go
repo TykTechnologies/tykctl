@@ -82,6 +82,23 @@ func (c *cloudSdkClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgId
 	return c.Client.LoadoutsApi.CreateLoadout(ctx, env, orgId, teamId)
 }
 
+// GetEnvById gets a single environment with its uuid.
+func (c *cloudSdkClient) GetEnvById(ctx context.Context, orgId string, teamId string, envId string) (cloud.InlineResponse2012, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2012{}, nil, err
+	}
+	return c.Client.LoadoutsApi.GetLoadout(ctx, orgId, teamId, envId)
+}
+
+func (c *cloudSdkClient) GetEnvs(ctx context.Context, orgId string, teamId string) (cloud.InlineResponse20016, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse20016{}, nil, err
+	}
+	return c.Client.LoadoutsApi.GetLoadouts(ctx, orgId, teamId)
+}
+
 // AddBeforeExecuteFunc adds functions that should be executed before each client request
 // You can for example add a function that changes the baseurl here or set new headers.
 func (c *cloudSdkClient) AddBeforeExecuteFunc(beforeExecuteFunc ...func(*cloud.APIClient, *cloud.Configuration) error) {

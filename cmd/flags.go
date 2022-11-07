@@ -34,6 +34,13 @@ func addTeamFlag(f *pflag.FlagSet) {
 		panic(err)
 	}
 }
+func addEnvFlag(f *pflag.FlagSet) {
+	f.String(env, "", "The environment to use")
+	err := viper.BindPFlag(env, f.Lookup(env))
+	if err != nil {
+		panic(err)
+	}
+}
 
 func addOutPutFlags(f *pflag.FlagSet) {
 	f.StringP(outPut, "o", "table", "Format you want to use can be table,json")

@@ -91,12 +91,22 @@ func (c *cloudSdkClient) GetEnvById(ctx context.Context, orgId string, teamId st
 	return c.Client.LoadoutsApi.GetLoadout(ctx, orgId, teamId, envId)
 }
 
+// GetEnvs gets all environments in a team.
 func (c *cloudSdkClient) GetEnvs(ctx context.Context, orgId string, teamId string) (cloud.InlineResponse20016, *http.Response, error) {
 	err := c.runBeforeExecute()
 	if err != nil {
 		return cloud.InlineResponse20016{}, nil, err
 	}
 	return c.Client.LoadoutsApi.GetLoadouts(ctx, orgId, teamId)
+}
+
+// CreateDeployment creates a home or edge deployment.
+func (c *cloudSdkClient) CreateDeployment(ctx context.Context, deployment cloud.Deployment, orgId, teamId, envId string) (cloud.InlineResponse2001, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2001{}, nil, err
+	}
+	return c.Client.DeploymentsApi.CreateDeployment(ctx, deployment, orgId, teamId, envId)
 }
 
 // AddBeforeExecuteFunc adds functions that should be executed before each client request

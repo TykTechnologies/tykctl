@@ -122,6 +122,20 @@ func (c *cloudSdkClient) GetDeploymentById(ctx context.Context, orgId string, te
 	}
 	return c.Client.DeploymentsApi.GetDeployment(ctx, orgId, teamId, envId, id, localVarOptionals)
 }
+func (c *cloudSdkClient) StartDeployment(ctx context.Context, orgId, teamId, envId, id string) (cloud.InlineResponse2001, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2001{}, nil, err
+	}
+	return c.Client.DeploymentsApi.StartDeployment(ctx, orgId, teamId, envId, id)
+}
+func (c *cloudSdkClient) GetDeploymentStatus(ctx context.Context, orgId string, teamId string, envId string, deploymentId string) (cloud.Payload, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.Payload{}, nil, err
+	}
+	return c.Client.DeploymentsApi.GetDeploymentStatus(ctx, orgId, teamId, envId, deploymentId)
+}
 
 // AddBeforeExecuteFunc adds functions that should be executed before each client request
 // You can for example add a function that changes the baseurl here or set new headers.

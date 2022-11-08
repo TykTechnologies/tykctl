@@ -5,16 +5,14 @@ import (
 	"errors"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
-	"log"
 	"net/http"
 )
 
 var (
-	ErrorFetchingDeployments = errors.New("error fetching deployments")
+	ErrorFetchingDeployments      = errors.New("error fetching deployments")
+	ErrorFetchingDeploymentStatus = errors.New("error fetching deployment status")
 )
 
 func NewFetchDeploymentCmd(client internal.CloudClient) *cobra.Command {
@@ -40,7 +38,6 @@ func NewFetchDeploymentCmd(client internal.CloudClient) *cobra.Command {
 		})
 }
 func validateAndFetchDeploymentById(ctx context.Context, client internal.CloudClient, f *pflag.FlagSet, id string) error {
-	log.Println(id)
 	deploymentFlags, err := validateCommonDeploymentFetchFlags(f)
 	if err != nil {
 		return err
@@ -105,36 +102,20 @@ func GetDeploymentById(ctx context.Context, client internal.CloudClient, orgId, 
 	return depResponse.Payload, nil
 }
 
-func validateCommonDeploymentFetchFlags(f *pflag.FlagSet) (*DeploymentFetchFlags, error) {
+func validateCommonDeploymentFetchFlags(f *pflag.FlagSet) (*DeploymentFlags, error) {
+	deploymentFlag, err := validateCommonDeploymentFlags()
+	if err != nil {
+		return nil, err
+	}
 	output, err := f.GetString(outPut)
 	if err != nil {
 		return nil, err
 	}
+	deploymentFlag.OutPut = output
 	if output != table && output != jsonFormat {
 		return nil, ErrorOutPutFormat
 	}
-	var deploymentFlag DeploymentFetchFlags
-	deploymentFlag.OutPut = output
-	deploymentFlag.OrgId = viper.GetString(org)
-	if util.StringIsEmpty(deploymentFlag.OrgId) {
-		return nil, ErrorOrgRequired
-	}
-	deploymentFlag.TeamId = viper.GetString(team)
-	if util.StringIsEmpty(deploymentFlag.TeamId) {
-		return nil, ErrorTeamRequired
-	}
-	deploymentFlag.EnvId = viper.GetString(env)
-	if util.StringIsEmpty(deploymentFlag.EnvId) {
-		return nil, ErrorEnvRequired
-	}
-	return &deploymentFlag, nil
-}
-
-type DeploymentFetchFlags struct {
-	OrgId  string
-	TeamId string
-	EnvId  string
-	OutPut string
+	return deploymentFlag, nil
 }
 
 func CreateDeploymentHeadersAndRows(deployments []cloud.Deployment) ([]string, [][]string) {

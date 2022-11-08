@@ -100,6 +100,22 @@ func (mr *MockCloudClientMockRecorder) GetDeploymentById(ctx, orgId, teamId, env
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentById", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentById), ctx, orgId, teamId, envId, id, localVarOptionals)
 }
 
+// GetDeploymentStatus mocks base method.
+func (m *MockCloudClient) GetDeploymentStatus(ctx context.Context, orgId, teamId, envId, deploymentId string) (cloud.Payload, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDeploymentStatus", ctx, orgId, teamId, envId, deploymentId)
+	ret0, _ := ret[0].(cloud.Payload)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetDeploymentStatus indicates an expected call of GetDeploymentStatus.
+func (mr *MockCloudClientMockRecorder) GetDeploymentStatus(ctx, orgId, teamId, envId, deploymentId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentStatus", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentStatus), ctx, orgId, teamId, envId, deploymentId)
+}
+
 // GetEnvById mocks base method.
 func (m *MockCloudClient) GetEnvById(ctx context.Context, orgId, teamId, envId string) (cloud.InlineResponse2012, *http.Response, error) {
 	m.ctrl.T.Helper()
@@ -210,4 +226,20 @@ func (m *MockCloudClient) GetTeams(ctx context.Context, oid string) (cloud.Inlin
 func (mr *MockCloudClientMockRecorder) GetTeams(ctx, oid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeams", reflect.TypeOf((*MockCloudClient)(nil).GetTeams), ctx, oid)
+}
+
+// StartDeployment mocks base method.
+func (m *MockCloudClient) StartDeployment(ctx context.Context, orgID, teamId, envId, id string) (cloud.InlineResponse2001, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StartDeployment", ctx, orgID, teamId, envId, id)
+	ret0, _ := ret[0].(cloud.InlineResponse2001)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// StartDeployment indicates an expected call of StartDeployment.
+func (mr *MockCloudClientMockRecorder) StartDeployment(ctx, orgID, teamId, envId, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartDeployment", reflect.TypeOf((*MockCloudClient)(nil).StartDeployment), ctx, orgID, teamId, envId, id)
 }

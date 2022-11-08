@@ -8,13 +8,14 @@ import (
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"net/http"
 	"time"
 )
 
 var (
 	ErrorCreatingDeployment = errors.New("error creating deployment")
+	ErrorStartingDeployment = errors.New("error starting deployment")
+	ErrorZoneCodeIsRequired = errors.New("error zone is required")
 )
 
 func NewCreateDeploymentCmd(client internal.CloudClient) *cobra.Command {
@@ -28,6 +29,7 @@ func addDeploymentFlag(f *pflag.FlagSet) {
 	f.StringP(name, "n", "", "name for the deployment you want to create.")
 	f.String(zone, "", "the region you want to deploy into")
 	f.String(domain, "", "custom domain for your deployment")
+	f.Bool(deploy, false, "deploy the deployment after create")
 }
 
 func CreateDeployment(ctx context.Context, client internal.CloudClient, deployment cloud.Deployment, orgId, teamId, envId string) (*cloud.Deployment, error) {
@@ -67,17 +69,9 @@ func newDeployment() cloud.Deployment {
 }
 
 func extractCommonDeploymentFlags(f *pflag.FlagSet) (*cloud.Deployment, error) {
-	orgId := viper.GetString(org)
-	if util.StringIsEmpty(orgId) {
-		return nil, ErrorOrgRequired
-	}
-	tid := viper.GetString(team)
-	if util.StringIsEmpty(tid) {
-		return nil, ErrorTeamRequired
-	}
-	envId := viper.GetString(env)
-	if util.StringIsEmpty(envId) {
-		return nil, ErrorEnvRequired
+	deploymentFlags, err := validateCommonDeploymentFlags()
+	if err != nil {
+		return nil, err
 	}
 	deploymentName, err := f.GetString(name)
 	if err != nil {
@@ -90,11 +84,14 @@ func extractCommonDeploymentFlags(f *pflag.FlagSet) (*cloud.Deployment, error) {
 	if err != nil {
 		return nil, err
 	}
+	if util.StringIsEmpty(zone) {
+		return nil, ErrorZoneCodeIsRequired
+	}
 	d := newDeployment()
 	d.ZoneCode = zone
 	d.Name = deploymentName
-	d.OID = orgId
-	d.LID = envId
-	d.TID = tid
+	d.OID = deploymentFlags.OrgId
+	d.LID = deploymentFlags.EnvId
+	d.TID = deploymentFlags.TeamId
 	return &d, nil
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"log"
 )
 
 var (
@@ -20,12 +21,11 @@ func NewCreateEdgeDeployment(client internal.CloudClient) *cobra.Command {
 		WithBindFlagOnPreRun([]BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithFlagAdder(false, addEdgeDeploymentFlag).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			deployment, err := validateEdgeDeploymentFlagAndCreate(cmd.Context(), client, cmd.Flags())
+			_, err := validateEdgeDeploymentFlagAndCreate(cmd.Context(), client, cmd.Flags())
 			if err != nil {
 				cmd.Println(err)
 				return err
 			}
-			cmd.Println(fmt.Sprintf("deployment %s created successfully", deployment.UID))
 			return nil
 		})
 }
@@ -48,5 +48,21 @@ func validateEdgeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	}
 	deployment.LinkedDeployments["LinkedMDCBID"] = controlPlane
 	deployment.Kind = gateway
-	return CreateDeployment(ctx, client, *deployment, deployment.OID, deployment.TID, deployment.LID)
+	deployHome, err := f.GetBool(deploy)
+	if err != nil {
+		return nil, err
+	}
+	deploymentResponse, err := CreateDeployment(ctx, client, *deployment, deployment.OID, deployment.TID, deployment.LID)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(fmt.Sprintf("deployment %s created successfully", deploymentResponse.UID))
+	if deployHome {
+		_, err := validateFlagsAndStartDeployment(ctx, client, deploymentResponse.UID)
+		if err != nil {
+			return nil, err
+		}
+		log.Println(fmt.Sprintf("deploying..."))
+	}
+	return deploymentResponse, nil
 }

@@ -43,4 +43,6 @@ const (
 	awsRegion              = "aws-region"
 	enablePlugins          = "enable-plugins"
 	linkedControlPlane     = "control-plane"
+	deploy                 = "deploy"
+	status                 = "status"
 )

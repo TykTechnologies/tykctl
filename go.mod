@@ -3,7 +3,7 @@ module github.com/TykTechnologies/tykctl
 go 1.19
 
 require (
-	github.com/TykTechnologies/cloud-sdk v0.0.0-20221026120202-40877a81be01
+	github.com/TykTechnologies/cloud-sdk v0.0.0-20221108125257-43623dbac4ae
 	github.com/golang/mock v1.4.4
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/spf13/cobra v1.6.0

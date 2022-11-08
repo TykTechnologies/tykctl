@@ -32,6 +32,7 @@ const (
 	home                   = "home"
 	edge                   = "edge"
 	deployment             = "deployment"
+	deployments            = "deployments"
 	env                    = "env"
 	zone                   = "zone"
 	domain                 = "domain"

@@ -6,9 +6,10 @@ import (
 )
 
 func NewDeployment(client internal.CloudClient) *cobra.Command {
-	return NewCmd(deployment).
+	return NewCmd(deployments).
 		WithFlagAdder(true, addOrgFlag).
 		WithFlagAdder(true, addTeamFlag).
 		WithFlagAdder(true, addEnvFlag).
-		WithCommands(NewCreateDeploymentCmd(client))
+		WithCommands(NewCreateDeploymentCmd(client), NewFetchDeploymentCmd(client))
+
 }

@@ -17,4 +17,6 @@ type CloudClient interface {
 	GetEnvById(ctx context.Context, orgId string, teamId string, envId string) (cloud.InlineResponse2012, *http.Response, error)
 	GetEnvs(ctx context.Context, orgId string, teamId string) (cloud.InlineResponse20016, *http.Response, error)
 	CreateDeployment(ctx context.Context, deployment cloud.Deployment, orgId, teamId, envId string) (cloud.InlineResponse2001, *http.Response, error)
+	GetEnvDeployments(ctx context.Context, oid string, tid string, lid string) (cloud.InlineResponse200, *http.Response, error)
+	GetDeploymentById(ctx context.Context, orgId string, teamId string, envId string, id string, localVarOptionals *cloud.DeploymentsApiGetDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error)
 }

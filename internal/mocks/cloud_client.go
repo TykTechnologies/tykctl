@@ -84,6 +84,22 @@ func (mr *MockCloudClientMockRecorder) CreateTeam(ctx, team, oid interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeam", reflect.TypeOf((*MockCloudClient)(nil).CreateTeam), ctx, team, oid)
 }
 
+// GetDeploymentById mocks base method.
+func (m *MockCloudClient) GetDeploymentById(ctx context.Context, orgId, teamId, envId, id string, localVarOptionals *cloud.DeploymentsApiGetDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDeploymentById", ctx, orgId, teamId, envId, id, localVarOptionals)
+	ret0, _ := ret[0].(cloud.InlineResponse2001)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetDeploymentById indicates an expected call of GetDeploymentById.
+func (mr *MockCloudClientMockRecorder) GetDeploymentById(ctx, orgId, teamId, envId, id, localVarOptionals interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentById", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentById), ctx, orgId, teamId, envId, id, localVarOptionals)
+}
+
 // GetEnvById mocks base method.
 func (m *MockCloudClient) GetEnvById(ctx context.Context, orgId, teamId, envId string) (cloud.InlineResponse2012, *http.Response, error) {
 	m.ctrl.T.Helper()
@@ -98,6 +114,22 @@ func (m *MockCloudClient) GetEnvById(ctx context.Context, orgId, teamId, envId s
 func (mr *MockCloudClientMockRecorder) GetEnvById(ctx, orgId, teamId, envId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnvById", reflect.TypeOf((*MockCloudClient)(nil).GetEnvById), ctx, orgId, teamId, envId)
+}
+
+// GetEnvDeployments mocks base method.
+func (m *MockCloudClient) GetEnvDeployments(ctx context.Context, oid, tid, lid string) (cloud.InlineResponse200, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEnvDeployments", ctx, oid, tid, lid)
+	ret0, _ := ret[0].(cloud.InlineResponse200)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetEnvDeployments indicates an expected call of GetEnvDeployments.
+func (mr *MockCloudClientMockRecorder) GetEnvDeployments(ctx, oid, tid, lid interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnvDeployments", reflect.TypeOf((*MockCloudClient)(nil).GetEnvDeployments), ctx, oid, tid, lid)
 }
 
 // GetEnvs mocks base method.

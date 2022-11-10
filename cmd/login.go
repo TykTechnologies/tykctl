@@ -15,8 +15,7 @@ import (
 )
 
 const (
-	dashboardUrl = "https://dash.ara-staging.tyk.technology"
-	loginDesc    = `
+	loginDesc = `
         This command will login into your cloud account and set the token in your config file.
         Note: The token will only last for 30 minute you will need to login again after 30 minutes.
 		You will be prompted to provide your email and  password to login.
@@ -66,7 +65,7 @@ func addLoginFlags(f *pflag.FlagSet) {
 	if err != nil {
 		panic(err)
 	}
-	f.StringP(dashboard, "d", dashboardUrl, "Url to connect to the dashboard(Default is the staging url)")
+	f.StringP(dashboard, "d", internal.DashboardUrl, "Url to connect to the dashboard(Default is the staging url)")
 	err = viper.BindPFlag(dashboard, f.Lookup(dashboard))
 	if err != nil {
 		panic(err)

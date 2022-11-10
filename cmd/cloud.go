@@ -33,5 +33,7 @@ func NewCloudCommand(client internal.CloudClient) *cobra.Command {
 		NewOrgCommand(client),
 		NewTeamCmd(client),
 		NewEnvironmentCmd(client),
+		NewZonesCmd(client),
+		NewIntCmd(client),
 	)
 }

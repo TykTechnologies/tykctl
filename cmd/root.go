@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -31,7 +32,7 @@ func NewRootCmd(client internal.CloudClient) *cobra.Command {
 		WithDescription("access all tyk service via the cli").
 		WithFlagAdder(true, addGlobalPersistentFlags).
 		WithFlagAdder(false, addRootLocalFlags).
-		WithCommands(NewCloudCommand(client))
+		WithCommands(NewCloudCommand(client), NewCtxCmd())
 }
 
 func Execute() {
@@ -41,6 +42,7 @@ func Execute() {
 	}
 	sdkClient := internal.NewCloudSdkClient(&conf)
 	sdkClient.AddBeforeExecuteFunc(AddTokenAndBaseUrl)
+	sdkClient.AddBeforeRestyExecute(AddTokenAndBaseUrlToResty)
 	rootCmd := NewRootCmd(sdkClient)
 	err := rootCmd.Execute()
 	if err != nil {
@@ -60,7 +62,7 @@ func addGlobalPersistentFlags(f *pflag.FlagSet) {
 }
 
 func init() {
-	file := ".tykctl.yaml"
+	file := defaultConfigFile
 	home, err := os.UserHomeDir()
 	if err != nil {
 		cobra.CheckErr(err)
@@ -78,4 +80,11 @@ func AddTokenAndBaseUrl(client *cloud.APIClient, conf *cloud.Configuration) erro
 	conf.AddDefaultHeader("Authorization", token)
 	return nil
 
+}
+
+func AddTokenAndBaseUrlToResty(client *resty.Client) error {
+	token := viper.GetString("token")
+	client.SetBaseURL(internal.DashboardUrl)
+	client.SetAuthToken(token)
+	return nil
 }

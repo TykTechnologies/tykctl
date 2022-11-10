@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
+	"github.com/go-resty/resty/v2"
 	"net/http"
 )
 
@@ -21,4 +22,5 @@ type CloudClient interface {
 	GetDeploymentById(ctx context.Context, orgId string, teamId string, envId string, id string, localVarOptionals *cloud.DeploymentsApiGetDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error)
 	StartDeployment(ctx context.Context, orgID, teamId, envId string, id string) (cloud.InlineResponse2001, *http.Response, error)
 	GetDeploymentStatus(ctx context.Context, orgId string, teamId string, envId string, deploymentId string) (cloud.Payload, *http.Response, error)
+	GetDeploymentZones(ctx context.Context) (*ZoneResponse, *resty.Response, error)
 }

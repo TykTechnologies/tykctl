@@ -45,4 +45,9 @@ const (
 	linkedControlPlane     = "control-plane"
 	deploy                 = "deploy"
 	status                 = "status"
+	ctxCmd                 = "ctx"
+	defaultConfigFile      = ".tykctl.yaml"
+	zones                  = "zones"
+	initCloud              = "init"
+	controller             = "controller"
 )

@@ -10,6 +10,8 @@ import (
 	reflect "reflect"
 
 	cloud "github.com/TykTechnologies/cloud-sdk/cloud"
+	internal "github.com/TykTechnologies/tykctl/internal"
+	resty "github.com/go-resty/resty/v2"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -114,6 +116,22 @@ func (m *MockCloudClient) GetDeploymentStatus(ctx context.Context, orgId, teamId
 func (mr *MockCloudClientMockRecorder) GetDeploymentStatus(ctx, orgId, teamId, envId, deploymentId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentStatus", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentStatus), ctx, orgId, teamId, envId, deploymentId)
+}
+
+// GetDeploymentZones mocks base method.
+func (m *MockCloudClient) GetDeploymentZones(ctx context.Context) (*internal.ZoneResponse, *resty.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDeploymentZones", ctx)
+	ret0, _ := ret[0].(*internal.ZoneResponse)
+	ret1, _ := ret[1].(*resty.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetDeploymentZones indicates an expected call of GetDeploymentZones.
+func (mr *MockCloudClientMockRecorder) GetDeploymentZones(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentZones", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentZones), ctx)
 }
 
 // GetEnvById mocks base method.

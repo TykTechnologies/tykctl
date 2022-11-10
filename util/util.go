@@ -2,6 +2,7 @@ package util
 
 import (
 	"errors"
+	"fmt"
 	"net/mail"
 	"strings"
 )
@@ -19,4 +20,47 @@ func ValidateEmail(email string) error {
 	}
 	_, err := mail.ParseAddress(email)
 	return err
+}
+
+func Contains[T comparable](elems []T, v T) bool {
+	for _, s := range elems {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
+
+func AbbreviateDirection(direction string) string {
+	switch direction {
+	case "east":
+		return "e"
+	case "north":
+		return "n"
+	case "south":
+		return "s"
+	case "northeast":
+		return "ne"
+	case "northwest":
+		return "nw"
+	case "west":
+		return "w"
+	case "southwest":
+		return "sw"
+	case "southeast":
+		return "se"
+	case "central":
+		return "c"
+	}
+
+	return ""
+}
+
+func GenerateUrlFromZone(region string) (string, error) {
+	regionPart := strings.Split(region, "-")
+	if len(regionPart) != 4 {
+		return "", errors.New("the format of this region is wrong")
+	}
+	url := fmt.Sprintf("https://controller-aws-%s%s%s.cloud-ara.tyk.io:37001", regionPart[1], AbbreviateDirection(regionPart[2]), regionPart[3])
+	return url, nil
 }

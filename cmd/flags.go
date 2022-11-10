@@ -55,5 +55,4 @@ func SaveToConfig(key, value string) error {
 		return fmt.Errorf("Couldn't write config: %s\n", err.Error())
 	}
 	return nil
-
 }

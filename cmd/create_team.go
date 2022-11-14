@@ -1,83 +1,89 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
-	"github.com/TykTechnologies/tykctl/swagger-gen"
+	"context"
+	"errors"
+	"fmt"
+	"github.com/TykTechnologies/cloud-sdk/cloud"
+	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	"net/http"
 )
 
 const createTeamDesc = `
-This command will create a team.
-
+This command will create a team in a given organization.
 You have to pass the name you want to give the team and org in which you want to create the team.
-
 If the org is not provided we will use the one you set in the config file.
-
-To set a default team in the config file run:
-
+To set a default org in the config file run:
 tykctl cloud init
-
 Sample usage for this command:
-
-tyckctl cloud team create --name="first team" --org=<org uuid>
-
+tyckctl cloud teams create --name="first team" --org=<org uuid>
 `
 
-// createTeamCmd represents the createTeam command
-var createTeamCmd = &cobra.Command{
-	Use:     "create",
-	Short:   "create a team",
-	Long:    createTeamDesc,
-	Example: `tyckctl cloud team create --name="first team" --org=<org uuid>`,
-	Run: func(cmd *cobra.Command, args []string) {
-		org := viper.GetString("org")
-		if len(org) == 0 {
-			cmd.Println("organization is required")
-			return
-		}
-		teamName, err := cmd.Flags().GetString("name")
-		if err != nil {
+var (
+	ErrorCreatingTeam = errors.New("error creating team")
+	ErrorOrgRequired  = errors.New("org flag is required")
+	ErrorNameRequired = errors.New("name flag is required")
+)
 
-			cmd.Println(err)
-			return
-		}
-
-		if len(teamName) == 0 {
-			cmd.Println("Team name is required")
-			return
-		}
-		cmd.Println(teamName)
-		team := swagger.Team{
-			Name: teamName,
-		}
-		s.Prefix = "creating teams "
-		s.Start()
-		teams, _, err := client.TeamsApi.CreateTeam(cmd.Context(), team, org)
-		s.Stop()
-		if err != nil {
-
-			cmd.Println(err)
-			return
-		}
-		cmd.Printf("Team %s created successfully", teams.Payload.UID)
-	},
+func NewCreateTeamCmd(client internal.CloudClient) *cobra.Command {
+	return NewCmd(create).WithFlagAdder(false, createTeamFlags).
+		WithLongDescription(createTeamDesc).
+		WithDescription("creates a team in a given organization.").
+		WithExample("tyckctl cloud teams create --name='first team' --org=<org uuid>").
+		WithBindFlagOnPreRun([]BindFlag{{Name: "org", Persistent: false}}).
+		NoArgs(func(ctx context.Context, command cobra.Command) error {
+			org := viper.GetString(org)
+			teamName, err := command.Flags().GetString(name)
+			if err != nil {
+				command.Println(err)
+				return err
+			}
+			team, err := validateFlagsAndCreateTeam(ctx, client, teamName, org)
+			if err != nil {
+				command.Println(err)
+				return err
+			}
+			command.Println(fmt.Sprintf("team %s created successfully", team.UID))
+			return nil
+		})
 }
 
-func init() {
-	teamCmd.AddCommand(createTeamCmd)
-	createTeamCmd.Flags().StringP("name", "n", "", "name to give the new team")
-	createTeamCmd.MarkFlagRequired("name")
-	// Here you will define your flags and configuration settings.
+// validateFlagsAndCreateTeam validate that org and name are not empty and send request to create a team.
+func validateFlagsAndCreateTeam(ctx context.Context, client internal.CloudClient, teamName, orgId string) (*cloud.Team, error) {
+	if util.StringIsEmpty(orgId) {
+		return nil, ErrorOrgRequired
+	}
+	if util.StringIsEmpty(teamName) {
+		return nil, ErrorNameRequired
+	}
+	team := cloud.Team{Name: teamName}
+	createdTeam, err := CreateTeam(ctx, client, team, orgId)
+	if err != nil {
+		return nil, err
+	}
+	return createdTeam, nil
+}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createTeamCmd.PersistentFlags().String("foo", "", "A help for foo")
+// createTeamFlags declares local flags to be added to the team command.
+func createTeamFlags(f *pflag.FlagSet) {
+	f.StringP(name, "n", "", "name for the team you want to create.")
+}
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createTeamCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+// CreateTeam the team send a request to the cloud to create a team.
+func CreateTeam(ctx context.Context, client internal.CloudClient, team cloud.Team, orgId string) (*cloud.Team, error) {
+	teamResponse, resp, err := client.CreateTeam(ctx, team, orgId)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusCreated {
+		return nil, ErrorCreatingTeam
+	}
+	if teamResponse.Status != statusOK {
+		return nil, errors.New(teamResponse.Error_)
+	}
+	return teamResponse.Payload, nil
 }

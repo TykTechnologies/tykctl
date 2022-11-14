@@ -4,126 +4,35 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/TykTechnologies/tykctl/swagger-gen"
-	"log"
-	"os"
-	"strconv"
-
 	"github.com/olekukonko/tablewriter"
+	"os"
 )
 
-func ShowTable(headers []string, data [][]string) {
+// Printable will print the data as a table on the terminal.
+func Printable(headers []string, data [][]string) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(headers)
+	table.AppendBulk(data)
 	table.SetBorder(true)
 	table.SetRowLine(true)
-	//table.SetColumnSeparator("|")
-	//table.SetCenterSeparator("")
 	table.SetAutoMergeCells(false)
-	//table.SetColumnSeparator("")
-	//table.SetRowSeparator("")
 	table.SetHeaderAlignment(3)
 	table.SetAutoFormatHeaders(true)
-	table.AppendBulk(data) // Add Bulk Data
 	table.Render()
 }
 
-func ShowJson(body []byte) {
-	var prettyJSON bytes.Buffer
-
-	err := json.Indent(&prettyJSON, body, "", "  ")
+// PrintJson print an interface as json.
+func PrintJson(body interface{}) error {
+	b, err := json.Marshal(body)
 	if err != nil {
-		log.Fatal("converting to json", err)
-		///log.Debug("Raw output: ", string(body))
-		return
+		return err
 	}
-
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, b, "", "  ")
+	if err != nil {
+		return err
+	}
 	fmt.Println(prettyJSON.String())
-}
+	return nil
 
-func PrintOrganizationTable(orgs []swagger.Organisation) {
-	headers := []string{"Name", "Teams"}
-	data := make([][]string, 0)
-	for _, org := range orgs {
-		orgData := []string{
-			org.Name, strconv.Itoa(len(org.Teams)),
-		}
-		data = append(data, orgData)
-
-	}
-	ShowTable(headers, data)
-}
-
-func PrintDeploymentInTable(deployments []swagger.Deployment) {
-	headers := []string{"ID", "Name", "State", "Control plane name", "Region", "Version", "Environment", "Team"}
-	data := make([][]string, 0)
-	for _, deployment := range deployments {
-		deploymentData := []string{deployment.UID,
-			deployment.Name, deployment.State, "", deployment.ZoneCode, deployment.BundleVersion, deployment.LoadoutName, deployment.TeamName,
-		}
-		data = append(data, deploymentData)
-
-	}
-	ShowTable(headers, data)
-
-}
-
-func PrintTeamInTable(teams []swagger.Team) {
-	headers := []string{"Name", "ID", "Organisation", "Frozen"}
-	data := make([][]string, 0)
-	for _, team := range teams {
-		teamData := []string{
-			team.Name, team.UID, team.Organisation.Name, strconv.FormatBool(team.Frozen),
-		}
-		data = append(data, teamData)
-	}
-
-	ShowTable(headers, data)
-
-}
-
-func PrintLoadOutInTable(loadOut []swagger.Loadout) {
-	headers := []string{"Name", "ID", "Team Name", "Blocked"}
-	data := make([][]string, 0)
-	for _, loadout := range loadOut {
-		loadData := []string{
-			loadout.Name, loadout.UID, loadout.TeamName, strconv.FormatBool(loadout.Blocked),
-		}
-
-		data = append(data, loadData)
-
-	}
-	ShowTable(headers, data)
-
-}
-
-func PrintOrganizationInTable(org []swagger.Organisation) {
-	headers := []string{"Name", "ID", "Zone"}
-	data := make([][]string, 0)
-	for _, organisation := range org {
-		orgData := []string{
-			organisation.Name, organisation.UID, organisation.Zone,
-		}
-
-		data = append(data, orgData)
-
-	}
-
-	ShowTable(headers, data)
-
-}
-
-func tablePrintNoMerge(headers []string, data [][]string) {
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(headers)
-	table.SetBorder(false)
-	table.SetRowLine(false)
-	table.SetCenterSeparator("")
-	table.SetAutoMergeCells(false)
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderAlignment(3)
-
-	table.AppendBulk(data) // Add Bulk Data
-	table.Render()
 }

@@ -1,12 +1,8 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
+	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 const CloudDesc = `
@@ -24,30 +20,18 @@ tykctl cloud init
 
 `
 
-// cloudCmd represents the cloud command
-var cloudCmd = &cobra.Command{
-	Use:     "cloud",
-	Short:   "All the operation for the tyk cloud",
-	Example: "tykctl cloud org list",
-	Long:    CloudDesc,
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			cmd.Help()
-			os.Exit(0)
-		}
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(cloudCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// cloudCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// cloudCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+// NewCloudCommand  creates the cloud service parent command.
+func NewCloudCommand(client internal.CloudClient) *cobra.Command {
+	return NewCmd("cloud").
+		WithDescription("All the operation for the tyk cloud.").
+		WithLongDescription(CloudDesc).
+		WithCommands(
+			NewLoginCommand(),
+			NewDeployment(client),
+			NewOrgCommand(client),
+			NewTeamCmd(client),
+			NewEnvironmentCmd(client),
+			NewZonesCmd(client),
+			NewInitCmd(client),
+		)
 }

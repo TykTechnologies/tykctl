@@ -30,24 +30,24 @@ func NewFetchTeamCmd(client internal.CloudClient) *cobra.Command {
 		WithDescription("fetch teams from a given organization.").
 		WithBindFlagOnPreRun([]BindFlag{{Name: "org", Persistent: false}}).
 		WithExample("tykctl cloud teams fetch --output<json/table>").
-		MaximumArgs(1, func(ctx context.Context, command cobra.Command, args []string) error {
-			outPut, err := command.Flags().GetString(outPut)
+		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
+			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {
-				command.Println(err)
+				cmd.Println(err)
 				return err
 			}
 			org := viper.GetString(org)
 			if len(args) == 0 {
 				err := FetchAndPrintTeams(ctx, client, outPut, org)
 				if err != nil {
-					command.Println(err)
+					cmd.Println(err)
 					return err
 				}
 				return nil
 			}
 			err = FetchAndPrintTeamById(ctx, client, outPut, org, args[0])
 			if err != nil {
-				command.Println(err)
+				cmd.Println(err)
 				return err
 			}
 			return nil

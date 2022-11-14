@@ -31,25 +31,25 @@ func NewFetchEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 		WithDescription("fetch environments from a given team.").
 		WithExample("tykctl cloud environments fetch --team=<teamId> --org=<orgID>").
 		WithBindFlagOnPreRun([]BindFlag{{Name: "org", Persistent: false}, {Name: "team", Persistent: false}}).
-		MaximumArgs(1, func(ctx context.Context, command cobra.Command, args []string) error {
-			outPut, err := command.Flags().GetString(outPut)
+		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
+			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {
-				command.Println(err)
+				cmd.Println(err)
 				return err
 			}
 			org := viper.GetString(org)
 			team := viper.GetString(team)
 			if len(args) == 0 {
-				err := validateFlagsAndPrintEnvs(command.Context(), client, outPut, org, team)
+				err := validateFlagsAndPrintEnvs(cmd.Context(), client, outPut, org, team)
 				if err != nil {
-					command.Println(err)
+					cmd.Println(err)
 					return err
 				}
 				return nil
 			}
-			err = validateFlagsAndPrintEnvById(command.Context(), client, outPut, org, team, args[0])
+			err = validateFlagsAndPrintEnvById(cmd.Context(), client, outPut, org, team, args[0])
 			if err != nil {
-				command.Println(err)
+				cmd.Println(err)
 				return err
 			}
 			return nil

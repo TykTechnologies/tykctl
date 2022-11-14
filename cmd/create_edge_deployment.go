@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
@@ -71,13 +70,13 @@ func validateEdgeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	if err != nil {
 		return nil, err
 	}
-	log.Println(fmt.Sprintf("deployment %s created successfully", deploymentResponse.UID))
+	log.Printf("deployment %s created successfully", deploymentResponse.UID)
 	if deployHome {
 		_, err := validateFlagsAndStartDeployment(ctx, client, deploymentResponse.UID)
 		if err != nil {
 			return nil, err
 		}
-		log.Println(fmt.Sprintf("deploying..."))
+		log.Println("deploying...")
 	}
 	return deploymentResponse, nil
 }

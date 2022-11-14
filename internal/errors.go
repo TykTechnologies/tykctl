@@ -23,5 +23,5 @@ type GenericHttpError struct {
 }
 
 func (g GenericHttpError) Error() string {
-	return fmt.Sprintf("%s", g.Body)
+	return g.Body
 }

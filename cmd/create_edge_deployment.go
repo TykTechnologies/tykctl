@@ -12,12 +12,27 @@ import (
 	"log"
 )
 
+const createEdgeDeploymentDesc = ` 
+This command creates an Edge Gateway.
+NOTE: This does not deploy the deployment it just create it.You can use the deploy flag to deploy after create.You can also use the deploy command to deploy the created deployment.
+You must pass the organization,team,zone and environment you want deploy this deployment.
+
+If you do not pass the org,zone or environment we will use the ones on your config file.You can set the default org,team and environment by running:
+tykctl cloud init
+Sample usage for this command
+
+tykctl cloud deployments create edge --name="test deployment"
+`
+
 var (
 	ErrorControlPlaneRequired = errors.New("error control plane to link the gateway to is required")
 )
 
 func NewCreateEdgeDeployment(client internal.CloudClient) *cobra.Command {
 	return NewCmd(edge).
+		WithLongDescription(createEdgeDeploymentDesc).
+		WithDescription("will create the edge gateway in a given environment").
+		WithExample("tykctl cloud deployments create edge --name='test deployment'").
 		WithBindFlagOnPreRun([]BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithFlagAdder(false, addEdgeDeploymentFlag).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {

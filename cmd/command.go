@@ -81,8 +81,8 @@ func (b *builder) WithCommands(cmds ...*cobra.Command) *cobra.Command {
 	return &b.cmd
 }
 
-// WithBindFlagOnPreRun helps us bind flags before prerun
-// this hel us solve ths cobra issue https://github.com/spf13/viper/issues/233.
+// WithBindFlagOnPreRun helps us bind flags before preRun
+// this help us solve ths cobra issue https://github.com/spf13/viper/issues/233.
 func (b *builder) WithBindFlagOnPreRun(flags []BindFlag) Builder {
 	b.cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
 		for _, flag := range flags {

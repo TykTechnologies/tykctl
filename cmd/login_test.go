@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/stretchr/testify/assert"
 
 	flag "github.com/spf13/pflag"
@@ -42,14 +41,6 @@ func TestAddLoginFlags(t *testing.T) {
 			Shorthand:   "",
 			Value:       "",
 			Default:     "",
-		},
-
-		{
-			Description: "Test dashboard",
-			Name:        "dashboard",
-			Shorthand:   "d",
-			Value:       internal.DashboardUrl,
-			Default:     internal.DashboardUrl,
 		},
 	}
 	testFlags(t, cmd.Flags(), flags)
@@ -196,14 +187,6 @@ func TestNewLoginCommand(t *testing.T) {
 			Shorthand:   "",
 			Value:       "",
 			Default:     "",
-		},
-
-		{
-			Description: "Test dashboard is passed to login command",
-			Name:        "dashboard",
-			Shorthand:   "d",
-			Value:       internal.DashboardUrl,
-			Default:     internal.DashboardUrl,
 		},
 	}
 	testFlags(t, cmd.Flags(), flags)

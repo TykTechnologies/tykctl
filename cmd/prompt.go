@@ -68,3 +68,27 @@ func envPrompt(envs []cloud.Loadout) (*cloud.Loadout, error) {
 	}
 	return &envs[selectedIndex], nil
 }
+
+func emailPrompt() (string, error) {
+	email := ""
+	prompt := &survey.Input{
+		Message: "Enter dashboard user email",
+	}
+	err := survey.AskOne(prompt, &email, survey.WithValidator(survey.Required))
+	if err != nil {
+		return "", err
+	}
+	return email, nil
+}
+
+func passwordPrompt() (string, error) {
+	password := ""
+	prompt := &survey.Password{
+		Message: "Enter dashboard user password",
+	}
+	err := survey.AskOne(prompt, &password, survey.WithValidator(survey.Required))
+	if err != nil {
+		return "", err
+	}
+	return password, nil
+}

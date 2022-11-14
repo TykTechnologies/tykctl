@@ -28,6 +28,7 @@ const (
 	create                 = "create"
 	name                   = "name"
 	org                    = "org"
+	orgs                   = "orgs"
 	environments           = "environments"
 	home                   = "home"
 	edge                   = "edge"
@@ -50,4 +51,6 @@ const (
 	zones                  = "zones"
 	initCloud              = "init"
 	controller             = "controller"
+	tykctl                 = "tykctl"
+	interactive            = "interactive"
 )

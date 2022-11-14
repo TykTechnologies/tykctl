@@ -16,6 +16,7 @@ func NewCtxCmd() *cobra.Command {
 	return NewCmd(ctxCmd).
 		WithDescription("set a value in the provided config file.").
 		WithLongDescription(ctxLongDescription).
+		WithExample("tykctl ctx org bar").
 		ExactArgs(2, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			err := SaveToConfig(args[0], args[1])
 			if err != nil {

@@ -10,9 +10,20 @@ import (
 	"time"
 )
 
+const deploymentStatusDesc = `
+This command will output the status of a deployment given its uuid.
+You will receive an error if the deployment does not exist.
+
+Sample usage for this command:
+tykctl cloud deployments status b5c503e8-c632-4ce0-9629-b0ee3e3c2c62 
+`
+
 func NewDeploymentStatusCmd(client internal.CloudClient) *cobra.Command {
 	return NewCmd(status).
 		WithBindFlagOnPreRun([]BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithExample("tykctl cloud deployments status <deployment uuid>").
+		WithLongDescription(deploymentStatusDesc).
+		WithDescription("output the status of a deployment given its uuid.").
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			checkStatus, err := validateFlagsAndCheckStatus(cmd.Context(), client, args[0])
 			if err != nil {

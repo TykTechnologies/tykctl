@@ -10,11 +10,11 @@ import (
 	"net/http"
 )
 
-const orgListDesc = `
-This command will list all your organizations.
+const fetchOrgDesc = `
+This command will fetch your organizations.
 Currently you can only be part of one organization hence we will return a single organization.
 Sample command usage:
-tykctl cloud org fetch --output<json/table>
+tykctl cloud orgs fetch --output<json/table>
 You can get the output either in table or json format.The default is table format.
 user the --output flag to change the format.
 `
@@ -27,26 +27,27 @@ var (
 
 func NewOrgListCommand(client internal.CloudClient) *cobra.Command {
 	return NewCmd(fetch).
-		WithExample("tykctl cloud org fetch --output<json/table>").
+		WithExample("tykctl cloud orgs fetch --output<json/table>").
 		WithFlagAdder(false, addOutPutFlags).
-		WithLongDescription(orgListDesc).
-		MaximumArgs(1, func(ctx context.Context, command cobra.Command, args []string) error {
-			outPut, err := command.Flags().GetString(outPut)
+		WithLongDescription(fetchOrgDesc).
+		WithDescription("fetch the organization you belong to.").
+		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
+			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {
-				command.Println(err)
+				cmd.Println(err)
 				return err
 			}
 			if len(args) == 1 {
-				err := FetchAndPrintOrgById(command.Context(), client, outPut, args[0])
+				err := FetchAndPrintOrgById(cmd.Context(), client, outPut, args[0])
 				if err != nil {
-					command.Println(err)
+					cmd.Println(err)
 					return err
 				}
 				return nil
 			}
 			err = FetchAndPrintOrganizations(ctx, client, outPut)
 			if err != nil {
-				command.Println(err)
+				cmd.Println(err)
 				return err
 			}
 			return nil

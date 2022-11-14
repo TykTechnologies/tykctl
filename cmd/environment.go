@@ -10,5 +10,8 @@ func NewEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 		WithFlagAdder(true, addOrgFlag).
 		WithBindFlagOnPreRun([]BindFlag{{Name: "org", Persistent: true}, {Name: "team", Persistent: true}}).
 		WithFlagAdder(true, addTeamFlag).
-		WithCommands(NewCreateEnvironmentCmd(client), NewFetchEnvironmentCmd(client))
+		WithCommands(
+			NewCreateEnvironmentCmd(client),
+			NewFetchEnvironmentCmd(client),
+		)
 }

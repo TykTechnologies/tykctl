@@ -1,6 +1,3 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
@@ -21,22 +18,20 @@ Tykctl is a cli that can be used to interact with all tyk components (tyk cloud,
 
 The cli is grouped into services.
 For example to use the tyk cloud services you should prefix all your subcommands with:
-tykcli cloud <subcommand here>
+tykctl cloud <subcommand here>
 
 Currently we only support tyk cloud.
-
 `
 
 func NewRootCmd(client internal.CloudClient) *cobra.Command {
-	return NewCmd("tykctl").WithLongDescription(rootDesc).
-		WithDescription("access all tyk service via the cli").
+	return NewCmd(tykctl).WithLongDescription(rootDesc).
+		WithDescription("access all tyk service via the tykctl.").
 		WithFlagAdder(true, addGlobalPersistentFlags).
 		WithFlagAdder(false, addRootLocalFlags).
 		WithCommands(NewCloudCommand(client), NewCtxCmd())
 }
 
 func Execute() {
-
 	conf := cloud.Configuration{
 		DefaultHeader: map[string]string{},
 	}
@@ -45,9 +40,6 @@ func Execute() {
 	sdkClient.AddBeforeRestyExecute(AddTokenAndBaseUrlToResty)
 	rootCmd := NewRootCmd(sdkClient)
 	err := rootCmd.Execute()
-	if err != nil {
-		return
-	}
 	if err != nil {
 		os.Exit(1)
 	}
@@ -74,16 +66,17 @@ func init() {
 
 // AddTokenAndBaseUrl will add a user token from the configuration file to each request header.
 func AddTokenAndBaseUrl(client *cloud.APIClient, conf *cloud.Configuration) error {
-	baseUrl := viper.GetString("controller")
+	baseUrl := viper.GetString(controller)
 	client.ChangeBasePath(baseUrl)
-	token := fmt.Sprintf("Bearer %s", viper.GetString("token"))
+	token := fmt.Sprintf("Bearer %s", viper.GetString(token))
 	conf.AddDefaultHeader("Authorization", token)
 	return nil
 
 }
 
+// AddTokenAndBaseUrlToResty will add token and BaseUrl to the resty client.
 func AddTokenAndBaseUrlToResty(client *resty.Client) error {
-	token := viper.GetString("token")
+	token := viper.GetString(token)
 	client.SetBaseURL(internal.DashboardUrl)
 	client.SetAuthToken(token)
 	return nil

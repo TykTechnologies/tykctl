@@ -10,6 +10,16 @@ import (
 	"net/http"
 )
 
+const fetchDeploymentDesc = `
+This command will fetch all the deployment belonging to a environment
+You will need to pass the org,team and env whose deployment you want to get.
+If you don't pass the org,team or env we will use the one set in your config file.
+You can either get the data as json or in a table.
+Use the --output<table,json> flag to change the format default is table.
+Sample usage: 
+tykctl cloud deployments fetch --org=<organization id> --output=<json/table>
+`
+
 var (
 	ErrorFetchingDeployments      = errors.New("error fetching deployments")
 	ErrorFetchingDeploymentStatus = errors.New("error fetching deployment status")
@@ -18,6 +28,9 @@ var (
 func NewFetchDeploymentCmd(client internal.CloudClient) *cobra.Command {
 	return NewCmd(fetch).
 		WithFlagAdder(false, addOutPutFlags).
+		WithLongDescription(fetchDeploymentDesc).
+		WithDescription("fetch deployment from an environment.").
+		WithExample("tykctl cloud deployments fetch").
 		WithBindFlagOnPreRun([]BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			if len(args) == 0 {

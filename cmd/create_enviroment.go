@@ -13,12 +13,23 @@ import (
 	"net/http"
 )
 
+const createEnvDesc = `
+This command create an environment in a team.
+You must pass the name of the environment.
+You must also set the org and team you want to create this environment in.
+If you don't pass the org and team we will use the one set in the config file.
+Sample usage:
+tyk cloud environments create --name="staging"
+`
+
 var (
 	ErrorCreatingEnv = errors.New("error creating environment")
 )
 
 func NewCreateEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 	return NewCmd(create).
+		WithLongDescription(createEnvDesc).
+		WithDescription("creates an environment in a given team.").
 		WithFlagAdder(false, createEnvironment).
 		WithBindFlagOnPreRun([]BindFlag{{Name: "org", Persistent: false}, {Name: "team", Persistent: false}}).
 		NoArgs(func(ctx context.Context, command cobra.Command) error {

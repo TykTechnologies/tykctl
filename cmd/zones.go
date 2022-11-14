@@ -11,6 +11,8 @@ import (
 
 func NewZonesCmd(client internal.CloudClient) *cobra.Command {
 	return NewCmd(zones).
+		WithDescription("fetch all the supported zones what deployment they supported.").
+		WithExample("tykctl cloud zones").
 		WithFlagAdder(false, addOutPutFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			err := FetchZonesAndPrint(ctx, client, cmd.Flags())

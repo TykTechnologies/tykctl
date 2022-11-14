@@ -27,20 +27,21 @@ const (
 )
 
 var (
-	ErrTokenNotFound          = errors.New("no token found")
-	ErrLoginFailed            = errors.New("login failed")
-	ErrSignatureNotFound      = errors.New("signature not found")
-	ErrDashboardUrlIsRequired = errors.New("dashboard url is required")
-	ErrPasswordIsRequired     = errors.New("password is required")
+	ErrTokenNotFound      = errors.New("no token found")
+	ErrLoginFailed        = errors.New("login failed")
+	ErrSignatureNotFound  = errors.New("signature not found")
+	ErrPasswordIsRequired = errors.New("password is required")
 )
 
 // NewLoginCommand creates a new login command.
 func NewLoginCommand() *cobra.Command {
 	return NewCmd(login).
 		WithLongDescription(loginDesc).
+		WithDescription("login to tyk cloud using password and email.").
+		WithExample("tykctl cloud login --password=<your cloud password here> --email=<your email here>").
 		WithFlagAdder(false, addLoginFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := validateAndLogin(cmd)
+			err := validateAndLogin(cmd.Flags())
 			if err != nil {
 				cmd.Println(err)
 				return err
@@ -56,17 +57,13 @@ func addLoginFlags(f *pflag.FlagSet) {
 	f.StringP(email, "e", "", "email address you used to login into the dashboard")
 	f.StringP(password, "p", "", "password you used to login into the dashboard")
 	f.String(baUser, "", "Basic auth user.This should only be used for staging server")
+	f.BoolP(interactive, "i", false, "login using the interactive mode.")
 	err := viper.BindPFlag(baUser, f.Lookup(baUser))
 	if err != nil {
 		panic(err)
 	}
 	f.String(baPass, "", "Basic auth password")
 	err = viper.BindPFlag(baPass, f.Lookup(baPass))
-	if err != nil {
-		panic(err)
-	}
-	f.StringP(dashboard, "d", internal.DashboardUrl, "Url to connect to the dashboard(Default is the staging url)")
-	err = viper.BindPFlag(dashboard, f.Lookup(dashboard))
 	if err != nil {
 		panic(err)
 	}
@@ -136,33 +133,69 @@ func extractToken(resp *http.Response) (string, error) {
 }
 
 // validateAndLogin validate cli flags and pass them to login.
-func validateAndLogin(cmd cobra.Command) error {
-	dashboard := viper.GetString(dashboard)
-	if util.StringIsEmpty(dashboard) {
-		return ErrDashboardUrlIsRequired
-	}
-	email, err := cmd.Flags().GetString(email)
+func validateAndLogin(f *pflag.FlagSet) error {
+	isInteractive, err := f.GetBool(interactive)
 	if err != nil {
 		return err
 	}
-	err = util.ValidateEmail(email)
+	var loginBody *LoginBody
+	if isInteractive {
+		loginBody, err = loginInteractive()
+		if err != nil {
+			return err
+		}
+	} else {
+		loginBody, err = loginWithFlag(f)
+		if err != nil {
+			return err
+		}
+	}
+	err = util.ValidateEmail(loginBody.Email)
 	if err != nil {
 		return err
 	}
-	password, err := cmd.Flags().GetString(password)
-	if err != nil {
-		return err
-	}
-	if util.StringIsEmpty(password) {
+	if util.StringIsEmpty(loginBody.Password) {
 		return ErrPasswordIsRequired
 	}
 	baUser := viper.GetString(baUser)
 	baPass := viper.GetString(baPass)
-	err = getAndSaveToken(dashboard, email, password, baUser, baPass)
+	err = getAndSaveToken(internal.DashboardUrl, loginBody.Email, loginBody.Password, baUser, baPass)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+// loginWithFlag will extract email and password from the flags.
+func loginWithFlag(f *pflag.FlagSet) (*LoginBody, error) {
+	email, err := f.GetString(email)
+	if err != nil {
+		return nil, err
+	}
+	password, err := f.GetString(password)
+	if err != nil {
+		return nil, err
+	}
+	return &LoginBody{
+		Email:    email,
+		Password: password,
+	}, nil
+}
+
+// loginInteractive will extract ask user to enter login details interactively.
+func loginInteractive() (*LoginBody, error) {
+	email, err := emailPrompt()
+	if err != nil {
+		return nil, err
+	}
+	password, err := passwordPrompt()
+	if err != nil {
+		return nil, err
+	}
+	return &LoginBody{
+		Email:    email,
+		Password: password,
+	}, nil
 }
 
 // getAndSaveToken token to configuration file.

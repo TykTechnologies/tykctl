@@ -19,5 +19,4 @@ func TestNewRootCmd(t *testing.T) {
 	m := mock.NewMockCloudClient(ctrl)
 	cmd := NewRootCmd(m)
 	testFlags(t, cmd.Flags(), flags)
-
 }

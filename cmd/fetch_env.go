@@ -11,6 +11,14 @@ import (
 	"net/http"
 )
 
+const fetchEnvDesc = `
+This command will fetch all the environment in a team.
+You must pass the --org and --team.If it they are not passed we will use the default org and team set in your config file.
+We support json and table as the output format.To set the output format use the --output<json/table> flag.
+Sample usage of this command:
+tykctl cloud environments fetch --team=<teamId> --org=<orgID> --output=<json/table>
+`
+
 var (
 	ErrorFetchingEnvironment = errors.New("error fetching environments")
 	ErrorEnvRequired         = errors.New("error env is required")
@@ -19,6 +27,9 @@ var (
 func NewFetchEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 	return NewCmd(fetch).
 		WithFlagAdder(false, addOutPutFlags).
+		WithLongDescription(fetchEnvDesc).
+		WithDescription("fetch environments from a given team.").
+		WithExample("tykctl cloud environments fetch --team=<teamId> --org=<orgID>").
 		WithBindFlagOnPreRun([]BindFlag{{Name: "org", Persistent: false}, {Name: "team", Persistent: false}}).
 		MaximumArgs(1, func(ctx context.Context, command cobra.Command, args []string) error {
 			outPut, err := command.Flags().GetString(outPut)

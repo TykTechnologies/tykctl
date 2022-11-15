@@ -9,6 +9,6 @@ lint:
 
 
 generate-docs:
-	cd docs && go run docs.go
+	cd docs && rm docs.md && go run docs.go
 
 

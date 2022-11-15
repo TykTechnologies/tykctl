@@ -50,7 +50,7 @@ A working Go environment- Some libraries use generics hence you will need Go ver
 
 ### Docs
 
-**Will enter link to documentation here**
+Check the full tykctl [documentation here](https://github.com/TykTechnologies/tykctl/blob/main/docs/tykctl.md).
 
 ### Roadmap
 

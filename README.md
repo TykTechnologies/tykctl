@@ -4,6 +4,13 @@ Tykctl is a command line tool for interacting with all tyk services.At the momen
 
 1. Tyk cloud
 
+## Overview
+Some of the features the tykctl provides include:
+1. Ability to login to tyk cloud.
+2. Fetching all your organizations from tyk cloud.
+3. Creating teams in you tyk cloud organization.
+4. Create environments in your team.
+5. Deploy control plane and edge gateways.
 ## Install
 
  #### With Homebrew (recommended for macOS)

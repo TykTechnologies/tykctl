@@ -1,18 +1,25 @@
-name: Generate docs
+name: Generate documentation
+
 on:
   push:
     branches:
-      - main
+      - "main"
 jobs:
-  generate-angular-client:
-    runs-on: ubuntu-latest
-    name: Example
+  test:
+    runs-on: ubuntu-20.04
+    env:
+      GOPRIVATE: github.com/TykTechnologies/cloud-sdk
+      GH_ACCESS_TOKEN: ${{ secrets.ORG_GH_TOKEN }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Generate documentation
-        run: |
-          make generate-docs
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v3
+        with:
+          stable: 'false'
+          go-version: '1.19'
+
+      - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+      - name: Testing
+        run: make generate-docs
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: save generated documentation

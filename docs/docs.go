@@ -16,7 +16,12 @@ func main() {
 	}
 	defer f.Close()
 	out := new(bytes.Buffer)
-	s := []*cobra.Command{cloudcmd.NewLoginCommand()}
+	s := []*cobra.Command{cloudcmd.NewLoginCommand(),
+		cloudcmd.NewInitCmd(nil),
+		cloudcmd.NewOrgListCommand(nil),
+		cloudcmd.NewCreateTeamCmd(nil),
+		cloudcmd.NewFetchTeamCmd(nil),
+	}
 	for _, cmd := range s {
 		err := doc.GenMarkdown(cmd, out)
 		if err != nil {

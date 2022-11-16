@@ -49,8 +49,6 @@ A working Go environment- Some libraries use generics hence you will need Go ver
   ```
 
 ### Docs
-*The Documentation is still Work in progress*
-
 Check the full tykctl [documentation here](./docs/tykctl_cloud.md).
 
 ### Roadmap

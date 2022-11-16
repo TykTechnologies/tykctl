@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"github.com/TykTechnologies/tykctl/cloudcmd"
+	"github.com/TykTechnologies/tykctl/sharedCmd"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 	"log"
@@ -10,6 +11,13 @@ import (
 )
 
 func main() {
+	rootCmd := sharedCmd.NewRootCmd()
+	rootCmd.AddCommand(cloudcmd.NewCloudCommand(nil))
+	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
+	err := doc.GenMarkdownTree(rootCmd, "./")
+	if err != nil {
+		log.Fatal(err)
+	}
 	f, err := os.OpenFile("docs.md", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic(err)

@@ -1,5 +1,4 @@
 name: Generate documentation
-
 on:
   push:
     branches:
@@ -18,7 +17,7 @@ jobs:
           go-version: '1.19'
 
       - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
-      - name: Testing
+      - name: Generate  documentation
         run: make generate-docs
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:

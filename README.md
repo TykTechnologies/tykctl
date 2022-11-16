@@ -49,8 +49,6 @@ A working Go environment- Some libraries use generics hence you will need Go ver
   ```
 
 ### Docs
-*The Documentation is still Work in progress*
-
 Check the full tykctl [documentation here](./docs/tykctl_cloud.md).
 
 ### Roadmap
@@ -74,4 +72,5 @@ Check the full tykctl [documentation here](./docs/tykctl_cloud.md).
 7. internal - contains mocks,cloud http clients and all the common functions that will be used within the cli.The file
    labeled `command.go` contains a builder to build the cmd.
    
- 
+### License
+Tykctl is released under the MPL v2.0; please see [LICENSE.md](./LICENSE) for a full version of the license.

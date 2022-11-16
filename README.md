@@ -72,4 +72,5 @@ Check the full tykctl [documentation here](./docs/tykctl_cloud.md).
 7. internal - contains mocks,cloud http clients and all the common functions that will be used within the cli.The file
    labeled `command.go` contains a builder to build the cmd.
    
- 
+### Open Source License
+Tykctl is released under the MPL v2.0; please see [LICENSE.md](./LICENSE) for a full version of the license.

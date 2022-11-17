@@ -49,7 +49,7 @@ A working Go environment- Some libraries use generics hence you will need Go ver
   ```
 
 ### Docs
-Check the full tykctl [documentation here](./docs/tykctl_cloud.md).
+Check the full tykctl [documentation here](./docs/tykctl.md).
 
 ### Roadmap
 

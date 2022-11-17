@@ -9,8 +9,10 @@ import (
 
 var (
 	ctxLongDescription = `Set config flags using arguments, eg.
-		"tykctl ctx org bar"
-	will set the variable "org" to "bar"`
+		
+     "tykctl ctx org bar"
+	
+     will set the variable "org" to "bar"`
 )
 
 func NewCtxCmd() *cobra.Command {

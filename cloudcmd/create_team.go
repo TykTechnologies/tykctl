@@ -18,8 +18,11 @@ This command will create a team in a given organization.
 You have to pass the name you want to give the team and org in which you want to create the team.
 If the org is not provided we will use the one you set in the config file.
 To set a default org in the config file run:
+
 tykctl cloud init
+
 Sample usage for this command:
+
 tyckctl cloud teams create --name="first team" --org=<org uuid>
 `
 
@@ -32,7 +35,7 @@ var (
 func NewCreateTeamCmd(client internal.CloudClient) *cobra.Command {
 	return internal.NewCmd(create).WithFlagAdder(false, createTeamFlags).
 		WithLongDescription(createTeamDesc).
-		WithDescription("creates a team in a given organization.").
+		WithDescription("create a team in a given organization.").
 		WithExample("tyckctl cloud teams create --name='first team' --org=<org uuid>").
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: false}}).
 		NoArgs(func(ctx context.Context, command cobra.Command) error {

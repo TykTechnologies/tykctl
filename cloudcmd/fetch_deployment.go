@@ -11,12 +11,17 @@ import (
 )
 
 const fetchDeploymentDesc = `
-This command will fetch all the deployment belonging to a environment
-You will need to pass the org,team and env whose deployment you want to get.
+This command will fetch all the deployment belonging to a environment.
+
+Note: You must pass an --env, --team  and --org flag command.
+
 If you don't pass the org,team or env we will use the one set in your config file.
+
 You can either get the data as json or in a table.
 Use the --output<table,json> flag to change the format default is table.
+
 Sample usage: 
+
 tykctl cloud deployments fetch --org=<organization id> --output=<json/table>
 `
 

@@ -26,7 +26,7 @@ func NewCloudCommand(client internal.CloudClient) *cobra.Command {
 		WithDescription("All the operation for the tyk cloud.").
 		WithLongDescription(CloudDesc).
 		WithCommands(
-			NewLoginCommand(),
+			NewLoginCommand(client),
 			NewDeployment(client),
 			NewOrgCommand(client),
 			NewTeamCmd(client),

@@ -16,10 +16,12 @@ var (
 	ErrorTeamRequired = errors.New("team flag is required")
 	fetchTeamDesc     = `
 		This command will fetch and list all the teams in an organization.
+
 		You must pass the --org flag.If it is not passed we will use the default one set in the config file.
 		The output can be either json or table. Default is table.
 		To change the format use --output=<json/table> flag.
-		Sample usage:
+		
+         Sample usage:
 			tykctl teams fetch --org=<orgID> --output=<json/table>`
 )
 

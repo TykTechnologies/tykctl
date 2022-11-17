@@ -10,11 +10,17 @@ import (
 const initDesc = `
 This command will initialize the cli and set default in the config file.
 Before using this command you will need to login with:
-tykctl cloud login 
+
+tykctl cloud login
+
 Use this command to:
+
 1. Set the default organization.
+
 2. Set the default team
+
 3. Set the default environment.
+
 4. Set your zone and home region.
 This command should ideally be run after the login command.
 `

@@ -18,7 +18,9 @@ This command create an environment in a team.
 You must pass the name of the environment.
 You must also set the org and team you want to create this environment in.
 If you don't pass the org and team we will use the one set in the config file.
+
 Sample usage:
+
 tyk cloud environments create --name="staging"
 `
 

@@ -12,9 +12,13 @@ import (
 
 const fetchOrgDesc = `
 This command will fetch your organizations.
+
 Currently you can only be part of one organization hence we will return a single organization.
+
 Sample command usage:
+
 tykctl cloud orgs fetch --output<json/table>
+
 You can get the output either in table or json format.The default is table format.
 user the --output flag to change the format.
 `
@@ -30,7 +34,7 @@ func NewOrgListCommand(client internal.CloudClient) *cobra.Command {
 		WithExample("tykctl cloud orgs fetch --output<json/table>").
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchOrgDesc).
-		WithDescription("fetch the organization you belong to.").
+		WithDescription("fetch the organizations you belong to.").
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {

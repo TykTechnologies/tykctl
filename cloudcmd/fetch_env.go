@@ -13,9 +13,13 @@ import (
 
 const fetchEnvDesc = `
 This command will fetch all the environment in a team.
-You must pass the --org and --team.If it they are not passed we will use the default org and team set in your config file.
+
+You must pass the --org and --team.If they are not passed we will use the default org and team set in your config file.
+
 We support json and table as the output format.To set the output format use the --output<json/table> flag.
+
 Sample usage of this command:
+
 tykctl cloud environments fetch --team=<teamId> --org=<orgID> --output=<json/table>
 `
 

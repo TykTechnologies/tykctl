@@ -11,14 +11,20 @@ import (
 )
 
 const deployDesc = `
-This command will deploy a Home or edge gateway given its id.
+This command will deploy a Home or edge gateway given its uuid.
+
 Note: You need to first create the Home or edge gateway before you can deploy it.
-Use tykctl cloud deployments create to create the deployment.
+
+Use tykctl cloud deployments create to create the deployment before you can deploy it.
+
 The org,team,environment where the deployment was created has to be provided.
+
 If org,team and environment are not set we will use the default set on your config file. 
 You must also provide the uuid of the deployment you want to deploy.
 to get the uuid run : tykctl cloud deployments fetch
+
 Sample usage of this command:
+
 tykctl cloud deployments deploy --org=<org here> --team=<team here> --env=<environment here> --uid=<deployment id>
 `
 
@@ -26,7 +32,7 @@ func NewStartDeploymentCmd(client internal.CloudClient) *cobra.Command {
 	return internal.NewCmd(deploy).
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithLongDescription(deployDesc).
-		WithDescription("deploy a home or edge gateway deployment given its id").
+		WithDescription("deploy a home or edge gateway deployment given its uuid").
 		WithExample("tykctl cloud deployments deploy --org=<org here> --team=<team here> --env=<environment here> --uid=<deployment id>").
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			deployment, err := validateFlagsAndStartDeployment(ctx, client, args[0])

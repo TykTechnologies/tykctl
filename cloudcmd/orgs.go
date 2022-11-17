@@ -8,7 +8,10 @@ import (
 const orgDesc = `
 This is the parent command for all action that can be done to an organization.
 The list of subcommand supported by this command are:
+
 1. tykctl cloud orgs fetch - list all you organizations.
+
+2. tykctl cloud orgs fetch [orgId] - list a single organizations.
 `
 
 func NewOrgCommand(client internal.CloudClient) *cobra.Command {

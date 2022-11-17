@@ -24,7 +24,7 @@ func main() {
 	}
 	defer f.Close()
 	out := new(bytes.Buffer)
-	s := []*cobra.Command{cloudcmd.NewLoginCommand(),
+	s := []*cobra.Command{cloudcmd.NewLoginCommand(nil),
 		cloudcmd.NewInitCmd(nil),
 		cloudcmd.NewOrgListCommand(nil),
 		cloudcmd.NewCreateTeamCmd(nil),

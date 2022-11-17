@@ -12,6 +12,14 @@ import (
 	"time"
 )
 
+const createDeploymentDesc = `This is the parent command for 
+            creating either an edge or a home gateway.You must provide exactly one arg which can be either home or edge.
+
+Note: You will need to use the deploy flag if you want the deployment to be deployed after create.
+     
+     Example: tykctl deployments create home
+`
+
 var (
 	ErrorCreatingDeployment = errors.New("error creating deployment")
 	ErrorStartingDeployment = errors.New("error starting deployment")
@@ -20,6 +28,8 @@ var (
 
 func NewCreateDeploymentCmd(client internal.CloudClient) *cobra.Command {
 	return internal.NewCmd(create).
+		WithLongDescription(createDeploymentDesc).
+		WithDescription("This is the parent command for creating the edge or home deployment.").
 		WithFlagAdder(true, addDeploymentFlag).
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithCommands(
@@ -30,7 +40,7 @@ func NewCreateDeploymentCmd(client internal.CloudClient) *cobra.Command {
 
 func addDeploymentFlag(f *pflag.FlagSet) {
 	f.StringP(name, "n", "", "name for the deployment you want to create.")
-	f.String(zone, "", "the region you want to deploy into")
+	f.String(zone, "", "the region you want to deploy into e.g aws-eu-west-2")
 	f.String(domain, "", "custom domain for your deployment")
 	f.Bool(deploy, false, "deploy the deployment after create")
 }

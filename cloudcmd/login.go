@@ -17,12 +17,17 @@ import (
 const (
 	loginDesc = `
         This command will login into your cloud account and set the token in your config file.
+       
         Note: The token will only last for 30 minute you will need to login again after 30 minutes.
-		You will be prompted to provide your email and  password to login.
+		
+        You will be prompted to provide your email and  password to login if you use the interactive mode.
 		When using the cloud service you should always run this command first as each command will require a token.
-		For the staging server you will also need to provide nginx basic auth.
-		Sample usage:
-		tykctl cloud login --ba-pass=<use this only is staging> --ba-pass=<use this in staging>
+		
+        For the staging server you will also need to provide nginx basic auth.
+		
+        Sample usage:
+		
+         tykctl cloud login --ba-pass=<use this only is staging> --ba-pass=<use this in staging>
 `
 )
 
@@ -34,7 +39,7 @@ var (
 )
 
 // NewLoginCommand creates a new login command.
-func NewLoginCommand() *cobra.Command {
+func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 	return internal.NewCmd(login).
 		WithLongDescription(loginDesc).
 		WithDescription("login to tyk cloud using password and email.").
@@ -47,6 +52,14 @@ func NewLoginCommand() *cobra.Command {
 				return err
 			}
 			cmd.Println("Authentication successful")
+			controller := viper.GetString(controller)
+			if util.StringIsEmpty(controller) {
+				err = SetupPrompt(cmd.Context(), client)
+				if err != nil {
+					cmd.Println(err)
+					return err
+				}
+			}
 			return nil
 		})
 

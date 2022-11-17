@@ -8,12 +8,12 @@ import (
 
 func TestNewRootCmd(t *testing.T) {
 	flags := []internal.Flag{{
-		Description: "Test toggle flag",
-		Name:        "toggle",
-		Shorthand:   "t",
-		Default:     "false",
-		Value:       "false",
+		Description: "Test config flag",
+		Name:        "config",
+		Shorthand:   "",
+		Default:     "",
+		Value:       "",
 	}}
 	cmd := NewRootCmd()
-	testutil.TestFlags(t, cmd.Flags(), flags)
+	testutil.TestFlags(t, cmd.PersistentFlags(), flags)
 }

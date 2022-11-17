@@ -37,7 +37,6 @@ func NewRootCmd() *cobra.Command {
 		WithLongDescription(rootDesc).
 		WithDescription("Tykctl is a cli that can be used to interact with tyk components (tyk cloud,tyk gateway and tyk dashboard.").
 		WithFlagAdder(true, addGlobalPersistentFlags).
-		WithFlagAdder(false, addRootLocalFlags).
 		WithCommands()
 }
 
@@ -56,9 +55,6 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
-}
-
-func addRootLocalFlags(f *pflag.FlagSet) {
 }
 
 func addGlobalPersistentFlags(f *pflag.FlagSet) {

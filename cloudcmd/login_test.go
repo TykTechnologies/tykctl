@@ -159,7 +159,7 @@ func TestDashboardLoginRequest(t *testing.T) {
 }
 
 func TestNewLoginCommand(t *testing.T) {
-	cmd := NewLoginCommand()
+	cmd := NewLoginCommand(nil)
 	flags := []internal.Flag{{
 		Description: "Test email address is passed to login command",
 		Name:        "email",

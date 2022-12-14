@@ -28,6 +28,7 @@ The supported commands are :
 
 func NewDeployment(client internal.CloudClient) *cobra.Command {
 	return internal.NewCmd(deployments).
+		WithAliases([]string{dep}).
 		WithLongDescription(deploymentDesc).
 		WithDescription("parent command for all action you can perform in a deployment.").
 		WithFlagAdder(true, addOrgFlag).

@@ -18,6 +18,7 @@ type Builder interface {
 	ExactArgs(argCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command
 	WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Builder
 	WithBindFlagOnPreRun(flags []BindFlag) Builder
+	WithAliases(aliases []string) Builder
 }
 
 type builder struct {
@@ -128,4 +129,9 @@ func (b *builder) ExactArgs(argCount int, action func(context.Context, cobra.Com
 		return action(b.cmd.Context(), b.cmd, args)
 	}
 	return &b.cmd
+}
+
+func (b *builder) WithAliases(aliases []string) Builder {
+	b.cmd.Aliases = aliases
+	return b
 }

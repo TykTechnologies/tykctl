@@ -13,6 +13,7 @@ const environmentDesc = `This is the parent command to all environment operation
 
 func NewEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 	return internal.NewCmd(environments).
+		WithAliases([]string{"env"}).
 		WithFlagAdder(true, addOrgFlag).
 		WithLongDescription(environmentDesc).
 		WithDescription("parent command to all environment operations").

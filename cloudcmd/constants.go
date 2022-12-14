@@ -34,6 +34,7 @@ const (
 	edge                   = "edge"
 	deployment             = "deployment"
 	deployments            = "deployments"
+	dep                    = "dep"
 	env                    = "env"
 	zone                   = "zone"
 	domain                 = "domain"

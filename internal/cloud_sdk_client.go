@@ -78,6 +78,15 @@ func (c *cloudSdkClient) GetTeams(ctx context.Context, oid string) (cloud.Inline
 	return c.Client.TeamsApi.GetTeams(ctx, oid)
 }
 
+// UpdateTeam updates the name on the team that is already created.
+func (c *cloudSdkClient) UpdateTeam(ctx context.Context, team cloud.Team, orgId string, teamId string) (cloud.InlineResponse2011, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2011{}, nil, err
+	}
+	return c.Client.TeamsApi.UpdateTeam(ctx, team, orgId, teamId)
+}
+
 // CreateEnv create an environment in a given team.
 func (c *cloudSdkClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgId string, teamId string) (cloud.InlineResponse2012, *http.Response, error) {
 	err := c.runBeforeExecute()
@@ -179,6 +188,7 @@ func (c *cloudSdkClient) runBeforeExecute() error {
 	}
 	return nil
 }
+
 func (c *cloudSdkClient) runBeforeRestyExecute() error {
 	c.dashboardClient.OnBeforeRequest(func(client *resty.Client, req *resty.Request) error {
 		for _, f := range c.beforeRestyExecute {

@@ -30,6 +30,7 @@ const (
 	org                    = "org"
 	orgs                   = "orgs"
 	environments           = "environments"
+	update                 = "update"
 	home                   = "home"
 	edge                   = "edge"
 	deployment             = "deployment"

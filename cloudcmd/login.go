@@ -93,8 +93,7 @@ func initUserProfile(ctx context.Context, client internal.CloudClient) (map[stri
 	if err != nil {
 		return nil, err
 	}
-	profile := getUserRole(userInfo.Roles)
-	return profile, nil
+	return getUserRole(userInfo.Roles), nil
 }
 
 // initOrgInfo will fetch the user organization and extract team and create a controllerUrl that

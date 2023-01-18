@@ -38,7 +38,7 @@ func NewFetchEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			org := viper.GetString(org)
@@ -46,14 +46,14 @@ func NewFetchEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 			if len(args) == 0 {
 				err := validateFlagsAndPrintEnvs(cmd.Context(), client, outPut, org, team)
 				if err != nil {
-					cmd.Println(err)
+					cmd.PrintErrln(err)
 					return err
 				}
 				return nil
 			}
 			err = validateFlagsAndPrintEnvById(cmd.Context(), client, outPut, org, team, args[0])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

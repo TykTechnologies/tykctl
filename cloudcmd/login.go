@@ -11,7 +11,6 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/exp/slices"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -51,17 +50,17 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			err := validateAndLogin(cmd.Flags())
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			profile, err := initUserProfile(ctx, client)
 			if err != nil {
-				log.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			err = internal.SaveMapToConfig(profile)
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 
@@ -72,12 +71,12 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 			}
 			orgInfo, err := initOrgInfo(ctx, client, orgId)
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			err = internal.SaveMapToConfig(orgInfo)
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			cmd.Println("Authentication successful")

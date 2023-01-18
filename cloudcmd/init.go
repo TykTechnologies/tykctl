@@ -33,7 +33,7 @@ func NewInitCmd(client internal.CloudClient) *cobra.Command {
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			err := SetupPrompt(cmd.Context(), client)
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

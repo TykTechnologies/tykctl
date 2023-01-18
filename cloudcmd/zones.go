@@ -24,7 +24,7 @@ func NewZonesCmd(client internal.CloudClient) *cobra.Command {
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			err := FetchZonesAndPrint(ctx, client, cmd.Flags())
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

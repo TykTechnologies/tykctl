@@ -27,7 +27,7 @@ func NewDeploymentStatusCmd(client internal.CloudClient) *cobra.Command {
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			checkStatus, err := validateFlagsAndCheckStatus(cmd.Context(), client, args[0])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			cmd.Println(checkStatus.CurrentState)

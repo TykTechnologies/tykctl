@@ -172,7 +172,7 @@ func (c *cloudSdkClient) GetDeploymentZones(ctx context.Context) (*ZoneResponse,
 	return &zoneResponse, response, nil
 }
 
-// GetUserInfo will get userRole, orgId and the team the user belongs to.
+// GetUserInfo will get userRole, orgId and the team the user belongs to from tyk cloud.
 func (c *cloudSdkClient) GetUserInfo(ctx context.Context) (*UserInfo, *resty.Response, error) {
 	err := c.runBeforeRestyExecute()
 	if err != nil {
@@ -190,6 +190,8 @@ func (c *cloudSdkClient) GetUserInfo(ctx context.Context) (*UserInfo, *resty.Res
 	}
 	return &userInfo, response, nil
 }
+
+// GetOrgInfo will fetch an organization using its id from tyk cloud.
 func (c *cloudSdkClient) GetOrgInfo(ctx context.Context, orgId string) (*OrgInfo, *resty.Response, error) {
 	err := c.runBeforeRestyExecute()
 	if err != nil {

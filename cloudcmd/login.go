@@ -97,6 +97,8 @@ func initUserProfile(ctx context.Context, client internal.CloudClient) (map[stri
 	return profile, nil
 }
 
+// initOrgInfo will fetch the user organization and extract team and create a controllerUrl that
+// the user can use to connect to tyk cloud depending on their region.
 func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string) (map[string]string, error) {
 	info, _, err := client.GetOrgInfo(ctx, orgId)
 	if err != nil {
@@ -114,6 +116,8 @@ func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string)
 	}
 	return m, nil
 }
+
+// getUserRole returns the user role.
 func getUserRole(roles []internal.Role) map[string]string {
 	roleList := []string{"org_admin", "team_admin", "team_member"}
 	m := make(map[string]string)

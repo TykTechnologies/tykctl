@@ -6,7 +6,14 @@ import (
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 )
 
-func RegionPrompt(regions []string) (string, error) {
+type SurveyPrompt struct {
+}
+
+var (
+	_ CloudPrompt = (*SurveyPrompt)(nil)
+)
+
+func (s *SurveyPrompt) RegionPrompt(regions []string) (string, error) {
 	prompt := &survey.Select{
 		Message: "Select your home region",
 		Options: regions,
@@ -18,7 +25,7 @@ func RegionPrompt(regions []string) (string, error) {
 	}
 	return region, nil
 }
-func OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation, error) {
+func (s *SurveyPrompt) OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation, error) {
 	var organizations []string
 	for _, org := range orgs {
 		organizations = append(organizations, fmt.Sprintf("%s:%s", org.Name, org.UID))
@@ -35,7 +42,7 @@ func OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation, error) {
 	return &orgs[selectedIndex], nil
 }
 
-func teamPrompt(teams []cloud.Team) (*cloud.Team, error) {
+func (s *SurveyPrompt) teamPrompt(teams []cloud.Team) (*cloud.Team, error) {
 	var teamString []string
 	for _, team := range teams {
 		teamString = append(teamString, fmt.Sprintf("%s:%s", team.Name, team.UID))
@@ -52,7 +59,7 @@ func teamPrompt(teams []cloud.Team) (*cloud.Team, error) {
 	return &teams[selectedIndex], nil
 }
 
-func envPrompt(envs []cloud.Loadout) (*cloud.Loadout, error) {
+func (s *SurveyPrompt) envPrompt(envs []cloud.Loadout) (*cloud.Loadout, error) {
 	var loadoutString []string
 	for _, loadout := range envs {
 		loadoutString = append(loadoutString, fmt.Sprintf("%s:%s", loadout.Name, loadout.UID))

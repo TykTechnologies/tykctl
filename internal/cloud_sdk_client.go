@@ -9,10 +9,12 @@ import (
 )
 
 var (
-	_            CloudClient = (*cloudSdkClient)(nil)
-	zonePath                 = "/api/deployments/zones"
-	userInfoPath             = "/api/users/whoami"
-	orgInfoPath              = "api/organisations/"
+	_               CloudClient = (*cloudSdkClient)(nil)
+	zonePath                    = "/api/deployments/zones"
+	userInfoPath                = "/api/users/whoami"
+	orgInfoPath                 = "api/organisations/"
+	applicationJson             = "application/json"
+	contentType                 = "Content-Type"
 )
 
 // CloudSdkClient should implement CloudClient as it will be used to make request to Ara.
@@ -160,7 +162,7 @@ func (c *cloudSdkClient) GetDeploymentZones(ctx context.Context) (*ZoneResponse,
 		return nil, nil, err
 	}
 	var zoneResponse ZoneResponse
-	request := c.dashboardClient.R().SetHeader("Content-Type", "application/json").SetResult(&zoneResponse)
+	request := c.dashboardClient.R().SetHeader(contentType, applicationJson).SetResult(&zoneResponse)
 	request.SetContext(ctx)
 	response, err := request.Get(zonePath)
 	if err != nil {
@@ -179,7 +181,7 @@ func (c *cloudSdkClient) GetUserInfo(ctx context.Context) (*UserInfo, *resty.Res
 		return nil, nil, err
 	}
 	var userInfo UserInfo
-	request := c.dashboardClient.R().SetHeader("Content-Type", "application/json").SetResult(&userInfo)
+	request := c.dashboardClient.R().SetHeader(contentType, applicationJson).SetResult(&userInfo)
 	request.SetContext(ctx)
 	response, err := request.Get(userInfoPath)
 	if err != nil {
@@ -198,7 +200,7 @@ func (c *cloudSdkClient) GetOrgInfo(ctx context.Context, orgId string) (*OrgInfo
 		return nil, nil, err
 	}
 	var orgInfo OrgInfo
-	request := c.dashboardClient.R().SetHeader("Content-Type", "application/json").SetResult(&orgInfo)
+	request := c.dashboardClient.R().SetHeader(contentType, applicationJson).SetResult(&orgInfo)
 	request.SetContext(ctx)
 	path := fmt.Sprintf("%s%s", orgInfoPath, orgId)
 	response, err := request.Get(path)

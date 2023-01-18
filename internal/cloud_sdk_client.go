@@ -2,14 +2,17 @@ package internal
 
 import (
 	"context"
+	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/go-resty/resty/v2"
 	"net/http"
 )
 
 var (
-	_        CloudClient = (*cloudSdkClient)(nil)
-	zonePath             = "/api/deployments/zones"
+	_            CloudClient = (*cloudSdkClient)(nil)
+	zonePath                 = "/api/deployments/zones"
+	userInfoPath             = "/api/users/whoami"
+	orgInfoPath              = "api/organisations/"
 )
 
 // CloudSdkClient should implement CloudClient as it will be used to make request to Ara.
@@ -167,6 +170,43 @@ func (c *cloudSdkClient) GetDeploymentZones(ctx context.Context) (*ZoneResponse,
 		return nil, nil, NewGenericHttpError(response.String())
 	}
 	return &zoneResponse, response, nil
+}
+
+// GetUserInfo will get userRole, orgId and the team the user belongs to.
+func (c *cloudSdkClient) GetUserInfo(ctx context.Context) (*UserInfo, *resty.Response, error) {
+	err := c.runBeforeRestyExecute()
+	if err != nil {
+		return nil, nil, err
+	}
+	var userInfo UserInfo
+	request := c.dashboardClient.R().SetHeader("Content-Type", "application/json").SetResult(&userInfo)
+	request.SetContext(ctx)
+	response, err := request.Get(userInfoPath)
+	if err != nil {
+		return nil, nil, err
+	}
+	if response.StatusCode() != 200 {
+		return nil, nil, NewGenericHttpError(response.String())
+	}
+	return &userInfo, response, nil
+}
+func (c *cloudSdkClient) GetOrgInfo(ctx context.Context, orgId string) (*OrgInfo, *resty.Response, error) {
+	err := c.runBeforeRestyExecute()
+	if err != nil {
+		return nil, nil, err
+	}
+	var orgInfo OrgInfo
+	request := c.dashboardClient.R().SetHeader("Content-Type", "application/json").SetResult(&orgInfo)
+	request.SetContext(ctx)
+	path := fmt.Sprintf("%s%s", orgInfoPath, orgId)
+	response, err := request.Get(path)
+	if err != nil {
+		return nil, nil, err
+	}
+	if response.StatusCode() != 200 {
+		return nil, nil, NewGenericHttpError(response.String())
+	}
+	return &orgInfo, response, nil
 }
 
 // AddBeforeExecuteFunc adds functions that should be executed before each client request

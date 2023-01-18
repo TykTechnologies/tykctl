@@ -26,3 +26,15 @@ func SaveToConfig(key, value string) error {
 	}
 	return nil
 }
+
+// SaveMapToConfig takes a map and write it to configuration file.
+// the map keys are used as the keys in the config file.
+func SaveMapToConfig(data map[string]string) error {
+	for key, value := range data {
+		err := SaveToConfig(key, value)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

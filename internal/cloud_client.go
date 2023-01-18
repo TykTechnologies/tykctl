@@ -24,4 +24,6 @@ type CloudClient interface {
 	StartDeployment(ctx context.Context, orgID, teamId, envId string, id string) (cloud.InlineResponse2001, *http.Response, error)
 	GetDeploymentStatus(ctx context.Context, orgId string, teamId string, envId string, deploymentId string) (cloud.Payload, *http.Response, error)
 	GetDeploymentZones(ctx context.Context) (*ZoneResponse, *resty.Response, error)
+	GetUserInfo(ctx context.Context) (*UserInfo, *resty.Response, error)
+	GetOrgInfo(ctx context.Context, orgId string) (*OrgInfo, *resty.Response, error)
 }

@@ -9,7 +9,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	"golang.org/x/exp/slices"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 )
@@ -51,6 +53,19 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 				cmd.Println(err)
 				return err
 			}
+			err = initUserInfo(ctx, client)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+			orgId := viper.GetString(org)
+
+			if orgId != "" {
+				_, err := initOrgInfo(ctx, client, orgId)
+				if err != nil {
+					return err
+				}
+			}
 			cmd.Println("Authentication successful")
 			controller := viper.GetString(controller)
 			if util.StringIsEmpty(controller) {
@@ -63,6 +78,53 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 			return nil
 		})
 
+}
+
+// initUserInfo will auto fetch user info such as:
+// user roles,user team
+func initUserInfo(ctx context.Context, client internal.CloudClient) error {
+	userInfo, _, err := client.GetUserInfo(ctx)
+	if err != nil {
+		return err
+	}
+	userRole := getUserRole(userInfo.Roles)
+	log.Println(userRole)
+	return nil
+}
+
+func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string) (string, error) {
+	info, _, err := client.GetOrgInfo(ctx, orgId)
+	if err != nil {
+		return "", err
+	}
+	controllerUrl, err := util.GenerateUrlFromZone(info.Organisation.Zone)
+	if err != nil {
+		return "", err
+	}
+	err = internal.SaveToConfig(controller, controllerUrl)
+	if err != nil {
+		return "", err
+	}
+	return controllerUrl, nil
+}
+func getUserRole(roles []internal.Role) map[string]string {
+	roleList := []string{"org_admin", "team_admin", "team_member"}
+	m := make(map[string]string)
+	for _, role := range roles {
+		contain := slices.Contains(roleList, role.Role)
+		if contain {
+			m[userRole] = role.Role
+			if role.OrgID != "" {
+				m[org] = role.OrgID
+			}
+			if role.TeamID != "" {
+				m[team] = role.TeamID
+			}
+			return m
+
+		}
+	}
+	return m
 }
 
 // addLoginFlags add the flags required by the login command.

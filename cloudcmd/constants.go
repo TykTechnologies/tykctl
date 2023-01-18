@@ -54,4 +54,5 @@ const (
 	controller             = "controller"
 	tykctl                 = "tykctl"
 	interactive            = "interactive"
+	userRole               = "role"
 )

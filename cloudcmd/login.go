@@ -87,7 +87,7 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 }
 
 // initUserProfile will auto fetch user info such as:
-// user roles,user team
+// user roles,user team.
 func initUserProfile(ctx context.Context, client internal.CloudClient) (map[string]string, error) {
 	userInfo, _, err := client.GetUserInfo(ctx)
 	if err != nil {

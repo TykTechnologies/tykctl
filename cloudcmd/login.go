@@ -38,6 +38,7 @@ var (
 	ErrLoginFailed        = errors.New("login failed")
 	ErrSignatureNotFound  = errors.New("signature not found")
 	ErrPasswordIsRequired = errors.New("password is required")
+	ErrNoOrganization     = errors.New("you do not have any organization")
 )
 
 // NewLoginCommand creates a new login command.
@@ -53,59 +54,65 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 				cmd.Println(err)
 				return err
 			}
-			err = initUserInfo(ctx, client)
+			profile, err := initUserProfile(ctx, client)
 			if err != nil {
 				log.Println(err)
 				return err
 			}
-			orgId := viper.GetString(org)
+			err = internal.SaveMapToConfig(profile)
+			if err != nil {
+				cmd.Println(err)
+				return err
+			}
 
-			if orgId != "" {
-				_, err := initOrgInfo(ctx, client, orgId)
-				if err != nil {
-					return err
-				}
+			orgId := viper.GetString(org)
+			if orgId == "" {
+				cmd.Println("You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
+				return ErrNoOrganization
+			}
+			orgInfo, err := initOrgInfo(ctx, client, orgId)
+			if err != nil {
+				cmd.Println(err)
+				return err
+			}
+			err = internal.SaveMapToConfig(orgInfo)
+			if err != nil {
+				cmd.Println(err)
+				return err
 			}
 			cmd.Println("Authentication successful")
-			controller := viper.GetString(controller)
-			if util.StringIsEmpty(controller) {
-				err = SetupPrompt(cmd.Context(), client)
-				if err != nil {
-					cmd.Println(err)
-					return err
-				}
-			}
 			return nil
 		})
 
 }
 
-// initUserInfo will auto fetch user info such as:
+// initUserProfile will auto fetch user info such as:
 // user roles,user team
-func initUserInfo(ctx context.Context, client internal.CloudClient) error {
+func initUserProfile(ctx context.Context, client internal.CloudClient) (map[string]string, error) {
 	userInfo, _, err := client.GetUserInfo(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	userRole := getUserRole(userInfo.Roles)
-	log.Println(userRole)
-	return nil
+	profile := getUserRole(userInfo.Roles)
+	return profile, nil
 }
 
-func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string) (string, error) {
+func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string) (map[string]string, error) {
 	info, _, err := client.GetOrgInfo(ctx, orgId)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
+	m := make(map[string]string)
 	controllerUrl, err := util.GenerateUrlFromZone(info.Organisation.Zone)
 	if err != nil {
-		return "", err
+		return m, err
 	}
-	err = internal.SaveToConfig(controller, controllerUrl)
-	if err != nil {
-		return "", err
+	m[controller] = controllerUrl
+	m[org] = orgId
+	if len(info.Organisation.Teams) == 1 {
+		m[team] = info.Organisation.Teams[0].UID
 	}
-	return controllerUrl, nil
+	return m, nil
 }
 func getUserRole(roles []internal.Role) map[string]string {
 	roleList := []string{"org_admin", "team_admin", "team_member"}

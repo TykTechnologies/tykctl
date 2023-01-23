@@ -43,6 +43,12 @@ func (s *SurveyPrompt) OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation
 }
 
 func (s *SurveyPrompt) teamPrompt(teams []cloud.Team) (*cloud.Team, error) {
+	if len(teams) == 0 {
+		return nil, nil
+	}
+	if len(teams) == 1 {
+		return &teams[0], nil
+	}
 	var teamString []string
 	for _, team := range teams {
 		teamString = append(teamString, fmt.Sprintf("%s:%s", team.Name, team.UID))

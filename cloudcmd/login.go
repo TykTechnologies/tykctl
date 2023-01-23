@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
@@ -99,7 +100,7 @@ func initUserProfile(ctx context.Context, client internal.CloudClient) (map[stri
 
 // initOrgInfo will fetch the user organization and extract team and create a controllerUrl that
 // the user can use to connect to tyk cloud depending on their region.
-func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string) (map[string]string, error) {
+func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt CloudPrompt, orgId string) (map[string]string, error) {
 	info, _, err := client.GetOrgInfo(ctx, orgId)
 	if err != nil {
 		return nil, err
@@ -111,10 +112,21 @@ func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string)
 	}
 	m[controller] = controllerUrl
 	m[org] = orgId
+	team, err := prompt.teamPrompt(info.Organisation.Teams)
+
 	if len(info.Organisation.Teams) == 1 {
 		m[team] = info.Organisation.Teams[0].UID
+	} else if len(info.Organisation.Teams) > 1 {
+		team, err := prompt.teamPrompt(info.Organisation.Teams)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	return m, nil
+}
+func selectDefaultTeam(prompt CloudPrompt, teams []cloud.Team) (*cloud.Team, error) {
+	return prompt.teamPrompt(teams)
 }
 
 // getUserRole returns the user role.

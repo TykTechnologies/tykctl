@@ -1,4 +1,4 @@
-package cloudcmd
+package internal
 
 import "github.com/TykTechnologies/cloud-sdk/cloud"
 
@@ -6,6 +6,6 @@ import "github.com/TykTechnologies/cloud-sdk/cloud"
 type CloudPrompt interface {
 	RegionPrompt(regions []string) (string, error)
 	OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation, error)
-	teamPrompt(teams []cloud.Team) (*cloud.Team, error)
-	envPrompt(envs []cloud.Loadout) (*cloud.Loadout, error)
+	TeamPrompt(teams []cloud.Team) (*cloud.Team, error)
+	EnvPrompt(envs []cloud.Loadout) (*cloud.Loadout, error)
 }

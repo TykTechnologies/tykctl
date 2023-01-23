@@ -164,7 +164,7 @@ func TestDashboardLoginRequest(t *testing.T) {
 }
 
 func TestNewLoginCommand(t *testing.T) {
-	cmd := NewLoginCommand(nil)
+	cmd := NewLoginCommand(internal.CloudFactory{})
 	flags := []internal.Flag{{
 		Description: "Test email address is passed to login command",
 		Name:        "email",
@@ -277,12 +277,14 @@ func mockHttp(url string) (*http.Response, error) {
 
 func TestGetUserRole(t *testing.T) {
 	tests := []struct {
-		name  string
-		roles []internal.Role
-		want  map[string]string
+		name          string
+		roles         []internal.Role
+		want          *internal.Role
+		ExpectedError error
 	}{
 		{
-			name: "Test has team and org",
+			name:          "Test has team and org",
+			ExpectedError: nil,
 			roles: []internal.Role{{
 				Role:      "billing_admin",
 				OrgID:     "12fGHtmi567",
@@ -300,9 +302,13 @@ func TestGetUserRole(t *testing.T) {
 					AccountID: "78906756",
 				},
 			},
-			want: map[string]string{
-				"role": "org_admin",
-				"org":  "24568674d",
+			want: &internal.Role{
+				Role:      "org_admin",
+				OrgID:     "24568674d",
+				TeamID:    "",
+				OrgName:   "dx org",
+				TeamName:  "itachi team",
+				AccountID: "78906756",
 			},
 		},
 		{
@@ -316,28 +322,15 @@ func TestGetUserRole(t *testing.T) {
 				AccountID: "",
 			},
 			},
-			want: map[string]string{},
-		},
-		{
-			name: "Test has team id",
-			roles: []internal.Role{{
-				Role:      "team_admin",
-				OrgID:     "4576890hi",
-				TeamID:    "908765rf",
-				OrgName:   "",
-				TeamName:  "",
-				AccountID: "",
-			}},
-			want: map[string]string{
-				"role": "team_admin",
-				"org":  "4576890hi",
-				"team": "908765rf",
-			},
+			ExpectedError: ErrorNoRoleFound,
+			want:          nil,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equalf(t, tt.want, getUserRole(tt.roles), "getUserRole(%v)", tt.roles)
+			role, err := getUserRole(tt.roles)
+			assert.Equal(t, tt.ExpectedError, err)
+			assert.Equalf(t, tt.want, role, "getUserRole(%v)", tt.roles)
 		})
 	}
 }
@@ -349,7 +342,7 @@ func TestInitOrgInfo(t *testing.T) {
 		mockHttpResponse *resty.Response
 		mockError        error
 		ExpectedError    error
-		want             map[string]string
+		want             *internal.OrgInit
 		orgId            string
 	}{
 		{
@@ -364,16 +357,20 @@ func TestInitOrgInfo(t *testing.T) {
 			},
 			ExpectedError: nil,
 			orgId:         "helloOrg",
-			want:          map[string]string{"controller": "https://controller-aws-usw2.cloud-ara.tyk.io:37001", "org": "helloOrg", "team": "1"},
+			want: &internal.OrgInit{
+				Controller: "https://controller-aws-usw2.cloud-ara.tyk.io:37001",
+				Org:        "helloOrg", Team: "1",
+			},
 		},
 	}
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
+			prompt := mock.NewMockCloudPrompt(ctrl)
 			m := mock.NewMockCloudClient(ctrl)
 			m.EXPECT().GetOrgInfo(gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
-			info, err := initOrgInfo(context.Background(), m, tt.orgId)
+			info, err := initOrgInfo(context.Background(), m, prompt, tt.orgId)
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.want, info)
 
@@ -387,7 +384,7 @@ func TestInitUserProfile(t *testing.T) {
 		mockResponse     *internal.UserInfo
 		mockHttpResponse *resty.Response
 		mockError        error
-		want             map[string]string
+		want             *internal.Role
 		ExpectedError    error
 	}{
 		{
@@ -417,10 +414,10 @@ func TestInitUserProfile(t *testing.T) {
 				RawResponse: &http.Response{StatusCode: http.StatusOK},
 			},
 			mockError: nil,
-			want: map[string]string{
-				"role": "org_admin",
-				"org":  "986765",
-				"team": "8908756y",
+			want: &internal.Role{
+				Role:   "org_admin",
+				OrgID:  "986765",
+				TeamID: "8908756y",
 			},
 			ExpectedError: nil,
 		},

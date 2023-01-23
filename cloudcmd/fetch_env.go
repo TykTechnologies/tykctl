@@ -28,7 +28,7 @@ var (
 	ErrorEnvRequired         = errors.New("error env is required")
 )
 
-func NewFetchEnvironmentCmd(client internal.CloudClient) *cobra.Command {
+func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchEnvDesc).
@@ -38,22 +38,22 @@ func NewFetchEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			org := viper.GetString(org)
 			team := viper.GetString(team)
 			if len(args) == 0 {
-				err := validateFlagsAndPrintEnvs(cmd.Context(), client, outPut, org, team)
+				err := validateFlagsAndPrintEnvs(cmd.Context(), factory.Client, outPut, org, team)
 				if err != nil {
-					cmd.Println(err)
+					cmd.PrintErrln(err)
 					return err
 				}
 				return nil
 			}
-			err = validateFlagsAndPrintEnvById(cmd.Context(), client, outPut, org, team, args[0])
+			err = validateFlagsAndPrintEnvById(cmd.Context(), factory.Client, outPut, org, team, args[0])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
@@ -12,7 +11,6 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/exp/slices"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -40,10 +38,11 @@ var (
 	ErrSignatureNotFound  = errors.New("signature not found")
 	ErrPasswordIsRequired = errors.New("password is required")
 	ErrNoOrganization     = errors.New("you do not have any organization")
+	ErrorNoRoleFound      = errors.New("role not found")
 )
 
 // NewLoginCommand creates a new login command.
-func NewLoginCommand(client internal.CloudClient) *cobra.Command {
+func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(login).
 		WithLongDescription(loginDesc).
 		WithDescription("login to tyk cloud using password and email.").
@@ -52,17 +51,17 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			err := validateAndLogin(cmd.Flags())
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
-			profile, err := initUserProfile(ctx, client)
+			profile, err := initUserProfile(ctx, factory.Client)
 			if err != nil {
-				log.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
-			err = internal.SaveMapToConfig(profile)
+			err = internal.SaveMapToConfig(profile.RoleToMap())
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 
@@ -71,14 +70,14 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 				cmd.Println("You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
 				return ErrNoOrganization
 			}
-			orgInfo, err := initOrgInfo(ctx, client, orgId)
+			orgInfo, err := initOrgInfo(ctx, factory.Client, factory.Prompt, orgId)
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
-			err = internal.SaveMapToConfig(orgInfo)
+			err = internal.SaveMapToConfig(orgInfo.OrgInitToMap())
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			cmd.Println("Authentication successful")
@@ -88,66 +87,50 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 }
 
 // initUserProfile will auto fetch user info such as:
-// user roles,user team
-func initUserProfile(ctx context.Context, client internal.CloudClient) (map[string]string, error) {
+// user roles,user team.
+func initUserProfile(ctx context.Context, client internal.CloudClient) (*internal.Role, error) {
 	userInfo, _, err := client.GetUserInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
-	profile := getUserRole(userInfo.Roles)
-	return profile, nil
+	return getUserRole(userInfo.Roles)
+}
+
+// / getUserRole returns the user role.
+func getUserRole(roles []internal.Role) (*internal.Role, error) {
+	roleList := []string{"org_admin", "team_admin", "team_member"}
+	for _, role := range roles {
+		contain := slices.Contains(roleList, role.Role)
+		if contain {
+			return &role, nil
+		}
+	}
+	return nil, ErrorNoRoleFound
 }
 
 // initOrgInfo will fetch the user organization and extract team and create a controllerUrl that
 // the user can use to connect to tyk cloud depending on their region.
-func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt CloudPrompt, orgId string) (map[string]string, error) {
+func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgId string) (*internal.OrgInit, error) {
 	info, _, err := client.GetOrgInfo(ctx, orgId)
 	if err != nil {
 		return nil, err
 	}
-	m := make(map[string]string)
 	controllerUrl, err := util.GenerateUrlFromZone(info.Organisation.Zone)
 	if err != nil {
-		return m, err
+		return nil, err
 	}
-	m[controller] = controllerUrl
-	m[org] = orgId
-	team, err := prompt.teamPrompt(info.Organisation.Teams)
-
-	if len(info.Organisation.Teams) == 1 {
-		m[team] = info.Organisation.Teams[0].UID
-	} else if len(info.Organisation.Teams) > 1 {
-		team, err := prompt.teamPrompt(info.Organisation.Teams)
-		if err != nil {
-			return nil, err
-		}
+	var orgInit internal.OrgInit
+	orgInit.Controller = controllerUrl
+	orgInit.Org = orgId
+	selectedTeam, err := prompt.TeamPrompt(info.Organisation.Teams)
+	if err != nil {
+		return nil, err
+	}
+	if selectedTeam != nil {
+		orgInit.Team = selectedTeam.UID
 	}
 
-	return m, nil
-}
-func selectDefaultTeam(prompt CloudPrompt, teams []cloud.Team) (*cloud.Team, error) {
-	return prompt.teamPrompt(teams)
-}
-
-// getUserRole returns the user role.
-func getUserRole(roles []internal.Role) map[string]string {
-	roleList := []string{"org_admin", "team_admin", "team_member"}
-	m := make(map[string]string)
-	for _, role := range roles {
-		contain := slices.Contains(roleList, role.Role)
-		if contain {
-			m[userRole] = role.Role
-			if role.OrgID != "" {
-				m[org] = role.OrgID
-			}
-			if role.TeamID != "" {
-				m[team] = role.TeamID
-			}
-			return m
-
-		}
-	}
-	return m
+	return &orgInit, nil
 }
 
 // addLoginFlags add the flags required by the login command.
@@ -282,11 +265,11 @@ func loginWithFlag(f *pflag.FlagSet) (*LoginBody, error) {
 
 // loginInteractive will extract ask user to enter login details interactively.
 func loginInteractive() (*LoginBody, error) {
-	email, err := emailPrompt()
+	email, err := internal.EmailPrompt()
 	if err != nil {
 		return nil, err
 	}
-	password, err := passwordPrompt()
+	password, err := internal.PasswordPrompt()
 	if err != nil {
 		return nil, err
 	}

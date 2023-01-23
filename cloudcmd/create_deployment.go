@@ -26,15 +26,15 @@ var (
 	ErrorZoneCodeIsRequired = errors.New("error zone is required")
 )
 
-func NewCreateDeploymentCmd(client internal.CloudClient) *cobra.Command {
+func NewCreateDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(create).
 		WithLongDescription(createDeploymentDesc).
 		WithDescription("This is the parent command for creating the edge or home deployment.").
 		WithFlagAdder(true, addDeploymentFlag).
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithCommands(
-			NewCreateHomeDeployment(client),
-			NewCreateEdgeDeployment(client),
+			NewCreateHomeDeployment(factory.Client),
+			NewCreateEdgeDeployment(factory.Client),
 		)
 }
 

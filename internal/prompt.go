@@ -1,4 +1,4 @@
-package cloudcmd
+package internal
 
 import (
 	"fmt"
@@ -13,6 +13,9 @@ var (
 	_ CloudPrompt = (*SurveyPrompt)(nil)
 )
 
+func NewSurveyPrompt() *SurveyPrompt {
+	return &SurveyPrompt{}
+}
 func (s *SurveyPrompt) RegionPrompt(regions []string) (string, error) {
 	prompt := &survey.Select{
 		Message: "Select your home region",
@@ -26,6 +29,12 @@ func (s *SurveyPrompt) RegionPrompt(regions []string) (string, error) {
 	return region, nil
 }
 func (s *SurveyPrompt) OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation, error) {
+	if len(orgs) == 0 {
+		return nil, nil
+	}
+	if len(orgs) == 1 {
+		return &orgs[0], nil
+	}
 	var organizations []string
 	for _, org := range orgs {
 		organizations = append(organizations, fmt.Sprintf("%s:%s", org.Name, org.UID))
@@ -42,7 +51,7 @@ func (s *SurveyPrompt) OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation
 	return &orgs[selectedIndex], nil
 }
 
-func (s *SurveyPrompt) teamPrompt(teams []cloud.Team) (*cloud.Team, error) {
+func (s *SurveyPrompt) TeamPrompt(teams []cloud.Team) (*cloud.Team, error) {
 	if len(teams) == 0 {
 		return nil, nil
 	}
@@ -65,7 +74,13 @@ func (s *SurveyPrompt) teamPrompt(teams []cloud.Team) (*cloud.Team, error) {
 	return &teams[selectedIndex], nil
 }
 
-func (s *SurveyPrompt) envPrompt(envs []cloud.Loadout) (*cloud.Loadout, error) {
+func (s *SurveyPrompt) EnvPrompt(envs []cloud.Loadout) (*cloud.Loadout, error) {
+	if len(envs) == 0 {
+		return nil, nil
+	}
+	if len(envs) == 1 {
+		return &envs[0], nil
+	}
 	var loadoutString []string
 	for _, loadout := range envs {
 		loadoutString = append(loadoutString, fmt.Sprintf("%s:%s", loadout.Name, loadout.UID))
@@ -82,7 +97,7 @@ func (s *SurveyPrompt) envPrompt(envs []cloud.Loadout) (*cloud.Loadout, error) {
 	return &envs[selectedIndex], nil
 }
 
-func emailPrompt() (string, error) {
+func EmailPrompt() (string, error) {
 	email := ""
 	prompt := &survey.Input{
 		Message: "Enter dashboard user email",
@@ -94,7 +109,7 @@ func emailPrompt() (string, error) {
 	return email, nil
 }
 
-func passwordPrompt() (string, error) {
+func PasswordPrompt() (string, error) {
 	password := ""
 	prompt := &survey.Password{
 		Message: "Enter dashboard user password",

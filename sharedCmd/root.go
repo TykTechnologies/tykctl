@@ -48,7 +48,12 @@ func Execute() {
 	sdkClient.AddBeforeExecuteFunc(AddTokenAndBaseUrl)
 	sdkClient.AddBeforeRestyExecute(AddTokenAndBaseUrlToResty)
 	rootCmd := NewRootCmd()
-	rootCmd.AddCommand(cloudcmd.NewCloudCommand(sdkClient))
+
+	cloudFactory := internal.CloudFactory{
+		Client: sdkClient,
+		Prompt: internal.NewSurveyPrompt(),
+	}
+	rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
 	rootCmd.AddCommand(gatewaycmd.NewGatewayCommand())
 	err := rootCmd.Execute()

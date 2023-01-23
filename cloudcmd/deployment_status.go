@@ -18,16 +18,16 @@ Sample usage for this command:
 tykctl cloud deployments status b5c503e8-c632-4ce0-9629-b0ee3e3c2c62 
 `
 
-func NewDeploymentStatusCmd(client internal.CloudClient) *cobra.Command {
+func NewDeploymentStatusCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(status).
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithExample("tykctl cloud deployments status <deployment uuid>").
 		WithLongDescription(deploymentStatusDesc).
 		WithDescription("output the status of a deployment given its uuid.").
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
-			checkStatus, err := validateFlagsAndCheckStatus(cmd.Context(), client, args[0])
+			checkStatus, err := validateFlagsAndCheckStatus(cmd.Context(), factory.Client, args[0])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			cmd.Println(checkStatus.CurrentState)

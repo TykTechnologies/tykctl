@@ -32,25 +32,25 @@ var (
 	ErrorNameRequired = errors.New("name flag is required")
 )
 
-func NewCreateTeamCmd(client internal.CloudClient) *cobra.Command {
+func NewCreateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(create).WithFlagAdder(false, createTeamFlags).
 		WithLongDescription(createTeamDesc).
 		WithDescription("create a team in a given organization.").
 		WithExample("tyckctl cloud teams create --name='first team' --org=<org uuid>").
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: false}}).
-		NoArgs(func(ctx context.Context, command cobra.Command) error {
+		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			org := viper.GetString(org)
-			teamName, err := command.Flags().GetString(name)
+			teamName, err := cmd.Flags().GetString(name)
 			if err != nil {
-				command.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
-			team, err := validateFlagsAndCreateTeam(ctx, client, teamName, org)
+			team, err := validateFlagsAndCreateTeam(ctx, factory.Client, teamName, org)
 			if err != nil {
-				command.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
-			command.Println(fmt.Sprintf("team %s created successfully", team.UID))
+			cmd.Println(fmt.Sprintf("team %s created successfully", team.UID))
 			return nil
 		})
 }

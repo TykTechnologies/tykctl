@@ -15,16 +15,16 @@ This will fetch all the zones and the type of deployment they support.
 You can run this command to find out the regions you can deploy your home or edge deployments.
 `
 
-func NewZonesCmd(client internal.CloudClient) *cobra.Command {
+func NewZonesCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(zones).
 		WithDescription("fetch all the supported zones and what deployment they support.").
 		WithExample("tykctl cloud zones").
 		WithLongDescription(zonesDesc).
 		WithFlagAdder(false, addOutPutFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := FetchZonesAndPrint(ctx, client, cmd.Flags())
+			err := FetchZonesAndPrint(ctx, factory.Client, cmd.Flags())
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

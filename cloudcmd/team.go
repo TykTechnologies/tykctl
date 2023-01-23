@@ -21,11 +21,11 @@ To set the default org run :
 tykctl cloud init
 `
 
-func NewTeamCmd(client internal.CloudClient) *cobra.Command {
+func NewTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(teams).
 		WithFlagAdder(true, addOrgFlag).
 		WithLongDescription(teamDesc).
 		WithDescription("parent command for all action you can perform in a team.").
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: true}}).
-		WithCommands(NewCreateTeamCmd(client), NewFetchTeamCmd(client))
+		WithCommands(NewCreateTeamCmd(factory), NewFetchTeamCmd(factory))
 }

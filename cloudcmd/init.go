@@ -3,8 +3,8 @@ package cloudcmd
 import (
 	"context"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 const initDesc = `
@@ -25,69 +25,43 @@ Use this command to:
 This command should ideally be run after the login command.
 `
 
-func NewInitCmd(client internal.CloudClient) *cobra.Command {
+func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(initCloud).
 		WithLongDescription(initDesc).
 		WithExample("tykctl cloud init").
 		WithDescription("initialize the cli and set the default region and organization.").
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := SetupPrompt(cmd.Context(), client)
+			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, viper.GetString(org))
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil
 		})
 }
-func SetupPrompt(ctx context.Context, client internal.CloudClient) error {
-	zones, _, err := client.GetDeploymentZones(ctx)
+func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgId string) error {
+	info, _, err := client.GetOrgInfo(ctx, orgId)
 	if err != nil {
 		return err
 	}
-	regions := make([]string, 0)
-	for k := range zones.Payload.Tags {
-		regions = append(regions, k)
-	}
-	selectedRegion, err := RegionPrompt(regions)
+	selectedTeam, err := prompt.TeamPrompt(info.Organisation.Teams)
 	if err != nil {
 		return err
 	}
-	url, err := util.GenerateUrlFromZone(selectedRegion)
-	if err != nil {
-		return err
+	var orgInit internal.OrgInit
+	if selectedTeam != nil {
+		orgInit.Team = selectedTeam.UID
+		selectedEnv, err := prompt.EnvPrompt(selectedTeam.Loadouts)
+		if err != nil {
+			return err
+		}
+		if selectedEnv != nil {
+			orgInit.Env = selectedEnv.UID
+		}
 	}
-	err = internal.SaveToConfig(controller, url)
-	if err != nil {
-		return err
-	}
-	orgs, err := GetOrgs(ctx, client)
-	if err != nil {
-		return err
-	}
-	selectedOrg, err := OrgPrompt(orgs)
-	if err != nil {
-		return err
-	}
-	err = internal.SaveToConfig(org, selectedOrg.UID)
-	if err != nil {
-		return err
-	}
-	selectedTeam, err := teamPrompt(selectedOrg.Teams)
-	if err != nil {
-		return err
-	}
-	err = internal.SaveToConfig(team, selectedTeam.UID)
-	if err != nil {
-		return err
-	}
-	selectedEnv, err := envPrompt(selectedTeam.Loadouts)
-	if err != nil {
-		return err
-	}
-	err = internal.SaveToConfig(env, selectedEnv.UID)
+	err = internal.SaveMapToConfig(orgInit.OrgInitToMap())
 	if err != nil {
 		return err
 	}
 	return nil
-
 }

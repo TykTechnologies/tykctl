@@ -28,16 +28,16 @@ Sample usage of this command:
 tykctl cloud deployments deploy --org=<org here> --team=<team here> --env=<environment here> --uid=<deployment id>
 `
 
-func NewStartDeploymentCmd(client internal.CloudClient) *cobra.Command {
+func NewStartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(deploy).
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithLongDescription(deployDesc).
 		WithDescription("deploy a home or edge gateway deployment given its uuid").
 		WithExample("tykctl cloud deployments deploy --org=<org here> --team=<team here> --env=<environment here> --uid=<deployment id>").
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
-			deployment, err := validateFlagsAndStartDeployment(ctx, client, args[0])
+			deployment, err := validateFlagsAndStartDeployment(ctx, factory.Client, args[0])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			cmd.Println(fmt.Sprintf("Deploying %s...", deployment.UID))

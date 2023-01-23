@@ -30,7 +30,7 @@ var (
 	ErrorFetchingDeploymentStatus = errors.New("error fetching deployment status")
 )
 
-func NewFetchDeploymentCmd(client internal.CloudClient) *cobra.Command {
+func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchDeploymentDesc).
@@ -40,16 +40,16 @@ func NewFetchDeploymentCmd(client internal.CloudClient) *cobra.Command {
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			if len(args) == 0 {
 
-				err := validateAndFetchEnvDeployments(cmd.Context(), client, cmd.Flags())
+				err := validateAndFetchEnvDeployments(cmd.Context(), factory.Client, cmd.Flags())
 				if err != nil {
-					cmd.Println(err)
+					cmd.PrintErrln(err)
 					return err
 				}
 				return nil
 			}
-			err := validateAndFetchDeploymentById(ctx, client, cmd.Flags(), args[0])
+			err := validateAndFetchDeploymentById(ctx, factory.Client, cmd.Flags(), args[0])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

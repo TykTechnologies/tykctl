@@ -14,8 +14,8 @@ The list of subcommand supported by this command are:
 2. tykctl cloud orgs fetch [orgId] - list a single organizations.
 `
 
-func NewOrgCommand(client internal.CloudClient) *cobra.Command {
+func NewOrgCommand(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(orgs).
 		WithLongDescription(orgDesc).WithCommands(
-		NewOrgListCommand(client))
+		NewOrgListCommand(factory))
 }

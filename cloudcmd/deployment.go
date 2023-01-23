@@ -26,7 +26,7 @@ The supported commands are :
 
 `
 
-func NewDeployment(client internal.CloudClient) *cobra.Command {
+func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(deployments).
 		WithAliases([]string{dep}).
 		WithLongDescription(deploymentDesc).
@@ -35,10 +35,10 @@ func NewDeployment(client internal.CloudClient) *cobra.Command {
 		WithFlagAdder(true, addTeamFlag).
 		WithFlagAdder(true, addEnvFlag).
 		WithCommands(
-			NewCreateDeploymentCmd(client),
-			NewFetchDeploymentCmd(client),
-			NewStartDeploymentCmd(client),
-			NewDeploymentStatusCmd(client))
+			NewCreateDeploymentCmd(factory),
+			NewFetchDeploymentCmd(factory),
+			NewStartDeploymentCmd(factory),
+			NewDeploymentStatusCmd(factory))
 
 }
 

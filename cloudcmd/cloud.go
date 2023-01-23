@@ -21,17 +21,17 @@ tykctl cloud init
 `
 
 // NewCloudCommand  creates the cloud service parent command.
-func NewCloudCommand(client internal.CloudClient) *cobra.Command {
+func NewCloudCommand(cloudFactory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd("cloud").
 		WithDescription("All the operation for the tyk cloud.").
 		WithLongDescription(CloudDesc).
 		WithCommands(
-			NewLoginCommand(client),
-			NewDeployment(client),
-			NewOrgCommand(client),
-			NewTeamCmd(client),
-			NewEnvironmentCmd(client),
-			NewZonesCmd(client),
-			NewInitCmd(client),
+			NewLoginCommand(cloudFactory),
+			NewDeployment(cloudFactory),
+			NewOrgCommand(cloudFactory),
+			NewTeamCmd(cloudFactory),
+			NewEnvironmentCmd(cloudFactory),
+			NewZonesCmd(cloudFactory),
+			NewInitCmd(cloudFactory),
 		)
 }

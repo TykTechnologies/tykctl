@@ -31,10 +31,11 @@ func SaveToConfig(key, value string) error {
 // the map keys are used as the keys in the config file.
 func SaveMapToConfig(data map[string]string) error {
 	for key, value := range data {
-		err := SaveToConfig(key, value)
-		if err != nil {
-			return err
-		}
+		viper.Set(key, value)
+	}
+	err := viper.WriteConfig()
+	if err != nil {
+		return fmt.Errorf("Couldn't write config: %s\n", err.Error())
 	}
 	return nil
 }

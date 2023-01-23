@@ -38,6 +38,7 @@ var (
 	ErrSignatureNotFound  = errors.New("signature not found")
 	ErrPasswordIsRequired = errors.New("password is required")
 	ErrNoOrganization     = errors.New("you do not have any organization")
+	ErrorNoRoleFound      = errors.New("role not found")
 )
 
 // NewLoginCommand creates a new login command.
@@ -58,7 +59,7 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
-			err = internal.SaveMapToConfig(profile)
+			err = internal.SaveMapToConfig(profile.RoleToMap())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -74,7 +75,7 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
-			err = internal.SaveMapToConfig(orgInfo)
+			err = internal.SaveMapToConfig(orgInfo.OrgInitToMap())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -87,53 +88,44 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 
 // initUserProfile will auto fetch user info such as:
 // user roles,user team.
-func initUserProfile(ctx context.Context, client internal.CloudClient) (map[string]string, error) {
+func initUserProfile(ctx context.Context, client internal.CloudClient) (*internal.Role, error) {
 	userInfo, _, err := client.GetUserInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return getUserRole(userInfo.Roles), nil
+	return getUserRole(userInfo.Roles)
+}
+
+// / getUserRole returns the user role.
+func getUserRole(roles []internal.Role) (*internal.Role, error) {
+	roleList := []string{"org_admin", "team_admin", "team_member"}
+	for _, role := range roles {
+		contain := slices.Contains(roleList, role.Role)
+		if contain {
+			return &role, nil
+		}
+	}
+	return nil, ErrorNoRoleFound
 }
 
 // initOrgInfo will fetch the user organization and extract team and create a controllerUrl that
 // the user can use to connect to tyk cloud depending on their region.
-func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string) (map[string]string, error) {
+func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string) (*internal.OrgInit, error) {
 	info, _, err := client.GetOrgInfo(ctx, orgId)
 	if err != nil {
 		return nil, err
 	}
-	m := make(map[string]string)
 	controllerUrl, err := util.GenerateUrlFromZone(info.Organisation.Zone)
 	if err != nil {
-		return m, err
+		return nil, err
 	}
-	m[controller] = controllerUrl
-	m[org] = orgId
+	var orgInit internal.OrgInit
+	orgInit.Controller = controllerUrl
+	orgInit.Org = orgId
 	if len(info.Organisation.Teams) == 1 {
-		m[team] = info.Organisation.Teams[0].UID
+		orgInit.Team = info.Organisation.Teams[0].UID
 	}
-	return m, nil
-}
-
-// getUserRole returns the user role.
-func getUserRole(roles []internal.Role) map[string]string {
-	roleList := []string{"org_admin", "team_admin", "team_member"}
-	m := make(map[string]string)
-	for _, role := range roles {
-		contain := slices.Contains(roleList, role.Role)
-		if contain {
-			m[userRole] = role.Role
-			if role.OrgID != "" {
-				m[org] = role.OrgID
-			}
-			if role.TeamID != "" {
-				m[team] = role.TeamID
-			}
-			return m
-
-		}
-	}
-	return m
+	return &orgInit, nil
 }
 
 // addLoginFlags add the flags required by the login command.

@@ -312,7 +312,20 @@ func TestGetUserRole(t *testing.T) {
 			},
 		},
 		{
-			name: "Test has no role",
+			name: "Test Empty Role",
+			roles: []internal.Role{{
+				Role:      "",
+				OrgID:     "457685098",
+				TeamID:    "6547586",
+				OrgName:   "My org",
+				TeamName:  "Org Name",
+				AccountID: "",
+			}},
+			want:          nil,
+			ExpectedError: ErrorNoRoleFound,
+		},
+		{
+			name: "Test has invalid role",
 			roles: []internal.Role{{
 				Role:      "org_admi",
 				OrgID:     "45689675f",

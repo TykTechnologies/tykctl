@@ -67,6 +67,36 @@ func TestRoleToMap(t *testing.T) {
 			},
 		},
 		{
+			name: "Test empty role ",
+			role: Role{
+				Role:      "",
+				OrgID:     "89756y4656",
+				TeamID:    "89875643e",
+				OrgName:   "Dx org",
+				TeamName:  "Team Dx",
+				AccountID: "",
+			},
+			want: map[string]string{
+				"team": "89875643e",
+				"org":  "89756y4656",
+			},
+		},
+		{
+			name: "Test empty org",
+			role: Role{
+				Role:      "org_admin",
+				OrgID:     "",
+				TeamID:    "y756475647",
+				OrgName:   "Second Org",
+				TeamName:  "Second Team",
+				AccountID: "",
+			},
+			want: map[string]string{
+				"team": "y756475647",
+				"role": "org_admin",
+			},
+		},
+		{
 			name: "Test Success",
 			role: Role{
 				Role:      "team_member",

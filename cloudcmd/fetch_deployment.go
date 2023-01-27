@@ -42,14 +42,14 @@ func NewFetchDeploymentCmd(client internal.CloudClient) *cobra.Command {
 
 				err := validateAndFetchEnvDeployments(cmd.Context(), client, cmd.Flags())
 				if err != nil {
-					cmd.Println(err)
+					cmd.PrintErrln(err)
 					return err
 				}
 				return nil
 			}
 			err := validateAndFetchDeploymentById(ctx, client, cmd.Flags(), args[0])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

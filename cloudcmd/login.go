@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+	"golang.org/x/exp/slices"
 	"io"
 	"net/http"
 	"net/url"
@@ -36,6 +37,8 @@ var (
 	ErrLoginFailed        = errors.New("login failed")
 	ErrSignatureNotFound  = errors.New("signature not found")
 	ErrPasswordIsRequired = errors.New("password is required")
+	ErrNoOrganization     = errors.New("you do not have any organization")
+	ErrorNoRoleFound      = errors.New("role not found")
 )
 
 // NewLoginCommand creates a new login command.
@@ -48,21 +51,81 @@ func NewLoginCommand(client internal.CloudClient) *cobra.Command {
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			err := validateAndLogin(cmd.Flags())
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
+				return err
+			}
+			profile, err := initUserProfile(ctx, client)
+			if err != nil {
+				cmd.PrintErrln(err)
+				return err
+			}
+			err = internal.SaveMapToConfig(profile.RoleToMap())
+			if err != nil {
+				cmd.PrintErrln(err)
+				return err
+			}
+
+			orgId := viper.GetString(org)
+			if orgId == "" {
+				cmd.Println("You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
+				return ErrNoOrganization
+			}
+			orgInfo, err := initOrgInfo(ctx, client, orgId)
+			if err != nil {
+				cmd.PrintErrln(err)
+				return err
+			}
+			err = internal.SaveMapToConfig(orgInfo.OrgInitToMap())
+			if err != nil {
+				cmd.PrintErrln(err)
 				return err
 			}
 			cmd.Println("Authentication successful")
-			controller := viper.GetString(controller)
-			if util.StringIsEmpty(controller) {
-				err = SetupPrompt(cmd.Context(), client)
-				if err != nil {
-					cmd.Println(err)
-					return err
-				}
-			}
 			return nil
 		})
 
+}
+
+// initUserProfile will auto fetch user info such as:
+// user roles,user team.
+func initUserProfile(ctx context.Context, client internal.CloudClient) (*internal.Role, error) {
+	userInfo, _, err := client.GetUserInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return getUserRole(userInfo.Roles)
+}
+
+// / getUserRole returns the user role.
+func getUserRole(roles []internal.Role) (*internal.Role, error) {
+	roleList := []string{"org_admin", "team_admin", "team_member"}
+	for _, role := range roles {
+		contain := slices.Contains(roleList, role.Role)
+		if contain {
+			return &role, nil
+		}
+	}
+	return nil, ErrorNoRoleFound
+}
+
+// initOrgInfo will fetch the user organization and extract team and create a controllerUrl that
+// the user can use to connect to tyk cloud depending on their region.
+func initOrgInfo(ctx context.Context, client internal.CloudClient, orgId string) (*internal.OrgInit, error) {
+	info, _, err := client.GetOrgInfo(ctx, orgId)
+	if err != nil {
+		return nil, err
+	}
+	controllerUrl, err := util.GenerateUrlFromZone(info.Organisation.Zone)
+	if err != nil {
+		return nil, err
+	}
+	var orgInit internal.OrgInit
+	orgInit.Controller = controllerUrl
+	orgInit.Org = orgId
+	if len(info.Organisation.Teams) == 1 {
+		orgInit.Team = info.Organisation.Teams[0].UID
+	}
+	return &orgInit, nil
 }
 
 // addLoginFlags add the flags required by the login command.

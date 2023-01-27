@@ -35,21 +35,21 @@ func NewFetchTeamCmd(client internal.CloudClient) *cobra.Command {
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			org := viper.GetString(org)
 			if len(args) == 0 {
 				err := FetchAndPrintTeams(ctx, client, outPut, org)
 				if err != nil {
-					cmd.Println(err)
+					cmd.PrintErrln(err)
 					return err
 				}
 				return nil
 			}
 			err = FetchAndPrintTeamById(ctx, client, outPut, org, args[0])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

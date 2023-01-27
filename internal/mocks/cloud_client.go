@@ -198,6 +198,22 @@ func (mr *MockCloudClientMockRecorder) GetOrgById(ctx, oid interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgById", reflect.TypeOf((*MockCloudClient)(nil).GetOrgById), ctx, oid)
 }
 
+// GetOrgInfo mocks base method.
+func (m *MockCloudClient) GetOrgInfo(ctx context.Context, orgId string) (*internal.OrgInfo, *resty.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOrgInfo", ctx, orgId)
+	ret0, _ := ret[0].(*internal.OrgInfo)
+	ret1, _ := ret[1].(*resty.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetOrgInfo indicates an expected call of GetOrgInfo.
+func (mr *MockCloudClientMockRecorder) GetOrgInfo(ctx, orgId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgInfo", reflect.TypeOf((*MockCloudClient)(nil).GetOrgInfo), ctx, orgId)
+}
+
 // GetOrgs mocks base method.
 func (m *MockCloudClient) GetOrgs(ctx context.Context) (cloud.InlineResponse20014, *http.Response, error) {
 	m.ctrl.T.Helper()
@@ -244,6 +260,22 @@ func (m *MockCloudClient) GetTeams(ctx context.Context, oid string) (cloud.Inlin
 func (mr *MockCloudClientMockRecorder) GetTeams(ctx, oid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeams", reflect.TypeOf((*MockCloudClient)(nil).GetTeams), ctx, oid)
+}
+
+// GetUserInfo mocks base method.
+func (m *MockCloudClient) GetUserInfo(ctx context.Context) (*internal.UserInfo, *resty.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserInfo", ctx)
+	ret0, _ := ret[0].(*internal.UserInfo)
+	ret1, _ := ret[1].(*resty.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetUserInfo indicates an expected call of GetUserInfo.
+func (mr *MockCloudClientMockRecorder) GetUserInfo(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserInfo", reflect.TypeOf((*MockCloudClient)(nil).GetUserInfo), ctx)
 }
 
 // StartDeployment mocks base method.

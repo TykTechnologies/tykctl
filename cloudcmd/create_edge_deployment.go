@@ -41,7 +41,7 @@ func NewCreateEdgeDeployment(client internal.CloudClient) *cobra.Command {
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			_, err := validateEdgeDeploymentFlagAndCreate(cmd.Context(), client, cmd.Flags())
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			return nil

@@ -23,7 +23,7 @@ func NewCtxCmd() *cobra.Command {
 		ExactArgs(2, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			err := internal.SaveToConfig(args[0], args[1])
 			if err != nil {
-				cmd.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			cmd.Println(fmt.Sprintf("%s set successfully", args[0]))

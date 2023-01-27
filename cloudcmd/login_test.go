@@ -1,10 +1,15 @@
 package cloudcmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
+	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 	"github.com/TykTechnologies/tykctl/testutil"
+	"github.com/go-resty/resty/v2"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
@@ -268,4 +273,176 @@ type ExtractTestModel struct {
 func mockHttp(url string) (*http.Response, error) {
 
 	return http.Get(url)
+}
+
+func TestGetUserRole(t *testing.T) {
+	tests := []struct {
+		name          string
+		roles         []internal.Role
+		want          *internal.Role
+		ExpectedError error
+	}{
+		{
+			name:          "Test has team and org",
+			ExpectedError: nil,
+			roles: []internal.Role{{
+				Role:      "billing_admin",
+				OrgID:     "12fGHtmi567",
+				TeamID:    "",
+				OrgName:   "data test",
+				TeamName:  "",
+				AccountID: "",
+			},
+				{
+					Role:      "org_admin",
+					OrgID:     "24568674d",
+					TeamID:    "",
+					OrgName:   "dx org",
+					TeamName:  "itachi team",
+					AccountID: "78906756",
+				},
+			},
+			want: &internal.Role{
+				Role:      "org_admin",
+				OrgID:     "24568674d",
+				TeamID:    "",
+				OrgName:   "dx org",
+				TeamName:  "itachi team",
+				AccountID: "78906756",
+			},
+		},
+		{
+			name: "Test Empty Role",
+			roles: []internal.Role{{
+				Role:      "",
+				OrgID:     "457685098",
+				TeamID:    "6547586",
+				OrgName:   "My org",
+				TeamName:  "Org Name",
+				AccountID: "",
+			}},
+			want:          nil,
+			ExpectedError: ErrorNoRoleFound,
+		},
+		{
+			name: "Test has invalid role",
+			roles: []internal.Role{{
+				Role:      "org_admi",
+				OrgID:     "45689675f",
+				TeamID:    "y123465j5",
+				OrgName:   "",
+				TeamName:  "",
+				AccountID: "",
+			},
+			},
+			ExpectedError: ErrorNoRoleFound,
+			want:          nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			role, err := getUserRole(tt.roles)
+			assert.Equal(t, tt.ExpectedError, err)
+			assert.Equalf(t, tt.want, role, "getUserRole(%v)", tt.roles)
+		})
+	}
+}
+
+func TestInitOrgInfo(t *testing.T) {
+	testCases := []struct {
+		name             string
+		mockResponse     *internal.OrgInfo
+		mockHttpResponse *resty.Response
+		mockError        error
+		ExpectedError    error
+		want             *internal.OrgInit
+		orgId            string
+	}{
+		{
+			name: "Test Success",
+			mockResponse: &internal.OrgInfo{Organisation: cloud.Organisation{
+				Zone:  "aws-us-west-2",
+				Teams: generateTeams(1),
+			}},
+			mockError: nil,
+			mockHttpResponse: &resty.Response{
+				RawResponse: &http.Response{StatusCode: http.StatusOK},
+			},
+			ExpectedError: nil,
+			orgId:         "helloOrg",
+			want: &internal.OrgInit{
+				Controller: "https://controller-aws-usw2.cloud-ara.tyk.io:37001",
+				Org:        "helloOrg", Team: "1",
+			},
+		},
+	}
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			m := mock.NewMockCloudClient(ctrl)
+			m.EXPECT().GetOrgInfo(gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			info, err := initOrgInfo(context.Background(), m, tt.orgId)
+			assert.Equal(t, tt.ExpectedError, err)
+			assert.Equal(t, tt.want, info)
+
+		})
+	}
+}
+
+func TestInitUserProfile(t *testing.T) {
+	tests := []struct {
+		name             string
+		mockResponse     *internal.UserInfo
+		mockHttpResponse *resty.Response
+		mockError        error
+		want             *internal.Role
+		ExpectedError    error
+	}{
+		{
+			name:         "Test 401 http error code",
+			mockResponse: nil,
+			mockHttpResponse: &resty.Response{
+				RawResponse: &http.Response{StatusCode: http.StatusUnauthorized},
+			},
+			mockError:     ErrorGenericError,
+			want:          nil,
+			ExpectedError: ErrorGenericError,
+		},
+
+		{
+			name: "Test Success Response",
+			mockResponse: &internal.UserInfo{
+				Email:     "",
+				LastName:  "",
+				AccountID: "",
+				Roles: []internal.Role{{
+					Role:   "org_admin",
+					OrgID:  "986765",
+					TeamID: "8908756y",
+				}},
+			},
+			mockHttpResponse: &resty.Response{
+				RawResponse: &http.Response{StatusCode: http.StatusOK},
+			},
+			mockError: nil,
+			want: &internal.Role{
+				Role:   "org_admin",
+				OrgID:  "986765",
+				TeamID: "8908756y",
+			},
+			ExpectedError: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+			m := mock.NewMockCloudClient(ctrl)
+			m.EXPECT().GetUserInfo(gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			got, err := initUserProfile(context.Background(), m)
+			assert.Equalf(t, tt.want, got, "initUserProfile")
+			assert.Equal(t, tt.ExpectedError, err)
+		})
+	}
 }

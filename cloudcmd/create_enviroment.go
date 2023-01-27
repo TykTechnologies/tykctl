@@ -34,20 +34,20 @@ func NewCreateEnvironmentCmd(client internal.CloudClient) *cobra.Command {
 		WithDescription("creates an environment in a given team.").
 		WithFlagAdder(false, createEnvironment).
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: false}, {Name: "team", Persistent: false}}).
-		NoArgs(func(ctx context.Context, command cobra.Command) error {
+		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			org := viper.GetString(org)
 			team := viper.GetString(team)
-			envName, err := command.Flags().GetString(name)
+			envName, err := cmd.Flags().GetString(name)
 			if err != nil {
-				command.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
 			env, err := validateFlagsAndCreateEnv(ctx, client, envName, team, org)
 			if err != nil {
-				command.Println(err)
+				cmd.PrintErrln(err)
 				return err
 			}
-			command.Println(fmt.Sprintf("Environment %s created successfully", env.UID))
+			cmd.Println(fmt.Sprintf("Environment %s created successfully", env.UID))
 			return nil
 		})
 }

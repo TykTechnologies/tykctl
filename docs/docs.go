@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"github.com/TykTechnologies/tykctl/cloudcmd"
+	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/sharedCmd"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
@@ -12,7 +13,11 @@ import (
 
 func main() {
 	rootCmd := sharedCmd.NewRootCmd()
-	rootCmd.AddCommand(cloudcmd.NewCloudCommand(nil))
+	factory := internal.CloudFactory{
+		Client: nil,
+		Prompt: nil,
+	}
+	rootCmd.AddCommand(cloudcmd.NewCloudCommand(factory))
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
 	err := doc.GenMarkdownTree(rootCmd, "./")
 	if err != nil {
@@ -24,11 +29,11 @@ func main() {
 	}
 	defer f.Close()
 	out := new(bytes.Buffer)
-	s := []*cobra.Command{cloudcmd.NewLoginCommand(nil),
-		cloudcmd.NewInitCmd(nil),
-		cloudcmd.NewOrgListCommand(nil),
-		cloudcmd.NewCreateTeamCmd(nil),
-		cloudcmd.NewFetchTeamCmd(nil),
+	s := []*cobra.Command{cloudcmd.NewLoginCommand(factory),
+		cloudcmd.NewInitCmd(factory),
+		cloudcmd.NewOrgListCommand(factory),
+		cloudcmd.NewCreateTeamCmd(factory),
+		cloudcmd.NewFetchTeamCmd(factory),
 	}
 	for _, cmd := range s {
 		err := doc.GenMarkdown(cmd, out)

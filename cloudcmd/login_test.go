@@ -350,30 +350,54 @@ func TestGetUserRole(t *testing.T) {
 
 func TestInitOrgInfo(t *testing.T) {
 	testCases := []struct {
-		name             string
-		mockResponse     *internal.OrgInfo
-		mockHttpResponse *resty.Response
-		mockError        error
-		ExpectedError    error
-		want             *internal.OrgInit
-		orgId            string
+		name               string
+		mockResponse       *internal.OrgInfo
+		mockHttpResponse   *resty.Response
+		mockError          error
+		ExpectedError      error
+		want               *internal.OrgInit
+		orgId              string
+		teamPromptResponse *cloud.Team
+		teamPromptError    error
+		teamPromptCalls    int
 	}{
+		{
+			name:         "Test GetOrgInfo returns an error",
+			mockResponse: nil,
+			mockHttpResponse: &resty.Response{
+				RawResponse: &http.Response{StatusCode: http.StatusForbidden},
+			},
+			mockError:          ErrorGenericError,
+			ExpectedError:      ErrorGenericError,
+			want:               nil,
+			orgId:              "",
+			teamPromptResponse: nil,
+			teamPromptError:    nil,
+			teamPromptCalls:    0,
+		},
+
 		{
 			name: "Test Success",
 			mockResponse: &internal.OrgInfo{Organisation: cloud.Organisation{
 				Zone:  "aws-us-west-2",
 				Teams: generateTeams(1),
 			}},
-			mockError: nil,
 			mockHttpResponse: &resty.Response{
 				RawResponse: &http.Response{StatusCode: http.StatusOK},
 			},
+			mockError:     nil,
 			ExpectedError: nil,
-			orgId:         "helloOrg",
 			want: &internal.OrgInit{
 				Controller: "https://controller-aws-usw2.cloud-ara.tyk.io:37001",
-				Org:        "helloOrg", Team: "1",
+				Org:        "helloOrg", Team: "654536rty56",
 			},
+			orgId: "helloOrg",
+			teamPromptResponse: &cloud.Team{
+				OID: "4598756363",
+				UID: "654536rty56",
+			},
+			teamPromptError: nil,
+			teamPromptCalls: 1,
 		},
 	}
 	for _, tt := range testCases {
@@ -383,6 +407,7 @@ func TestInitOrgInfo(t *testing.T) {
 			prompt := mock.NewMockCloudPrompt(ctrl)
 			m := mock.NewMockCloudClient(ctrl)
 			m.EXPECT().GetOrgInfo(gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			prompt.EXPECT().TeamPrompt(gomock.Any()).Return(tt.teamPromptResponse, tt.teamPromptError).Times(tt.teamPromptCalls)
 			info, err := initOrgInfo(context.Background(), m, prompt, tt.orgId)
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.want, info)

@@ -12,7 +12,12 @@ func TestNewEnvironmentCmd(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := mock.NewMockCloudClient(ctrl)
-	envCmd := NewEnvironmentCmd(m)
+	prompt := mock.NewMockCloudPrompt(ctrl)
+	factory := internal.CloudFactory{
+		Client: m,
+		Prompt: prompt,
+	}
+	envCmd := NewEnvironmentCmd(factory)
 
 	flags := []internal.Flag{{
 		Description: "Test org is added",

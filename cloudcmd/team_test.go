@@ -13,7 +13,12 @@ func TestNewTeamCmdPersistentFlags(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := mock.NewMockCloudClient(ctrl)
-	cmd := NewTeamCmd(m)
+	prompt := mock.NewMockCloudPrompt(ctrl)
+	factory := internal.CloudFactory{
+		Client: m,
+		Prompt: prompt,
+	}
+	cmd := NewTeamCmd(factory)
 	assert.Equal(t, true, cmd.PersistentFlags().HasFlags())
 	flags := []internal.Flag{{
 		Description: "Test Organization is added",

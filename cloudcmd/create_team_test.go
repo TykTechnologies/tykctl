@@ -150,8 +150,13 @@ func TestAllFlagsAreAddedToCreateTeamCmd(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	m := mock.NewMockCloudClient(ctrl)
-	parentCmd := NewTeamCmd(m)
-	cmd := NewCreateTeamCmd(m)
+	prompt := mock.NewMockCloudPrompt(ctrl)
+	factory := internal.CloudFactory{
+		Client: m,
+		Prompt: prompt,
+	}
+	parentCmd := NewTeamCmd(factory)
+	cmd := NewCreateTeamCmd(factory)
 	parentCmd.AddCommand(cmd)
 	localFlags := []internal.Flag{{
 		Description: "Test name is added.",

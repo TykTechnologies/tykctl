@@ -29,7 +29,8 @@ var (
 	controller        = "controller"
 	tykctl            = "tykctl"
 	defaultConfigFile = ".tykctl.yaml"
-	token             = "token"
+	currentCloudUser  = "cloud.current_user"
+	currentCloudToken = "cloud.current_token"
 )
 
 func NewRootCmd() *cobra.Command {
@@ -81,7 +82,7 @@ func init() {
 func AddTokenAndBaseUrl(client *cloud.APIClient, conf *cloud.Configuration) error {
 	baseUrl := viper.GetString(controller)
 	client.ChangeBasePath(baseUrl)
-	token := fmt.Sprintf("Bearer %s", viper.GetString(token))
+	token := fmt.Sprintf("Bearer %s", viper.GetString(currentCloudToken))
 	conf.AddDefaultHeader("Authorization", token)
 	return nil
 
@@ -89,7 +90,7 @@ func AddTokenAndBaseUrl(client *cloud.APIClient, conf *cloud.Configuration) erro
 
 // AddTokenAndBaseUrlToResty will add token and BaseUrl to the resty client.
 func AddTokenAndBaseUrlToResty(client *resty.Client) error {
-	token := viper.GetString(token)
+	token := viper.GetString(currentCloudToken)
 	client.SetBaseURL(internal.DashboardUrl)
 	client.SetAuthToken(token)
 	return nil

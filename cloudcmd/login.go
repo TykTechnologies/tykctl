@@ -54,18 +54,22 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
-			profile, err := initUserProfile(ctx, factory.Client)
+			info, err := GetUserInfo(ctx, factory.Client)
+			if err != nil {
+				return err
+			}
+			role, err := getUserRole(info.Roles)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
-			err = internal.SaveMapToConfig(profile.RoleToMap())
+			err = internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
 
-			orgId := viper.GetString(org)
+			orgId := viper.GetString(internal.CreateKeyFromPath("cloud", info.ID, org))
 			if orgId == "" {
 				cmd.Println("You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
 				return ErrNoOrganization
@@ -75,7 +79,12 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
-			err = internal.SaveMapToConfig(orgInfo.OrgInitToMap())
+			err = internal.SaveMapToCloudUserContext(info.ID, orgInfo.OrgInitToMap())
+			if err != nil {
+				cmd.PrintErrln(err)
+				return err
+			}
+			err = internal.SaveToConfig(currentCloudUser, info.ID)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -94,6 +103,14 @@ func initUserProfile(ctx context.Context, client internal.CloudClient) (*interna
 		return nil, err
 	}
 	return getUserRole(userInfo.Roles)
+}
+
+func GetUserInfo(ctx context.Context, client internal.CloudClient) (*internal.UserInfo, error) {
+	userInfo, _, err := client.GetUserInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return userInfo, nil
 }
 
 // / getUserRole returns the user role.
@@ -290,7 +307,7 @@ func getAndSaveToken(url, email, password, basicUser, basicPassword string) erro
 	if err != nil {
 		return err
 	}
-	return internal.SaveToConfig("token", token)
+	return internal.SaveToConfig(currentCloudToken, token)
 }
 
 type LoginBody struct {

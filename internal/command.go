@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrCurrentUserNotFound = errors.New("you have not yet set the current user")
+	ErrCurrentUserNotFound = errors.New("current user not set/found")
 )
 
 type Builder interface {

@@ -21,7 +21,7 @@ type BindFlag struct {
 	Persistent bool
 }
 
-// SaveToConfig writes data to the config file provided by --config
+// SaveToConfig writes data to the config file provided by --config.
 func SaveToConfig(key, value string) error {
 	viper.Set(key, value)
 	err := viper.WriteConfig()

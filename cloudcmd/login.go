@@ -37,7 +37,7 @@ var (
 	ErrLoginFailed        = errors.New("login failed")
 	ErrSignatureNotFound  = errors.New("signature not found")
 	ErrPasswordIsRequired = errors.New("password is required")
-	ErrNoOrganization     = errors.New("you do not have any organization")
+	ErrNoOrganization     = errors.New("you do not have any organization.You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
 	ErrorNoRoleFound      = errors.New("role not found")
 )
 
@@ -54,37 +54,7 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
-			info, err := GetUserInfo(ctx, factory.Client)
-			if err != nil {
-				return err
-			}
-			role, err := getUserRole(info.Roles)
-			if err != nil {
-				cmd.PrintErrln(err)
-				return err
-			}
-			err = internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
-			if err != nil {
-				cmd.PrintErrln(err)
-				return err
-			}
-
-			orgId := viper.GetString(internal.CreateKeyFromPath(cloudPath, info.ID, org))
-			if orgId == "" {
-				cmd.Println("You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
-				return ErrNoOrganization
-			}
-			orgInfo, err := initOrgInfo(ctx, factory.Client, factory.Prompt, orgId)
-			if err != nil {
-				cmd.PrintErrln(err)
-				return err
-			}
-			err = internal.SaveMapToCloudUserContext(info.ID, orgInfo.OrgInitToMap())
-			if err != nil {
-				cmd.PrintErrln(err)
-				return err
-			}
-			err = internal.SaveToConfig(currentCloudUser, info.ID)
+			err = initUserConfigFile(ctx, factory)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -93,6 +63,49 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 			return nil
 		})
 
+}
+
+// initUserConfigFile will fetch the user profile,organization and save them to the file.
+func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) error {
+	info, err := GetUserInfo(ctx, factory.Client)
+	if err != nil {
+		return err
+	}
+	err = saveRoleToConfig(info)
+	if err != nil {
+		return err
+	}
+	err = saveOrgInfoToConfig(ctx, factory, info.ID)
+	if err != nil {
+		return err
+	}
+	return internal.SaveToConfig(currentCloudUser, info.ID)
+}
+
+// saveOrgInfoToConfig will save the organization details to the config file passed by the user.
+func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, userId string) error {
+	orgId := viper.GetString(internal.CreateKeyFromPath(cloudPath, userId, org))
+	if orgId == "" {
+		return ErrNoOrganization
+	}
+	orgInfo, err := initOrgInfo(ctx, factory.Client, factory.Prompt, orgId)
+	if err != nil {
+		return err
+	}
+	return internal.SaveMapToCloudUserContext(userId, orgInfo.OrgInitToMap())
+}
+
+// saveRoleToConfig will save the user role to the config file passed by the user.
+func saveRoleToConfig(info *internal.UserInfo) error {
+	role, err := getUserRole(info.Roles)
+	if err != nil {
+		return err
+	}
+	err = internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // initUserProfile will auto fetch user info such as:

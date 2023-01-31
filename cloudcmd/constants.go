@@ -2,6 +2,7 @@ package cloudcmd
 
 const (
 	statusOK               = "ok"
+	cloudPath              = "cloud"
 	list                   = "list"
 	fetch                  = "fetch"
 	applicationJson        = "application/json"

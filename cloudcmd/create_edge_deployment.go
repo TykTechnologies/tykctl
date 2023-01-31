@@ -36,7 +36,7 @@ func NewCreateEdgeDeployment(client internal.CloudClient) *cobra.Command {
 		WithLongDescription(createEdgeDeploymentDesc).
 		WithDescription("will create the edge gateway in a given environment").
 		WithExample("tykctl cloud deployments create edge --name='test deployment'").
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithFlagAdder(false, addEdgeDeploymentFlag).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			_, err := validateEdgeDeploymentFlagAndCreate(cmd.Context(), client, cmd.Flags())

@@ -7,7 +7,6 @@ import (
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -30,7 +29,7 @@ func NewFetchTeamCmd(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchTeamDesc).
 		WithDescription("fetch teams from a given organization.").
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: false}}).
+		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).
 		WithExample("tykctl cloud teams fetch --output<json/table>").
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
@@ -38,7 +37,7 @@ func NewFetchTeamCmd(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
-			org := viper.GetString(org)
+			org := getCurrentUserOrg()
 			if len(args) == 0 {
 				err := FetchAndPrintTeams(ctx, factory.Client, outPut, org)
 				if err != nil {

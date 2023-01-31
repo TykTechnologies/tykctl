@@ -4,7 +4,6 @@ import (
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 const deploymentDesc = `This is the parent command to all deployment operation.Such as creating teams and fetching teams.
@@ -44,15 +43,15 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 
 func validateCommonDeploymentFlags() (*DeploymentFlags, error) {
 	var deploymentFlag DeploymentFlags
-	deploymentFlag.OrgId = viper.GetString(org)
+	deploymentFlag.OrgId = getCurrentUserOrg()
 	if util.StringIsEmpty(deploymentFlag.OrgId) {
 		return nil, ErrorOrgRequired
 	}
-	deploymentFlag.TeamId = viper.GetString(team)
+	deploymentFlag.TeamId = getCurrentUserTeam()
 	if util.StringIsEmpty(deploymentFlag.TeamId) {
 		return nil, ErrorTeamRequired
 	}
-	deploymentFlag.EnvId = viper.GetString(env)
+	deploymentFlag.EnvId = getCurrentUserEnv()
 	if util.StringIsEmpty(deploymentFlag.EnvId) {
 		return nil, ErrorEnvRequired
 	}

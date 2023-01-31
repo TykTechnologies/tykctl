@@ -69,7 +69,7 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 				return err
 			}
 
-			orgId := viper.GetString(internal.CreateKeyFromPath("cloud", info.ID, org))
+			orgId := viper.GetString(internal.CreateKeyFromPath(cloudPath, info.ID, org))
 			if orgId == "" {
 				cmd.Println("You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
 				return ErrNoOrganization
@@ -156,12 +156,12 @@ func addLoginFlags(f *pflag.FlagSet) {
 	f.StringP(password, "p", "", "password you used to login into the dashboard")
 	f.String(baUser, "", "Basic auth user.This should only be used for staging server")
 	f.BoolP(interactive, "i", false, "login using the interactive mode.")
-	err := viper.BindPFlag(baUser, f.Lookup(baUser))
+	err := viper.BindPFlag(internal.CreateKeyFromPath(cloudPath, baUser), f.Lookup(baUser))
 	if err != nil {
 		panic(err)
 	}
 	f.String(baPass, "", "Basic auth password")
-	err = viper.BindPFlag(baPass, f.Lookup(baPass))
+	err = viper.BindPFlag(internal.CreateKeyFromPath(cloudPath, baPass), f.Lookup(baPass))
 	if err != nil {
 		panic(err)
 	}
@@ -255,8 +255,8 @@ func validateAndLogin(f *pflag.FlagSet) error {
 	if util.StringIsEmpty(loginBody.Password) {
 		return ErrPasswordIsRequired
 	}
-	baUser := viper.GetString(baUser)
-	baPass := viper.GetString(baPass)
+	baUser := viper.GetString(internal.CreateKeyFromPath(cloudPath, baUser))
+	baPass := viper.GetString(internal.CreateKeyFromPath(cloudPath, baPass))
 	err = getAndSaveToken(internal.DashboardUrl, loginBody.Email, loginBody.Password, baUser, baPass)
 	if err != nil {
 		return err

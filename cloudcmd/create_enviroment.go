@@ -9,7 +9,6 @@ import (
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -33,10 +32,10 @@ func NewCreateEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(createEnvDesc).
 		WithDescription("creates an environment in a given team.").
 		WithFlagAdder(false, createEnvironment).
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: false}, {Name: "team", Persistent: false}}).
+		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			org := viper.GetString(org)
-			team := viper.GetString(team)
+			org := getCurrentUserOrg()
+			team := getCurrentUserTeam()
 			envName, err := cmd.Flags().GetString(name)
 			if err != nil {
 				cmd.PrintErrln(err)

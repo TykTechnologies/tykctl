@@ -80,7 +80,7 @@ func init() {
 
 // AddTokenAndBaseUrl will add a user token from the configuration file to each request header.
 func AddTokenAndBaseUrl(client *cloud.APIClient, conf *cloud.Configuration) error {
-	baseUrl := viper.GetString(controller)
+	baseUrl := viper.GetString(internal.CreateKeyFromPath("cloud", viper.GetString(currentCloudUser), controller))
 	client.ChangeBasePath(baseUrl)
 	token := fmt.Sprintf("Bearer %s", viper.GetString(currentCloudToken))
 	conf.AddDefaultHeader("Authorization", token)

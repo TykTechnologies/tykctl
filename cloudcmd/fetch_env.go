@@ -7,7 +7,6 @@ import (
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -34,15 +33,15 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(fetchEnvDesc).
 		WithDescription("fetch environments from a given team.").
 		WithExample("tykctl cloud environments fetch --team=<teamId> --org=<orgID>").
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: false}, {Name: "team", Persistent: false}}).
+		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
-			org := viper.GetString(org)
-			team := viper.GetString(team)
+			org := getCurrentUserOrg()
+			team := getCurrentUserTeam()
 			if len(args) == 0 {
 				err := validateFlagsAndPrintEnvs(cmd.Context(), factory.Client, outPut, org, team)
 				if err != nil {

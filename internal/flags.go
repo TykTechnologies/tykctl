@@ -5,6 +5,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+var (
+	configErrorMessage = "Couldn't write config: %s\n"
+)
+
 type Flag struct {
 	Description string
 	Name        string
@@ -22,7 +26,7 @@ func SaveToConfig(key, value string) error {
 	viper.Set(key, value)
 	err := viper.WriteConfig()
 	if err != nil {
-		return fmt.Errorf("Couldn't write config: %s\n", err.Error())
+		return fmt.Errorf(configErrorMessage, err.Error())
 	}
 	return nil
 }
@@ -35,7 +39,7 @@ func SaveMapToConfig(data map[string]string) error {
 	}
 	err := viper.WriteConfig()
 	if err != nil {
-		return fmt.Errorf("Couldn't write config: %s\n", err.Error())
+		return fmt.Errorf(configErrorMessage, err.Error())
 	}
 	return nil
 }
@@ -49,7 +53,7 @@ func SaveMapToCloudUserContext(userId string, data map[string]string) error {
 	}
 	err := viper.WriteConfig()
 	if err != nil {
-		return fmt.Errorf("Couldn't write config: %s\n", err.Error())
+		return fmt.Errorf(configErrorMessage, err.Error())
 	}
 	return nil
 }

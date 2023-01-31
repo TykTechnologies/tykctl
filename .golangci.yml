@@ -82,6 +82,8 @@ linters:
     - dupl
     - nilerr
     - misspell
+    - godot
+    - gofmt
 
 linters-settings:
   errcheck:

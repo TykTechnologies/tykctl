@@ -131,7 +131,6 @@ func (b *builder) WithBindFlagWithCurrentUserContext(flags []BindFlag) Builder {
 					return err
 				}
 			}
-			return nil
 		}
 		return nil
 	}

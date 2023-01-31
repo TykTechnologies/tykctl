@@ -120,17 +120,16 @@ func (b *builder) WithBindFlagWithCurrentUserContext(flags []BindFlag) Builder {
 		}
 		for _, flag := range flags {
 			currentUserCtx := fmt.Sprintf("cloud.%s.%s", currentUser, flag.Name)
+			var err error
 			if flag.Persistent {
-				err := viper.BindPFlag(currentUserCtx, b.cmd.PersistentFlags().Lookup(flag.Name))
-				if err != nil {
-					return err
-				}
+				err = viper.BindPFlag(currentUserCtx, b.cmd.PersistentFlags().Lookup(flag.Name))
 			} else {
-				err := viper.BindPFlag(currentUserCtx, b.cmd.Flags().Lookup(flag.Name))
-				if err != nil {
-					return err
-				}
+				err = viper.BindPFlag(currentUserCtx, b.cmd.Flags().Lookup(flag.Name))
 			}
+			if err != nil {
+				return err
+			}
+
 		}
 		return nil
 	}

@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/go-resty/resty/v2"
@@ -248,7 +249,8 @@ func (c *cloudSdkClient) runBeforeRestyExecute() error {
 
 // ExtractErrorMessage returns the body error message from our response.
 func ExtractErrorMessage(err error) string {
-	if genericError, ok := err.(cloud.GenericSwaggerError); ok {
+	var genericError *cloud.GenericSwaggerError
+	if errors.As(err, &genericError) {
 		return string(genericError.Body())
 	}
 	return err.Error()

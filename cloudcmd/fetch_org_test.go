@@ -129,7 +129,7 @@ func TestGetOrgById(t *testing.T) {
 			mockError:     nil,
 		},
 		{
-			name:             "Test response body status is not sucess",
+			name:             "Test response body status is not success",
 			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
 			mockResponse: cloud.InlineResponse2005{
 				Error_:  "i have an error here",

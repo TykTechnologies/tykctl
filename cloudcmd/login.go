@@ -49,7 +49,7 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 		WithExample("tykctl cloud login --password=<your cloud password here> --email=<your email here>").
 		WithFlagAdder(false, addLoginFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := validateAndLogin(cmd.Flags())
+			err := validateAndLogin(cmd.Context(), cmd.Flags())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -101,11 +101,7 @@ func saveRoleToConfig(info *internal.UserInfo) error {
 	if err != nil {
 		return err
 	}
-	err = internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
-	if err != nil {
-		return err
-	}
-	return nil
+	return internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
 }
 
 // initUserProfile will auto fetch user info such as:
@@ -120,10 +116,7 @@ func initUserProfile(ctx context.Context, client internal.CloudClient) (*interna
 
 func GetUserInfo(ctx context.Context, client internal.CloudClient) (*internal.UserInfo, error) {
 	userInfo, _, err := client.GetUserInfo(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return userInfo, nil
+	return userInfo, err
 }
 
 // / getUserRole returns the user role.
@@ -181,7 +174,7 @@ func addLoginFlags(f *pflag.FlagSet) {
 }
 
 // dashboardLogin send a request to ara dashboard to get a token to use to authenticate all other requests.
-func dashboardLogin(baseUrl, email, password, basicUser, basicPassword string) (*http.Response, error) {
+func dashboardLogin(ctx context.Context, baseUrl, email, password, basicUser, basicPassword string) (*http.Response, error) {
 	headers := map[string]string{
 		contentType: applicationJson,
 	}
@@ -193,7 +186,7 @@ func dashboardLogin(baseUrl, email, password, basicUser, basicPassword string) (
 	if err != nil {
 		return nil, err
 	}
-	req, err := internal.CreatePostRequest(fullUrl, body, headers)
+	req, err := internal.CreatePostRequest(ctx, fullUrl, body, headers)
 	if err != nil {
 		return nil, err
 	}
@@ -244,14 +237,14 @@ func extractToken(resp *http.Response) (string, error) {
 }
 
 // validateAndLogin validate cli flags and pass them to login.
-func validateAndLogin(f *pflag.FlagSet) error {
+func validateAndLogin(ctx context.Context, f *pflag.FlagSet) error {
 	isInteractive, err := f.GetBool(interactive)
 	if err != nil {
 		return err
 	}
 	var loginBody *LoginBody
 	if isInteractive {
-		loginBody, err = loginInteractive()
+		loginBody, err = loginInteractive(ctx)
 		if err != nil {
 			return err
 		}
@@ -270,7 +263,7 @@ func validateAndLogin(f *pflag.FlagSet) error {
 	}
 	baUser := viper.GetString(internal.CreateKeyFromPath(cloudPath, baUser))
 	baPass := viper.GetString(internal.CreateKeyFromPath(cloudPath, baPass))
-	err = getAndSaveToken(internal.DashboardUrl, loginBody.Email, loginBody.Password, baUser, baPass)
+	err = getAndSaveToken(ctx, internal.DashboardUrl, loginBody.Email, loginBody.Password, baUser, baPass)
 	if err != nil {
 		return err
 	}
@@ -294,7 +287,7 @@ func loginWithFlag(f *pflag.FlagSet) (*LoginBody, error) {
 }
 
 // loginInteractive will extract ask user to enter login details interactively.
-func loginInteractive() (*LoginBody, error) {
+func loginInteractive(ctx context.Context) (*LoginBody, error) {
 	email, err := internal.EmailPrompt()
 	if err != nil {
 		return nil, err
@@ -310,8 +303,8 @@ func loginInteractive() (*LoginBody, error) {
 }
 
 // getAndSaveToken token to configuration file.
-func getAndSaveToken(url, email, password, basicUser, basicPassword string) error {
-	resp, err := dashboardLogin(url, email, password, basicUser, basicPassword)
+func getAndSaveToken(ctx context.Context, url, email, password, basicUser, basicPassword string) error {
+	resp, err := dashboardLogin(ctx, url, email, password, basicUser, basicPassword)
 	if err != nil {
 		return err
 	}

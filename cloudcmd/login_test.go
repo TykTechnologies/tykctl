@@ -198,6 +198,7 @@ func TestNewLoginCommand(t *testing.T) {
 }
 
 func extractTokenRequest(t *testing.T, model ExtractTestModel) {
+	t.Helper()
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		for _, cookie := range model.Cookies {
@@ -207,7 +208,7 @@ func extractTokenRequest(t *testing.T, model ExtractTestModel) {
 
 	}))
 	defer s.Close()
-	response, err := mockHttp(s.URL)
+	response, err := mockHttp(context.Background(), s.URL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -224,6 +225,7 @@ func extractTokenRequest(t *testing.T, model ExtractTestModel) {
 }
 
 func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
+	t.Helper()
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, "/api/login", r.URL.Path)
 		assert.Equal(t, "application/json", r.Header.Get("Content-Type"))
@@ -246,7 +248,7 @@ func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
 
 	}))
 	defer s.Close()
-	_, err := dashboardLogin(s.URL, model.Email, model.Password, model.BasicUser, model.BasicPassword)
+	_, err := dashboardLogin(context.Background(), s.URL, model.Email, model.Password, model.BasicUser, model.BasicPassword)
 	if err != nil {
 		t.Fatal(err)
 		///st.Expect(t, err, nil)
@@ -270,9 +272,12 @@ type ExtractTestModel struct {
 	StatusCode    int
 }
 
-func mockHttp(url string) (*http.Response, error) {
-
-	return http.Get(url)
+func mockHttp(ctx context.Context, url string) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	return http.DefaultClient.Do(req)
 }
 
 func TestGetUserRole(t *testing.T) {

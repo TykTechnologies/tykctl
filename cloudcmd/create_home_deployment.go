@@ -31,6 +31,7 @@ tykctl cloud deployments create edge --name="test deployment"
 
 func NewCreateHomeDeployment(client internal.CloudClient) *cobra.Command {
 	return internal.NewCmd(home).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin).CloudRbac).
 		WithLongDescription(createHomeDeploymentDesc).
 		WithFlagAdder(false, addHomeDeploymentFlag).
 		WithDescription("create a control plane in your home region.").

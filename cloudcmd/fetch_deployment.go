@@ -32,6 +32,7 @@ var (
 
 func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
+		AddPreRunFuncs(NewCloudRbac(TeamMember).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchDeploymentDesc).
 		WithDescription("fetch deployment from an environment.").

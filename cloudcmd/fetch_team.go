@@ -26,6 +26,7 @@ var (
 
 func NewFetchTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchTeamDesc).
 		WithDescription("fetch teams from a given organization.").

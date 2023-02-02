@@ -31,6 +31,7 @@ func NewCreateDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(createDeploymentDesc).
 		WithDescription("This is the parent command for creating the edge or home deployment.").
 		WithFlagAdder(true, addDeploymentFlag).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin).CloudRbac).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithCommands(
 			NewCreateHomeDeployment(factory.Client),

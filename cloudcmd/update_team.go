@@ -21,6 +21,7 @@ tyckctl cloud teams update <uuid> --name=<new name> --org=<org uuid>
 
 func NewUpdateTeamCmd() *cobra.Command {
 	return internal.NewCmd(update).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin).CloudRbac).
 		WithFlagAdder(false, createTeamFlags).
 		WithLongDescription(updateTeamDesc).
 		WithDescription("update a team given it's uuid").

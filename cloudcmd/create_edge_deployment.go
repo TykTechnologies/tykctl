@@ -34,6 +34,7 @@ var (
 func NewCreateEdgeDeployment(client internal.CloudClient) *cobra.Command {
 	return internal.NewCmd(edge).
 		WithLongDescription(createEdgeDeploymentDesc).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin).CloudRbac).
 		WithDescription("will create the edge gateway in a given environment").
 		WithExample("tykctl cloud deployments create edge --name='test deployment'").
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).

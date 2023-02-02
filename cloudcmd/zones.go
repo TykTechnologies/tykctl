@@ -17,6 +17,7 @@ You can run this command to find out the regions you can deploy your home or edg
 
 func NewZonesCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(zones).
+		AddPreRunFuncs(NewCloudRbac(TeamMember).CloudRbac).
 		WithDescription("fetch all the supported zones and what deployment they support.").
 		WithExample("tykctl cloud zones").
 		WithLongDescription(zonesDesc).

@@ -29,6 +29,7 @@ var (
 
 func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
+		AddPreRunFuncs(NewCloudRbac(TeamMember).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchEnvDesc).
 		WithDescription("fetch environments from a given team.").

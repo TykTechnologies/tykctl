@@ -16,3 +16,7 @@ func getCurrentUserTeam() string {
 func getCurrentUserEnv() string {
 	return viper.GetString(internal.CreateKeyFromPath(cloudPath, viper.GetString(currentCloudUser), env))
 }
+
+func getCurrentUserRole() string {
+	return viper.GetString(internal.CreateKeyFromPath(cloudPath, viper.GetString(currentCloudUser), userRole))
+}

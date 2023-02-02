@@ -35,7 +35,7 @@ func NewCreateHomeDeployment(client internal.CloudClient) *cobra.Command {
 		WithFlagAdder(false, addHomeDeploymentFlag).
 		WithDescription("create a control plane in your home region.").
 		WithExample("tykctl cloud deployments create home --name='home-deployment'").
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			_, err := validateHomeDeploymentFlagAndCreate(cmd.Context(), client, cmd.Flags())
 			if err != nil {

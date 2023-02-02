@@ -9,7 +9,6 @@ import (
 	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"net/http"
 )
 
@@ -37,9 +36,9 @@ func NewCreateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(createTeamDesc).
 		WithDescription("create a team in a given organization.").
 		WithExample("tyckctl cloud teams create --name='first team' --org=<org uuid>").
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: false}}).
+		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			org := viper.GetString(org)
+			org := getCurrentUserOrg()
 			teamName, err := cmd.Flags().GetString(name)
 			if err != nil {
 				cmd.PrintErrln(err)

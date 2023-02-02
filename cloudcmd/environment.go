@@ -17,7 +17,7 @@ func NewEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(true, addOrgFlag).
 		WithLongDescription(environmentDesc).
 		WithDescription("parent command to all environment operations").
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: true}, {Name: "team", Persistent: true}}).
+		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: true}, {Name: team, Persistent: true}}).
 		WithFlagAdder(true, addTeamFlag).
 		WithCommands(
 			NewCreateEnvironmentCmd(factory),

@@ -2,6 +2,7 @@ package cloudcmd
 
 const (
 	statusOK               = "ok"
+	cloudPath              = "cloud"
 	list                   = "list"
 	fetch                  = "fetch"
 	applicationJson        = "application/json"
@@ -14,7 +15,6 @@ const (
 	password               = "password"
 	baUser                 = "ba-user"
 	baPass                 = "ba-pass"
-	token                  = "token"
 	contentType            = "Content-Type"
 	teamEntitlement        = "MaxTeamCount"
 	environmentEntitlement = "MaxLoadoutCount"
@@ -55,4 +55,6 @@ const (
 	tykctl                 = "tykctl"
 	interactive            = "interactive"
 	userRole               = "role"
+	currentCloudUser       = "cloud.current_user"
+	currentCloudToken      = "cloud.current_token"
 )

@@ -25,7 +25,7 @@ func NewUpdateTeamCmd() *cobra.Command {
 		WithLongDescription(updateTeamDesc).
 		WithDescription("update a team given it's uuid").
 		WithExample("tyckctl cloud teams update <uuid> --name=<new name> --org=<org uuid>").
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: "org", Persistent: false}}).
+		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			return nil
 		})

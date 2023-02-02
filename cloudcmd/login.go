@@ -37,7 +37,7 @@ var (
 	ErrLoginFailed        = errors.New("login failed")
 	ErrSignatureNotFound  = errors.New("signature not found")
 	ErrPasswordIsRequired = errors.New("password is required")
-	ErrNoOrganization     = errors.New("you do not have any organization")
+	ErrNoOrganization     = errors.New("you do not have any organization.You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
 	ErrorNoRoleFound      = errors.New("role not found")
 )
 
@@ -49,33 +49,12 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 		WithExample("tykctl cloud login --password=<your cloud password here> --email=<your email here>").
 		WithFlagAdder(false, addLoginFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := validateAndLogin(cmd.Flags())
+			err := validateAndLogin(cmd.Context(), cmd.Flags())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
-			profile, err := initUserProfile(ctx, factory.Client)
-			if err != nil {
-				cmd.PrintErrln(err)
-				return err
-			}
-			err = internal.SaveMapToConfig(profile.RoleToMap())
-			if err != nil {
-				cmd.PrintErrln(err)
-				return err
-			}
-
-			orgId := viper.GetString(org)
-			if orgId == "" {
-				cmd.Println("You need to create an organization here https://dashboard.cloud-ara.tyk.io/")
-				return ErrNoOrganization
-			}
-			orgInfo, err := initOrgInfo(ctx, factory.Client, factory.Prompt, orgId)
-			if err != nil {
-				cmd.PrintErrln(err)
-				return err
-			}
-			err = internal.SaveMapToConfig(orgInfo.OrgInitToMap())
+			err = initUserConfigFile(ctx, factory)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -86,6 +65,45 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 
 }
 
+// initUserConfigFile will fetch the user profile,organization and save them to the file.
+func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) error {
+	info, err := GetUserInfo(ctx, factory.Client)
+	if err != nil {
+		return err
+	}
+	err = saveRoleToConfig(info)
+	if err != nil {
+		return err
+	}
+	err = saveOrgInfoToConfig(ctx, factory, info.ID)
+	if err != nil {
+		return err
+	}
+	return internal.SaveToConfig(currentCloudUser, info.ID)
+}
+
+// saveOrgInfoToConfig will save the organization details to the config file passed by the user.
+func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, userId string) error {
+	orgId := viper.GetString(internal.CreateKeyFromPath(cloudPath, userId, org))
+	if orgId == "" {
+		return ErrNoOrganization
+	}
+	orgInfo, err := initOrgInfo(ctx, factory.Client, factory.Prompt, orgId)
+	if err != nil {
+		return err
+	}
+	return internal.SaveMapToCloudUserContext(userId, orgInfo.OrgInitToMap())
+}
+
+// saveRoleToConfig will save the user role to the config file passed by the user.
+func saveRoleToConfig(info *internal.UserInfo) error {
+	role, err := getUserRole(info.Roles)
+	if err != nil {
+		return err
+	}
+	return internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
+}
+
 // initUserProfile will auto fetch user info such as:
 // user roles,user team.
 func initUserProfile(ctx context.Context, client internal.CloudClient) (*internal.Role, error) {
@@ -94,6 +112,11 @@ func initUserProfile(ctx context.Context, client internal.CloudClient) (*interna
 		return nil, err
 	}
 	return getUserRole(userInfo.Roles)
+}
+
+func GetUserInfo(ctx context.Context, client internal.CloudClient) (*internal.UserInfo, error) {
+	userInfo, _, err := client.GetUserInfo(ctx)
+	return userInfo, err
 }
 
 // / getUserRole returns the user role.
@@ -139,19 +162,19 @@ func addLoginFlags(f *pflag.FlagSet) {
 	f.StringP(password, "p", "", "password you used to login into the dashboard")
 	f.String(baUser, "", "Basic auth user.This should only be used for staging server")
 	f.BoolP(interactive, "i", false, "login using the interactive mode.")
-	err := viper.BindPFlag(baUser, f.Lookup(baUser))
+	err := viper.BindPFlag(internal.CreateKeyFromPath(cloudPath, baUser), f.Lookup(baUser))
 	if err != nil {
 		panic(err)
 	}
 	f.String(baPass, "", "Basic auth password")
-	err = viper.BindPFlag(baPass, f.Lookup(baPass))
+	err = viper.BindPFlag(internal.CreateKeyFromPath(cloudPath, baPass), f.Lookup(baPass))
 	if err != nil {
 		panic(err)
 	}
 }
 
 // dashboardLogin send a request to ara dashboard to get a token to use to authenticate all other requests.
-func dashboardLogin(baseUrl, email, password, basicUser, basicPassword string) (*http.Response, error) {
+func dashboardLogin(ctx context.Context, baseUrl, email, password, basicUser, basicPassword string) (*http.Response, error) {
 	headers := map[string]string{
 		contentType: applicationJson,
 	}
@@ -163,7 +186,7 @@ func dashboardLogin(baseUrl, email, password, basicUser, basicPassword string) (
 	if err != nil {
 		return nil, err
 	}
-	req, err := internal.CreatePostRequest(fullUrl, body, headers)
+	req, err := internal.CreatePostRequest(ctx, fullUrl, body, headers)
 	if err != nil {
 		return nil, err
 	}
@@ -214,14 +237,14 @@ func extractToken(resp *http.Response) (string, error) {
 }
 
 // validateAndLogin validate cli flags and pass them to login.
-func validateAndLogin(f *pflag.FlagSet) error {
+func validateAndLogin(ctx context.Context, f *pflag.FlagSet) error {
 	isInteractive, err := f.GetBool(interactive)
 	if err != nil {
 		return err
 	}
 	var loginBody *LoginBody
 	if isInteractive {
-		loginBody, err = loginInteractive()
+		loginBody, err = loginInteractive(ctx)
 		if err != nil {
 			return err
 		}
@@ -238,9 +261,9 @@ func validateAndLogin(f *pflag.FlagSet) error {
 	if util.StringIsEmpty(loginBody.Password) {
 		return ErrPasswordIsRequired
 	}
-	baUser := viper.GetString(baUser)
-	baPass := viper.GetString(baPass)
-	err = getAndSaveToken(internal.DashboardUrl, loginBody.Email, loginBody.Password, baUser, baPass)
+	baUser := viper.GetString(internal.CreateKeyFromPath(cloudPath, baUser))
+	baPass := viper.GetString(internal.CreateKeyFromPath(cloudPath, baPass))
+	err = getAndSaveToken(ctx, internal.DashboardUrl, loginBody.Email, loginBody.Password, baUser, baPass)
 	if err != nil {
 		return err
 	}
@@ -264,7 +287,7 @@ func loginWithFlag(f *pflag.FlagSet) (*LoginBody, error) {
 }
 
 // loginInteractive will extract ask user to enter login details interactively.
-func loginInteractive() (*LoginBody, error) {
+func loginInteractive(ctx context.Context) (*LoginBody, error) {
 	email, err := internal.EmailPrompt()
 	if err != nil {
 		return nil, err
@@ -280,8 +303,8 @@ func loginInteractive() (*LoginBody, error) {
 }
 
 // getAndSaveToken token to configuration file.
-func getAndSaveToken(url, email, password, basicUser, basicPassword string) error {
-	resp, err := dashboardLogin(url, email, password, basicUser, basicPassword)
+func getAndSaveToken(ctx context.Context, url, email, password, basicUser, basicPassword string) error {
+	resp, err := dashboardLogin(ctx, url, email, password, basicUser, basicPassword)
 	if err != nil {
 		return err
 	}
@@ -290,7 +313,7 @@ func getAndSaveToken(url, email, password, basicUser, basicPassword string) erro
 	if err != nil {
 		return err
 	}
-	return internal.SaveToConfig("token", token)
+	return internal.SaveToConfig(currentCloudToken, token)
 }
 
 type LoginBody struct {

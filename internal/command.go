@@ -2,9 +2,15 @@ package internal
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+)
+
+var (
+	ErrCurrentUserNotFound = errors.New("current user not set/found")
 )
 
 type Builder interface {
@@ -18,6 +24,7 @@ type Builder interface {
 	ExactArgs(argCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command
 	WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Builder
 	WithBindFlagOnPreRun(flags []BindFlag) Builder
+	WithBindFlagWithCurrentUserContext([]BindFlag) Builder
 	WithAliases(aliases []string) Builder
 }
 
@@ -98,6 +105,31 @@ func (b *builder) WithBindFlagOnPreRun(flags []BindFlag) Builder {
 					return err
 				}
 			}
+		}
+		return nil
+	}
+	return b
+}
+
+// WithBindFlagWithCurrentUserContext will help us get the current user flag since viper is initialized on cobra PreRun.
+func (b *builder) WithBindFlagWithCurrentUserContext(flags []BindFlag) Builder {
+	b.cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
+		currentUser := viper.GetString(currentCloudUser)
+		if currentUser == "" {
+			return ErrCurrentUserNotFound
+		}
+		for _, flag := range flags {
+			currentUserCtx := fmt.Sprintf("cloud.%s.%s", currentUser, flag.Name)
+			var err error
+			if flag.Persistent {
+				err = viper.BindPFlag(currentUserCtx, b.cmd.PersistentFlags().Lookup(flag.Name))
+			} else {
+				err = viper.BindPFlag(currentUserCtx, b.cmd.Flags().Lookup(flag.Name))
+			}
+			if err != nil {
+				return err
+			}
+
 		}
 		return nil
 	}

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"net/http"
@@ -35,14 +34,7 @@ func NewCreateEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(false, createEnvironment).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			org := factory.Config.GetCurrentUserOrg()
-			team := factory.Config.GetCurrentUserTeam()
-			envName, err := cmd.Flags().GetString(name)
-			if err != nil {
-				cmd.PrintErrln(err)
-				return err
-			}
-			env, err := validateFlagsAndCreateEnv(ctx, factory.Client, envName, team, org)
+			env, err := validateFlagsAndCreateEnv(ctx, factory.Client, factory.Config, cmd)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -58,18 +50,10 @@ func createEnvironment(f *pflag.FlagSet) {
 }
 
 // validateFlagsAndCreateEnv validate that the cloudcmd flags are not empty and create environment in a team.
-func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient, envName, teamId, orgId string) (*cloud.Loadout, error) {
-	if util.StringIsEmpty(orgId) {
-		return nil, ErrorOrgRequired
-	}
-	if util.StringIsEmpty(teamId) {
-		return nil, ErrorTeamRequired
-	}
-	env := cloud.Loadout{Name: envName}
-	if util.StringIsEmpty(env.Name) {
-		return nil, ErrorNameRequired
-	}
-	environment, err := CreateEnvironment(ctx, client, env, orgId, teamId)
+func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient, config internal.UserConfig, cmd cobra.Command) (*cloud.Loadout, error) {
+	commonEnvFlags, err := validateCommonEnvFlags(config, cmd)
+	env := cloud.Loadout{Name: commonEnvFlags.envName}
+	environment, err := CreateEnvironment(ctx, client, env, commonEnvFlags.orgId, commonEnvFlags.teamId)
 	if err != nil {
 		return nil, err
 	}

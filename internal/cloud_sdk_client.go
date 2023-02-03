@@ -119,6 +119,13 @@ func (c *cloudSdkClient) GetEnvs(ctx context.Context, orgId string, teamId strin
 	}
 	return c.Client.LoadoutsApi.GetLoadouts(ctx, orgId, teamId)
 }
+func (c *cloudSdkClient) UpdateEnv(ctx context.Context, body cloud.Loadout, oid string, tid string, lid string) (cloud.InlineResponse2012, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2012{}, nil, err
+	}
+	return c.Client.LoadoutsApi.UpdateLoadout(ctx, body, oid, tid, lid)
+}
 
 // CreateDeployment creates a home or edge deployment.
 func (c *cloudSdkClient) CreateDeployment(ctx context.Context, deployment cloud.Deployment, orgId, teamId, envId string) (cloud.InlineResponse2001, *http.Response, error) {

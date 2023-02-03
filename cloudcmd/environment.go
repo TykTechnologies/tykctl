@@ -2,6 +2,7 @@ package cloudcmd
 
 import (
 	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/util"
 	"github.com/spf13/cobra"
 )
 
@@ -22,5 +23,35 @@ func NewEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithCommands(
 			NewCreateEnvironmentCmd(factory),
 			NewFetchEnvironmentCmd(factory),
+			NewUpdateEnvCmd(factory),
 		)
+}
+
+func validateCommonEnvFlags(Config internal.UserConfig, cmd cobra.Command) (*CommonEnvFlags, error) {
+	orgId := Config.GetCurrentUserOrg()
+	if util.StringIsEmpty(orgId) {
+		return nil, ErrorOrgRequired
+	}
+	teamId := Config.GetCurrentUserTeam()
+	if util.StringIsEmpty(teamId) {
+		return nil, ErrorTeamRequired
+	}
+	envName, err := cmd.Flags().GetString(name)
+	if err != nil {
+		return nil, err
+	}
+	if util.StringIsEmpty(envName) {
+		return nil, ErrorNameRequired
+	}
+	return &CommonEnvFlags{
+		orgId:   orgId,
+		teamId:  teamId,
+		envName: envName,
+	}, nil
+}
+
+type CommonEnvFlags struct {
+	orgId   string
+	teamId  string
+	envName string
 }

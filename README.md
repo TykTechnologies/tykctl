@@ -1,9 +1,6 @@
 # Tykctl
 
-Tykctl is a command line tool that can be used to interact with tyk components (tyk cloud,tyk gateway and tyk
-dashboard.At the moment the services supported are:
-
-1. Tyk cloud
+Tykctl is a command line tool that can be used to interact with tyk cloud.
 
 ## Overview
 
@@ -19,11 +16,8 @@ Some features the tykctl provides include:
 
 #### With Homebrew (recommended for macOS)
 
-- This is a private repo hence you will need to set the `HOMEBREW_GITHUB_API_TOKEN` environment variable with a GitHub
-  personal access token before running `brew install`
-
  ```shell
-  export HOMEBREW_GITHUB_API_TOKEN=<Github access token here>
+ 
   brew tap TykTechnologies/tykctl https://github.com/TykTechnologies/tykctl
   brew install tykctl 
   ```

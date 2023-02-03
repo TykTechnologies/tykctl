@@ -32,6 +32,7 @@ var (
 
 func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
+		AddPreRunFuncs(NewCloudRbac(TeamMember, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchDeploymentDesc).
 		WithDescription("fetch deployment from an environment.").
@@ -40,14 +41,14 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			if len(args) == 0 {
 
-				err := validateAndFetchEnvDeployments(cmd.Context(), factory.Client, cmd.Flags())
+				err := validateAndFetchEnvDeployments(cmd.Context(), factory.Client, factory.Config, cmd.Flags())
 				if err != nil {
 					cmd.PrintErrln(err)
 					return err
 				}
 				return nil
 			}
-			err := validateAndFetchDeploymentById(ctx, factory.Client, cmd.Flags(), args[0])
+			err := validateAndFetchDeploymentById(ctx, factory.Client, factory.Config, cmd.Flags(), args[0])
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -55,8 +56,8 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 			return nil
 		})
 }
-func validateAndFetchDeploymentById(ctx context.Context, client internal.CloudClient, f *pflag.FlagSet, id string) error {
-	deploymentFlags, err := validateCommonDeploymentFetchFlags(f)
+func validateAndFetchDeploymentById(ctx context.Context, client internal.CloudClient, config internal.UserConfig, f *pflag.FlagSet, id string) error {
+	deploymentFlags, err := validateCommonDeploymentFetchFlags(f, config)
 	if err != nil {
 		return err
 	}
@@ -74,8 +75,8 @@ func validateAndFetchDeploymentById(ctx context.Context, client internal.CloudCl
 	}
 	return internal.PrintJson(deployment)
 }
-func validateAndFetchEnvDeployments(ctx context.Context, client internal.CloudClient, f *pflag.FlagSet) error {
-	deploymentFlags, err := validateCommonDeploymentFetchFlags(f)
+func validateAndFetchEnvDeployments(ctx context.Context, client internal.CloudClient, config internal.UserConfig, f *pflag.FlagSet) error {
+	deploymentFlags, err := validateCommonDeploymentFetchFlags(f, config)
 	if err != nil {
 		return err
 	}
@@ -120,8 +121,8 @@ func GetDeploymentById(ctx context.Context, client internal.CloudClient, orgId, 
 	return depResponse.Payload, nil
 }
 
-func validateCommonDeploymentFetchFlags(f *pflag.FlagSet) (*DeploymentFlags, error) {
-	deploymentFlag, err := validateCommonDeploymentFlags()
+func validateCommonDeploymentFetchFlags(f *pflag.FlagSet, config internal.UserConfig) (*DeploymentFlags, error) {
+	deploymentFlag, err := validateCommonDeploymentFlags(config)
 	if err != nil {
 		return nil, err
 	}

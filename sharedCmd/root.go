@@ -49,13 +49,14 @@ func Execute() {
 	sdkClient.AddBeforeExecuteFunc(AddTokenAndBaseUrl)
 	sdkClient.AddBeforeRestyExecute(AddTokenAndBaseUrlToResty)
 	rootCmd := NewRootCmd()
-
 	cloudFactory := internal.CloudFactory{
 		Client: sdkClient,
 		Prompt: internal.NewSurveyPrompt(),
+		Config: internal.ViperConfig{},
 	}
 	rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
+	rootCmd.AddCommand(NewCheckoutCmd())
 	rootCmd.AddCommand(gatewaycmd.NewGatewayCommand())
 	err := rootCmd.Execute()
 	if err != nil {

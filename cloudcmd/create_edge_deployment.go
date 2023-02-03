@@ -31,15 +31,16 @@ var (
 	ErrorControlPlaneRequired = errors.New("error control plane to link the gateway to is required")
 )
 
-func NewCreateEdgeDeployment(client internal.CloudClient) *cobra.Command {
+func NewCreateEdgeDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(edge).
 		WithLongDescription(createEdgeDeploymentDesc).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithDescription("will create the edge gateway in a given environment").
 		WithExample("tykctl cloud deployments create edge --name='test deployment'").
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithFlagAdder(false, addEdgeDeploymentFlag).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			_, err := validateEdgeDeploymentFlagAndCreate(cmd.Context(), client, cmd.Flags())
+			_, err := validateEdgeDeploymentFlagAndCreate(cmd.Context(), factory.Client, cmd.Flags(), factory.Config)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -52,8 +53,8 @@ func addEdgeDeploymentFlag(f *pflag.FlagSet) {
 	f.String(linkedControlPlane, "", "control plane to link the edge gateway to.")
 }
 
-func validateEdgeDeploymentFlagAndCreate(ctx context.Context, client internal.CloudClient, f *pflag.FlagSet) (*cloud.Deployment, error) {
-	deployment, err := extractCommonDeploymentFlags(f)
+func validateEdgeDeploymentFlagAndCreate(ctx context.Context, client internal.CloudClient, f *pflag.FlagSet, config internal.UserConfig) (*cloud.Deployment, error) {
+	deployment, err := extractCommonDeploymentFlags(f, config)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +77,7 @@ func validateEdgeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	}
 	log.Printf("deployment %s created successfully", deploymentResponse.UID)
 	if deployHome {
-		_, err := validateFlagsAndStartDeployment(ctx, client, deploymentResponse.UID)
+		_, err := validateFlagsAndStartDeployment(ctx, client, config, deploymentResponse.UID)
 		if err != nil {
 			return nil, err
 		}

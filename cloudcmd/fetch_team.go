@@ -26,6 +26,7 @@ var (
 
 func NewFetchTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchTeamDesc).
 		WithDescription("fetch teams from a given organization.").
@@ -37,7 +38,7 @@ func NewFetchTeamCmd(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
-			org := getCurrentUserOrg()
+			org := factory.Config.GetCurrentUserOrg()
 			if len(args) == 0 {
 				err := FetchAndPrintTeams(ctx, factory.Client, outPut, org)
 				if err != nil {

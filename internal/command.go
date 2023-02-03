@@ -26,10 +26,15 @@ type Builder interface {
 	WithBindFlagOnPreRun(flags []BindFlag) Builder
 	WithBindFlagWithCurrentUserContext([]BindFlag) Builder
 	WithAliases(aliases []string) Builder
+	WithValidArgs(args []string) Builder
+	AddPreRunFuncs(...func(cmd *cobra.Command, args []string) error) Builder
 }
 
 type builder struct {
-	cmd cobra.Command
+	cmd                     cobra.Command
+	runOnPreRun             []func(cmd *cobra.Command, args []string) error
+	bindOnPreRun            []BindFlag
+	bindWithContextOnPreRun []BindFlag
 }
 
 // NewCmd Creates a new command builder.
@@ -92,53 +97,81 @@ func (b *builder) WithCommands(cmds ...*cobra.Command) *cobra.Command {
 // WithBindFlagOnPreRun helps us bind flags before preRun
 // this help us solve ths cobra issue https://github.com/spf13/viper/issues/233.
 func (b *builder) WithBindFlagOnPreRun(flags []BindFlag) Builder {
-	b.cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-		for _, flag := range flags {
-			if flag.Persistent {
-				err := viper.BindPFlag(flag.Name, b.cmd.PersistentFlags().Lookup(flag.Name))
-				if err != nil {
-					return err
-				}
-			} else {
-				err := viper.BindPFlag(flag.Name, b.cmd.Flags().Lookup(flag.Name))
-				if err != nil {
-					return err
-				}
+	b.bindOnPreRun = append(b.bindOnPreRun, flags...)
+	return b
+}
+func (b *builder) bindFlagonPreRun() error {
+	for _, flag := range b.bindOnPreRun {
+		if flag.Persistent {
+			err := viper.BindPFlag(flag.Name, b.cmd.PersistentFlags().Lookup(flag.Name))
+			if err != nil {
+				return err
+			}
+		} else {
+			err := viper.BindPFlag(flag.Name, b.cmd.Flags().Lookup(flag.Name))
+			if err != nil {
+				return err
 			}
 		}
-		return nil
 	}
-	return b
+	return nil
 }
 
 // WithBindFlagWithCurrentUserContext will help us get the current user flag since viper is initialized on cobra PreRun.
 func (b *builder) WithBindFlagWithCurrentUserContext(flags []BindFlag) Builder {
-	b.cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-		currentUser := viper.GetString(currentCloudUser)
-		if currentUser == "" {
-			return ErrCurrentUserNotFound
-		}
-		for _, flag := range flags {
-			currentUserCtx := fmt.Sprintf("cloud.%s.%s", currentUser, flag.Name)
-			var err error
-			if flag.Persistent {
-				err = viper.BindPFlag(currentUserCtx, b.cmd.PersistentFlags().Lookup(flag.Name))
-			} else {
-				err = viper.BindPFlag(currentUserCtx, b.cmd.Flags().Lookup(flag.Name))
-			}
-			if err != nil {
-				return err
-			}
-
-		}
-		return nil
-	}
+	b.bindWithContextOnPreRun = append(b.bindWithContextOnPreRun, flags...)
 	return b
 }
 
-// NoArgs is for when you want to execute the cloudcmd with zero args.
+// bindFlagonPreRunWithCurrentContext which get the parameters from the current logged user
+// this will allow us to support different users in the config.
+func (b *builder) bindFlagonPreRunWithCurrentContext() error {
+	currentUser := viper.GetString(currentCloudUser)
+	if currentUser == "" {
+		return ErrCurrentUserNotFound
+	}
+	for _, flag := range b.bindWithContextOnPreRun {
+		currentUserCtx := fmt.Sprintf("cloud.%s.%s", currentUser, flag.Name)
+		var err error
+		if flag.Persistent {
+			err = viper.BindPFlag(currentUserCtx, b.cmd.PersistentFlags().Lookup(flag.Name))
+		} else {
+			err = viper.BindPFlag(currentUserCtx, b.cmd.Flags().Lookup(flag.Name))
+		}
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
+// executePreRunFuncs will run all the function scheduled to be run during cmd preRun.
+func (b *builder) executePreRunFuncs(cmd *cobra.Command, args []string) error {
+	for _, f := range b.runOnPreRun {
+		err := f(cmd, args)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func (b *builder) PreRun(cmd *cobra.Command, args []string) error {
+	err := b.bindFlagonPreRun()
+	if err != nil {
+		return err
+	}
+	err = b.bindFlagonPreRunWithCurrentContext()
+	if err != nil {
+		return err
+	}
+	return b.executePreRunFuncs(cmd, args)
+}
+
+// NoArgs is for when you want to execute the cloudCmd with zero args.
 func (b *builder) NoArgs(action func(context.Context, cobra.Command) error) *cobra.Command {
 	b.cmd.Args = cobra.NoArgs
+	b.cmd.PreRunE = b.PreRun
 	b.cmd.RunE = func(*cobra.Command, []string) error {
 		return action(b.cmd.Context(), b.cmd)
 	}
@@ -148,6 +181,7 @@ func (b *builder) NoArgs(action func(context.Context, cobra.Command) error) *cob
 // MaximumArgs fails if you pass args that are more than the specified maxArgCount.
 func (b *builder) MaximumArgs(maxArgCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command {
 	b.cmd.Args = cobra.MaximumNArgs(maxArgCount)
+	b.cmd.PreRunE = b.PreRun
 	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		return action(b.cmd.Context(), b.cmd, args)
 	}
@@ -157,6 +191,7 @@ func (b *builder) MaximumArgs(maxArgCount int, action func(context.Context, cobr
 // ExactArgs fails if you pass args that are more or less than the specified argCount.
 func (b *builder) ExactArgs(argCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command {
 	b.cmd.Args = cobra.ExactArgs(argCount)
+	b.cmd.PreRunE = b.PreRun
 	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		return action(b.cmd.Context(), b.cmd, args)
 	}
@@ -165,5 +200,15 @@ func (b *builder) ExactArgs(argCount int, action func(context.Context, cobra.Com
 
 func (b *builder) WithAliases(aliases []string) Builder {
 	b.cmd.Aliases = aliases
+	return b
+}
+
+func (b *builder) WithValidArgs(args []string) Builder {
+	b.cmd.ValidArgs = args
+	return b
+}
+
+func (b *builder) AddPreRunFuncs(items ...func(cmd *cobra.Command, args []string) error) Builder {
+	b.runOnPreRun = append(b.runOnPreRun, items...)
 	return b
 }

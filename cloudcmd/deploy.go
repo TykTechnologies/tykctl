@@ -30,12 +30,13 @@ tykctl cloud deployments deploy --org=<org here> --team=<team here> --env=<envir
 
 func NewStartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(deploy).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithLongDescription(deployDesc).
 		WithDescription("deploy a home or edge gateway deployment given its uuid").
 		WithExample("tykctl cloud deployments deploy --org=<org here> --team=<team here> --env=<environment here> --uid=<deployment id>").
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
-			deployment, err := validateFlagsAndStartDeployment(ctx, factory.Client, args[0])
+			deployment, err := validateFlagsAndStartDeployment(ctx, factory.Client, factory.Config, args[0])
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -45,8 +46,8 @@ func NewStartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		})
 }
 
-func validateFlagsAndStartDeployment(ctx context.Context, client internal.CloudClient, deploymentID string) (*cloud.Deployment, error) {
-	deploymentFlags, err := validateCommonDeploymentFlags()
+func validateFlagsAndStartDeployment(ctx context.Context, client internal.CloudClient, config internal.UserConfig, deploymentID string) (*cloud.Deployment, error) {
+	deploymentFlags, err := validateCommonDeploymentFlags(config)
 	if err != nil {
 		return nil, err
 	}

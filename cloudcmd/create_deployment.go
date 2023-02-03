@@ -31,10 +31,11 @@ func NewCreateDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(createDeploymentDesc).
 		WithDescription("This is the parent command for creating the edge or home deployment.").
 		WithFlagAdder(true, addDeploymentFlag).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithCommands(
-			NewCreateHomeDeployment(factory.Client),
-			NewCreateEdgeDeployment(factory.Client),
+			NewCreateHomeDeployment(factory),
+			NewCreateEdgeDeployment(factory),
 		)
 }
 
@@ -81,8 +82,8 @@ func newDeployment() cloud.Deployment {
 	return d
 }
 
-func extractCommonDeploymentFlags(f *pflag.FlagSet) (*cloud.Deployment, error) {
-	deploymentFlags, err := validateCommonDeploymentFlags()
+func extractCommonDeploymentFlags(f *pflag.FlagSet, config internal.UserConfig) (*cloud.Deployment, error) {
+	deploymentFlags, err := validateCommonDeploymentFlags(config)
 	if err != nil {
 		return nil, err
 	}

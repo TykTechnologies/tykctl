@@ -19,8 +19,9 @@ Sample usage for this command:
 tyckctl cloud teams update <uuid> --name=<new name> --org=<org uuid>
 `
 
-func NewUpdateTeamCmd() *cobra.Command {
+func NewUpdateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(update).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithFlagAdder(false, createTeamFlags).
 		WithLongDescription(updateTeamDesc).
 		WithDescription("update a team given it's uuid").

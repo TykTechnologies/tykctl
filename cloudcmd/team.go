@@ -28,5 +28,5 @@ func NewTeamCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(teamDesc).
 		WithDescription("parent command for all action you can perform in a team.").
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: true}}).
-		WithCommands(NewCreateTeamCmd(factory), NewFetchTeamCmd(factory))
+		WithCommands(NewCreateTeamCmd(factory), NewFetchTeamCmd(factory), NewUpdateTeamCmd(factory))
 }

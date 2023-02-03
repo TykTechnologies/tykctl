@@ -26,9 +26,11 @@ tyckctl cloud teams create --name="first team" --org=<org uuid>
 `
 
 var (
-	ErrorCreatingTeam = errors.New("error creating team")
-	ErrorOrgRequired  = errors.New("org flag is required")
-	ErrorNameRequired = errors.New("name flag is required")
+	ErrorCreatingTeam   = errors.New("error creating team")
+	ErrorUpdatingTeam   = errors.New("error updating team")
+	ErrorOrgRequired    = errors.New("org flag is required")
+	ErrorNameRequired   = errors.New("name flag is required")
+	ErrorTeamIdRequired = errors.New("TeamId is required")
 )
 
 func NewCreateTeamCmd(factory internal.CloudFactory) *cobra.Command {

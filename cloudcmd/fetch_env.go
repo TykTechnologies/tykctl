@@ -29,7 +29,7 @@ var (
 
 func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
-		AddPreRunFuncs(NewCloudRbac(TeamMember).CloudRbac).
+		AddPreRunFuncs(NewCloudRbac(TeamMember, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchEnvDesc).
 		WithDescription("fetch environments from a given team.").
@@ -41,8 +41,8 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
-			org := getCurrentUserOrg()
-			team := getCurrentUserTeam()
+			org := factory.Config.GetCurrentUserOrg()
+			team := factory.Config.GetCurrentUserTeam()
 			if len(args) == 0 {
 				err := validateFlagsAndPrintEnvs(cmd.Context(), factory.Client, outPut, org, team)
 				if err != nil {

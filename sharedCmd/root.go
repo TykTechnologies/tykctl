@@ -52,6 +52,7 @@ func Execute() {
 	cloudFactory := internal.CloudFactory{
 		Client: sdkClient,
 		Prompt: internal.NewSurveyPrompt(),
+		Config: internal.ViperConfig{},
 	}
 	rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())

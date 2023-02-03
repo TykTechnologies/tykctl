@@ -2,7 +2,9 @@ package cloudcmd
 
 import (
 	"fmt"
+	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/slices"
 )
 
 type Permission int
@@ -15,17 +17,27 @@ const (
 
 type CloudRbac struct {
 	MinAllowedUser Permission
+	Config         internal.UserConfig
 }
 
-func NewCloudRbac(MinAllowedUser Permission) CloudRbac {
+func NewCloudRbac(MinAllowedUser Permission, config internal.UserConfig) CloudRbac {
 	return CloudRbac{
 		MinAllowedUser: MinAllowedUser,
+		Config:         config,
 	}
 }
 
-// CloudRbac is a will run during preRun to check if a role is allowed to perform an action.
+// CloudRbac is a will run during preRun to check if a role is allowed to perform an action
+// this will prevent you from sending a request that will fail due to lack of permissions.
 func (c CloudRbac) CloudRbac(cmd *cobra.Command, args []string) error {
-	role := getCurrentUserRole()
+	role := c.Config.GetCurrentUserRole()
+	allowedRoles := []string{"org_admin", "team_admin", "team_member"}
+	if role == "" {
+		return ErrorNoRoleFound
+	}
+	if !slices.Contains(allowedRoles, role) {
+		return fmt.Errorf("%s is invalid", role)
+	}
 	if c.MinAllowedUser == TeamMember || role == "org_admin" {
 		return nil
 	}

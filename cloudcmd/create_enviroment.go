@@ -29,14 +29,14 @@ var (
 
 func NewCreateEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(create).
-		AddPreRunFuncs(NewCloudRbac(TeamAdmin).CloudRbac).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithLongDescription(createEnvDesc).
 		WithDescription("creates an environment in a given team.").
 		WithFlagAdder(false, createEnvironment).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			org := getCurrentUserOrg()
-			team := getCurrentUserTeam()
+			org := factory.Config.GetCurrentUserOrg()
+			team := factory.Config.GetCurrentUserTeam()
 			envName, err := cmd.Flags().GetString(name)
 			if err != nil {
 				cmd.PrintErrln(err)

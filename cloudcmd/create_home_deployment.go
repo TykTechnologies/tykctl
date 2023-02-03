@@ -29,16 +29,16 @@ Sample usage for this command
 tykctl cloud deployments create edge --name="test deployment"
 `
 
-func NewCreateHomeDeployment(client internal.CloudClient) *cobra.Command {
+func NewCreateHomeDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(home).
-		AddPreRunFuncs(NewCloudRbac(TeamAdmin).CloudRbac).
+		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithLongDescription(createHomeDeploymentDesc).
 		WithFlagAdder(false, addHomeDeploymentFlag).
 		WithDescription("create a control plane in your home region.").
 		WithExample("tykctl cloud deployments create home --name='home-deployment'").
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			_, err := validateHomeDeploymentFlagAndCreate(cmd.Context(), client, cmd.Flags())
+			_, err := validateHomeDeploymentFlagAndCreate(cmd.Context(), factory.Client, cmd.Flags(), factory.Config)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -54,8 +54,8 @@ func addHomeDeploymentFlag(f *pflag.FlagSet) {
 	f.Bool(enablePlugins, false, "enable plugins for the control plane")
 }
 
-func validateHomeDeploymentFlagAndCreate(ctx context.Context, client internal.CloudClient, f *pflag.FlagSet) (*cloud.Deployment, error) {
-	deployment, err := extractCommonDeploymentFlags(f)
+func validateHomeDeploymentFlagAndCreate(ctx context.Context, client internal.CloudClient, f *pflag.FlagSet, config internal.UserConfig) (*cloud.Deployment, error) {
+	deployment, err := extractCommonDeploymentFlags(f, config)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func validateHomeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	}
 	log.Printf("deployment %s created successfully", deploymentResponse.UID)
 	if deployHome {
-		_, err := validateFlagsAndStartDeployment(ctx, client, deploymentResponse.UID)
+		_, err := validateFlagsAndStartDeployment(ctx, client, config, deploymentResponse.UID)
 		if err != nil {
 			return nil, err
 		}

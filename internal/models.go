@@ -10,6 +10,7 @@ var (
 	team       = "team"
 	org        = "org"
 	controller = "controller"
+	env        = "env"
 )
 
 type OrgInfo struct {

@@ -35,7 +35,7 @@ func NewOrgListCommand(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchOrgDesc).
 		WithDescription("fetch the organizations you belong to.").
-		AddPreRunFuncs(NewCloudRbac(OrgAdmin).CloudRbac).
+		AddPreRunFuncs(NewCloudRbac(OrgAdmin, factory.Config).CloudRbac).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {

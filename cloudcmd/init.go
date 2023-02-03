@@ -30,7 +30,7 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 		WithExample("tykctl cloud init").
 		WithDescription("initialize the cli and set the default region and organization.").
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, getCurrentUserOrg())
+			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err

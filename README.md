@@ -1,9 +1,7 @@
 # Tykctl
 
-Tykctl is a command line tool that can be used to interact with tyk components (tyk cloud,tyk gateway and tyk
-dashboard.At the moment the services supported are:
+Tykctl is a command line tool that can be used to interact with tyk cloud.
 
-1. Tyk cloud
 
 ## Overview
 

@@ -16,13 +16,15 @@ import (
 var cfgFile string
 
 const rootDesc = `
-Tykctl is a cli that can be used to interact with all tyk components (tyk cloud,tyk gateway and tyk dashboard).
+Tykctl is a cli that can be used to interact with all tyk cloud.
 
-The cli is grouped into services.
-For example to use the tyk cloud services you should prefix all your subcommands with:
+How to use:
+
+All the commands should be prefixed with cloud:
+
 tykctl cloud <subcommand here>
 
-Currently we only support tyk cloud.
+
 `
 
 var (
@@ -36,7 +38,8 @@ var (
 func NewRootCmd() *cobra.Command {
 	return internal.NewCmd(tykctl).
 		WithLongDescription(rootDesc).
-		WithDescription("Tykctl is a cli that can be used to interact with tyk components (tyk cloud,tyk gateway and tyk dashboard.").
+		WithDescription("Tykctl is a cli that can be used to interact with tyk cloud").
+		WithExample("tykctl cloud <subcommand here>").
 		WithFlagAdder(true, addGlobalPersistentFlags).
 		WithCommands()
 }

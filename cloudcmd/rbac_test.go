@@ -9,6 +9,10 @@ import (
 	"testing"
 )
 
+var (
+	rbacError = "user with role %s is not allowed to perform this action"
+)
+
 func TestCloudRbacCloudRbac(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -26,19 +30,19 @@ func TestCloudRbacCloudRbac(t *testing.T) {
 			name:           "Test Only OrgAdmins Are Allowed",
 			MinAllowedUser: OrgAdmin,
 			Role:           "team_admin",
-			ExpectedError:  fmt.Errorf("user with role %s is not allowed to perform this action", "team_admin"),
+			ExpectedError:  fmt.Errorf(rbacError, "team_admin"),
 		},
 		{
 			name:           "Test Only Org Admin are allowed ",
 			MinAllowedUser: OrgAdmin,
 			Role:           "team_member",
-			ExpectedError:  fmt.Errorf("user with role %s is not allowed to perform this action", "team_member"),
+			ExpectedError:  fmt.Errorf(rbacError, "team_member"),
 		},
 		{
 			name:           "Test user with permission team admin and above allowed",
 			MinAllowedUser: TeamAdmin,
 			Role:           "team_member",
-			ExpectedError:  fmt.Errorf("user with role %s is not allowed to perform this action", "team_member"),
+			ExpectedError:  fmt.Errorf(rbacError, "team_member"),
 		},
 		{
 			name:           "Test user with permission team admin is allowed",

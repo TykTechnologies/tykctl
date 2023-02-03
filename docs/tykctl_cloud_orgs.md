@@ -1,6 +1,6 @@
 ## tykctl cloud orgs
 
-
+This is the parent command for all action that can be done to an organization.
 
 ### Synopsis
 

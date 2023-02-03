@@ -38,7 +38,7 @@ tykctl cloud init
 * [tykctl cloud environments](tykctl_cloud_environments.md)	 - parent command to all environment operations
 * [tykctl cloud init](tykctl_cloud_init.md)	 - initialize the cli and set the default region and organization.
 * [tykctl cloud login](tykctl_cloud_login.md)	 - login to tyk cloud using password and email.
-* [tykctl cloud orgs](tykctl_cloud_orgs.md)	 - 
+* [tykctl cloud orgs](tykctl_cloud_orgs.md)	 - This is the parent command for all action that can be done to an organization.
 * [tykctl cloud teams](tykctl_cloud_teams.md)	 - parent command for all action you can perform in a team.
 * [tykctl cloud zones](tykctl_cloud_zones.md)	 - fetch all the supported zones and what deployment they support.
 

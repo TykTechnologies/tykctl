@@ -126,6 +126,9 @@ func (b *builder) WithBindFlagWithCurrentUserContext(flags []BindFlag) Builder {
 // bindFlagonPreRunWithCurrentContext which get the parameters from the current logged user
 // this will allow us to support different users in the config.
 func (b *builder) bindFlagonPreRunWithCurrentContext() error {
+	if len(b.bindWithContextOnPreRun) == 0 {
+		return nil
+	}
 	currentUser := viper.GetString(currentCloudUser)
 	if currentUser == "" {
 		return ErrCurrentUserNotFound

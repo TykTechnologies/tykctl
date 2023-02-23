@@ -47,6 +47,7 @@ const (
 	enablePlugins          = "enable-plugins"
 	linkedControlPlane     = "control-plane"
 	deploy                 = "deploy"
+	restart                = "restart"
 	status                 = "status"
 	ctxCmd                 = "ctx"
 	zones                  = "zones"

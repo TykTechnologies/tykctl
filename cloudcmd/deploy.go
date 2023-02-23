@@ -25,7 +25,7 @@ to get the uuid run : tykctl cloud deployments fetch
 
 Sample usage of this command:
 
-tykctl cloud deployments deploy --org=<org here> --team=<team here> --env=<environment here> --uid=<deployment id>
+tykctl cloud dep deploy <deployment id> --org=<org here> --team=<team here> --env=<environment here> 
 `
 
 func NewStartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
@@ -34,7 +34,7 @@ func NewStartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		WithLongDescription(deployDesc).
 		WithDescription("deploy a home or edge gateway deployment given its uuid").
-		WithExample("tykctl cloud deployments deploy --org=<org here> --team=<team here> --env=<environment here> --uid=<deployment id>").
+		WithExample("tykctl cloud dep deploy <deployment id> --org=<org here> --team=<team here> --env=<environment here> ").
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			deployment, err := validateFlagsAndStartDeployment(ctx, factory.Client, factory.Config, args[0])
 			if err != nil {

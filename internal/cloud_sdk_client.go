@@ -149,6 +149,13 @@ func (c *cloudSdkClient) StartDeployment(ctx context.Context, orgId, teamId, env
 	}
 	return c.Client.DeploymentsApi.StartDeployment(ctx, orgId, teamId, envId, id)
 }
+func (c *cloudSdkClient) RestartDeployment(ctx context.Context, oid string, tid string, lid string, id string) (cloud.InlineResponse2001, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2001{}, nil, err
+	}
+	return c.Client.DeploymentsApi.RestartDeployment(ctx, oid, tid, lid, id)
+}
 func (c *cloudSdkClient) GetDeploymentStatus(ctx context.Context, orgId string, teamId string, envId string, deploymentId string) (cloud.Payload, *http.Response, error) {
 	err := c.runBeforeExecute()
 	if err != nil {

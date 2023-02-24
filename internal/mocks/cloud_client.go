@@ -278,6 +278,22 @@ func (mr *MockCloudClientMockRecorder) GetUserInfo(ctx interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserInfo", reflect.TypeOf((*MockCloudClient)(nil).GetUserInfo), ctx)
 }
 
+// RestartDeployment mocks base method.
+func (m *MockCloudClient) RestartDeployment(ctx context.Context, oid, tid, lid, id string) (cloud.InlineResponse2001, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RestartDeployment", ctx, oid, tid, lid, id)
+	ret0, _ := ret[0].(cloud.InlineResponse2001)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// RestartDeployment indicates an expected call of RestartDeployment.
+func (mr *MockCloudClientMockRecorder) RestartDeployment(ctx, oid, tid, lid, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RestartDeployment", reflect.TypeOf((*MockCloudClient)(nil).RestartDeployment), ctx, oid, tid, lid, id)
+}
+
 // StartDeployment mocks base method.
 func (m *MockCloudClient) StartDeployment(ctx context.Context, orgID, teamId, envId, id string) (cloud.InlineResponse2001, *http.Response, error) {
 	m.ctrl.T.Helper()

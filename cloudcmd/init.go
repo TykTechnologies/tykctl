@@ -2,8 +2,10 @@ package cloudcmd
 
 import (
 	"context"
+	"errors"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 const initDesc = `
@@ -30,15 +32,21 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 		WithExample("tykctl cloud init").
 		WithDescription("initialize the cli and set the default region and organization.").
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg())
+			userId := viper.GetString(currentCloudUser)
+			if userId == "" {
+				cmd.Println("Please login in first before running thid command")
+				return errors.New("you need to login to run this command")
+			}
+			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg(), userId)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
+			cmd.Println("Config file initialized successfully")
 			return nil
 		})
 }
-func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgId string) error {
+func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgId, userId string) error {
 	info, _, err := client.GetOrgInfo(ctx, orgId)
 	if err != nil {
 		return err
@@ -58,7 +66,7 @@ func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt intern
 			orgInit.Env = selectedEnv.UID
 		}
 	}
-	err = internal.SaveMapToConfig(orgInit.OrgInitToMap())
+	err = internal.SaveMapToCloudUserContext(userId, orgInit.OrgInitToMap())
 	if err != nil {
 		return err
 	}

@@ -44,6 +44,8 @@ github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63n
 github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2/go.mod h1:HBCaDeC1lPdgDeDbhX8XFpy1jqjK0IBG8W5K+xYqA0w=
 github.com/TykTechnologies/cloud-sdk v0.0.0-20221209030246-43880c352640 h1:ZWOs1QH3IJvZiB/mIdo/To4z5Ljbi7qf41kmzmDSspg=
 github.com/TykTechnologies/cloud-sdk v0.0.0-20221209030246-43880c352640/go.mod h1:6D7lyko2ug9uELZxO9rPH55rH6tbZ/rCgnevDFkETFw=
+github.com/TykTechnologies/gateway-sdk v0.0.1 h1:kpDSDZD0rx/G1/5A16IkualuOqVPk2W0ka7M1dCVVXw=
+github.com/TykTechnologies/gateway-sdk v0.0.1/go.mod h1:ZHK9SAWDAvN2+QnoQy981XBHLZoQHu4rpKjgNOTLcoc=
 github.com/antihax/optional v1.0.0 h1:xK2lYat7ZLaVVcIuj82J8kIro4V6kDe0AUDFboUCwcg=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=

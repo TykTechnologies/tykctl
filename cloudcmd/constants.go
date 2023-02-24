@@ -13,8 +13,6 @@ const (
 	dashboard              = "dashboard"
 	email                  = "email"
 	password               = "password"
-	baUser                 = "ba-user"
-	baPass                 = "ba-pass"
 	contentType            = "Content-Type"
 	teamEntitlement        = "MaxTeamCount"
 	environmentEntitlement = "MaxLoadoutCount"

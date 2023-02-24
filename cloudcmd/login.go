@@ -168,7 +168,7 @@ func addLoginFlags(f *pflag.FlagSet) {
 }
 
 // dashboardLogin send a request to ara dashboard to get a token to use to authenticate all other requests.
-func dashboardLogin(ctx context.Context, baseUrl, email, password, basicUser, basicPassword string) (*http.Response, error) {
+func dashboardLogin(ctx context.Context, baseUrl, email, password string) (*http.Response, error) {
 	headers := map[string]string{
 		contentType: applicationJson,
 	}
@@ -183,9 +183,6 @@ func dashboardLogin(ctx context.Context, baseUrl, email, password, basicUser, ba
 	req, err := internal.CreatePostRequest(ctx, fullUrl, body, headers)
 	if err != nil {
 		return nil, err
-	}
-	if len(basicUser) > 0 && len(basicPassword) > 0 {
-		req.SetBasicAuth(basicUser, basicPassword)
 	}
 	loginClient := &http.Client{}
 	response, err := loginClient.Do(req)
@@ -255,9 +252,7 @@ func validateAndLogin(ctx context.Context, f *pflag.FlagSet) error {
 	if util.StringIsEmpty(loginBody.Password) {
 		return ErrPasswordIsRequired
 	}
-	baUser := viper.GetString(internal.CreateKeyFromPath(cloudPath, baUser))
-	baPass := viper.GetString(internal.CreateKeyFromPath(cloudPath, baPass))
-	err = getAndSaveToken(ctx, internal.DashboardUrl, loginBody.Email, loginBody.Password, baUser, baPass)
+	err = getAndSaveToken(ctx, internal.DashboardUrl, loginBody.Email, loginBody.Password)
 	if err != nil {
 		return err
 	}
@@ -297,8 +292,8 @@ func loginInteractive(ctx context.Context) (*LoginBody, error) {
 }
 
 // getAndSaveToken token to configuration file.
-func getAndSaveToken(ctx context.Context, url, email, password, basicUser, basicPassword string) error {
-	resp, err := dashboardLogin(ctx, url, email, password, basicUser, basicPassword)
+func getAndSaveToken(ctx context.Context, url, email, password string) error {
+	resp, err := dashboardLogin(ctx, url, email, password)
 	if err != nil {
 		return err
 	}

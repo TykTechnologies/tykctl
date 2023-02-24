@@ -21,9 +21,10 @@ Note: You will need to use the deploy flag if you want the deployment to be depl
 `
 
 var (
-	ErrorCreatingDeployment = errors.New("error creating deployment")
-	ErrorStartingDeployment = errors.New("error starting deployment")
-	ErrorZoneCodeIsRequired = errors.New("error zone is required")
+	ErrorCreatingDeployment   = errors.New("error creating deployment")
+	ErrorStartingDeployment   = errors.New("error starting deployment")
+	ErrorRestartingDeployment = errors.New("error restarting deployment")
+	ErrorZoneCodeIsRequired   = errors.New("error zone is required")
 )
 
 func NewCreateDeploymentCmd(factory internal.CloudFactory) *cobra.Command {

@@ -2,10 +2,12 @@ package cloudcmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
+	"net/http"
 )
 
 const restartDepDesc = `
@@ -21,6 +23,7 @@ tykctl cloud dep restart --org=<org here> --team=<team here> --env=<environment 
 
 `
 
+// NewRestartDeploymentCmd will restart a home deployment or edge deployment given a uuid.
 func NewRestartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(restart).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
@@ -37,14 +40,30 @@ func NewRestartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 			return nil
 		})
 }
+
 func validateFlagsAndRestartDeployment(ctx context.Context, client internal.CloudClient, config internal.UserConfig, deploymentID string) (*cloud.Deployment, error) {
 	deploymentFlags, err := validateCommonDeploymentFlags(config)
 	if err != nil {
 		return nil, err
 	}
-	deployment, _, err := client.RestartDeployment(ctx, deploymentFlags.OrgId, deploymentFlags.TeamId, deploymentFlags.EnvId, deploymentID)
+	deployment, err := restartDeployment(ctx, client, deploymentFlags.OrgId, deploymentFlags.TeamId, deploymentFlags.EnvId, deploymentID)
 	if err != nil {
 		return nil, err
+	}
+	return deployment, nil
+}
+
+// restartDeployment will make a http request to tyk cloud to restart the deployment.
+func restartDeployment(ctx context.Context, client internal.CloudClient, orgId, teamId, envId, id string) (*cloud.Deployment, error) {
+	deployment, resp, err := client.RestartDeployment(ctx, orgId, teamId, envId, id)
+	if err != nil {
+		return nil, errors.New(internal.ExtractErrorMessage(err))
+	}
+	if (resp.StatusCode != http.StatusOK) && (resp.StatusCode != http.StatusCreated) {
+		return nil, ErrorRestartingDeployment
+	}
+	if deployment.Status != statusOK {
+		return nil, errors.New(deployment.Error_)
 	}
 	return deployment.Payload, nil
 }

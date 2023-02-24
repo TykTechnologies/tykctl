@@ -28,7 +28,10 @@ const (
 		
         Sample usage:
 		
-         tykctl cloud login --ba-pass=<use this only is staging> --ba-pass=<use this in staging>
+         tykctl cloud login -i (for interactive mode)
+         
+         tykctl cloud login --password=<your cloud password here> --email=<your email here> (non interactive mode)
+         
 `
 )
 
@@ -60,6 +63,7 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 				return err
 			}
 			cmd.Println("Authentication successful")
+			cmd.Println("you can run `tykctl cloud init` to set default org,team,env in your config file")
 			return nil
 		})
 
@@ -160,17 +164,7 @@ func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt intern
 func addLoginFlags(f *pflag.FlagSet) {
 	f.StringP(email, "e", "", "email address you used to login into the dashboard")
 	f.StringP(password, "p", "", "password you used to login into the dashboard")
-	f.String(baUser, "", "Basic auth user.This should only be used for staging server")
 	f.BoolP(interactive, "i", false, "login using the interactive mode.")
-	err := viper.BindPFlag(internal.CreateKeyFromPath(cloudPath, baUser), f.Lookup(baUser))
-	if err != nil {
-		panic(err)
-	}
-	f.String(baPass, "", "Basic auth password")
-	err = viper.BindPFlag(internal.CreateKeyFromPath(cloudPath, baPass), f.Lookup(baPass))
-	if err != nil {
-		panic(err)
-	}
 }
 
 // dashboardLogin send a request to ara dashboard to get a token to use to authenticate all other requests.

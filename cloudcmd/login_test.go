@@ -32,20 +32,6 @@ func TestAddLoginFlags(t *testing.T) {
 		Value:       "",
 		Default:     "",
 	},
-		{
-			Description: "Test ba-user",
-			Name:        "ba-user",
-			Shorthand:   "",
-			Value:       "",
-			Default:     "",
-		},
-		{
-			Description: "Test ba-pass",
-			Name:        "ba-pass",
-			Shorthand:   "",
-			Value:       "",
-			Default:     "",
-		},
 	}
 	testutil.TestFlags(t, cmd.Flags(), flags)
 }
@@ -127,32 +113,24 @@ func TestDashboardLoginRequest(t *testing.T) {
 	///url := "https://dash.ara-staging.tyk.technology"
 	var testModelList = []DashBoardTestingModel{
 		{
-			Description:   "Test All values Presents",
-			Email:         "itachi.w@tyk.io",
-			Password:      "ita.fg7574%¡",
-			BasicUser:     "iNUi3OpL",
-			BasicPassword: "N$.890TestThus",
+			Description: "Test All values Presents",
+			Email:       "itachi.w@tyk.io",
+			Password:    "ita.fg7574%¡",
 		},
 		{
-			Description:   "Test All values present",
-			Email:         "sasuke.w@tyk.io",
-			Password:      "suke.8%¡",
-			BasicUser:     "poy¡",
-			BasicPassword: "><<>[ddd][rt]",
+			Description: "Test All values present",
+			Email:       "sasuke.w@tyk.io",
+			Password:    "suke.8%¡",
 		},
 		{
-			Description:   "Test All values present",
-			Email:         "[][]{?/v.w@tyk.io",
-			Password:      "-[]fk•#",
-			BasicUser:     "po904873",
-			BasicPassword: "p#cb1djdk",
+			Description: "Test All values present",
+			Email:       "[][]{?/v.w@tyk.io",
+			Password:    "-[]fk•#",
 		},
 		{
-			Description:   "Test Basic user and auth absent",
-			Email:         "[][]{?/v.w@tyk.io",
-			Password:      "-[]fk•#",
-			BasicUser:     "",
-			BasicPassword: "",
+			Description: "Test Basic user and auth absent",
+			Email:       "[][]{?/v.w@tyk.io",
+			Password:    "-[]fk•#",
 		},
 	}
 	for _, tt := range testModelList {
@@ -178,20 +156,6 @@ func TestNewLoginCommand(t *testing.T) {
 		Value:       "",
 		Default:     "",
 	},
-		{
-			Description: "Test ba-user is passed to login command",
-			Name:        "ba-user",
-			Shorthand:   "",
-			Value:       "",
-			Default:     "",
-		},
-		{
-			Description: "Test ba-pass is passed to login command",
-			Name:        "ba-pass",
-			Shorthand:   "",
-			Value:       "",
-			Default:     "",
-		},
 	}
 	testutil.TestFlags(t, cmd.Flags(), flags)
 
@@ -229,9 +193,7 @@ func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, "/api/login", r.URL.Path)
 		assert.Equal(t, "application/json", r.Header.Get("Content-Type"))
-		username, password, _ := r.BasicAuth()
-		assert.Equal(t, model.BasicUser, username)
-		assert.Equal(t, model.BasicPassword, password)
+
 		assert.NotNil(t, r.Body)
 		b, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -248,7 +210,7 @@ func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
 
 	}))
 	defer s.Close()
-	_, err := dashboardLogin(context.Background(), s.URL, model.Email, model.Password, model.BasicUser, model.BasicPassword)
+	_, err := dashboardLogin(context.Background(), s.URL, model.Email, model.Password)
 	if err != nil {
 		t.Fatal(err)
 		///st.Expect(t, err, nil)
@@ -256,11 +218,9 @@ func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
 }
 
 type DashBoardTestingModel struct {
-	Description   string
-	Email         string
-	Password      string
-	BasicUser     string
-	BasicPassword string
+	Description string
+	Email       string
+	Password    string
 }
 
 type ExtractTestModel struct {

@@ -23,11 +23,9 @@ brews:
     tap:
       owner: TykTechnologies
       name: tykctl
-    download_strategy: GitHubPrivateRepositoryReleaseDownloadStrategy
-    custom_require: "lib/custom_download_strategy"
     commit_author:
-      name: Keith Wachira
-      email: keith.w@tyk.io
+      name: goreleaserbot
+      email: bot@goreleaser.com
     folder: HomebrewFormula
 checksum:
   name_template: 'checksums.txt'

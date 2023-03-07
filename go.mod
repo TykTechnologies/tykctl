@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/TykTechnologies/cloud-sdk v0.0.0-20221209030246-43880c352640
+	github.com/TykTechnologies/gateway-sdk v0.0.2
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang/mock v1.6.0
 	github.com/olekukonko/tablewriter v0.0.5
@@ -16,7 +17,6 @@ require (
 )
 
 require (
-	github.com/TykTechnologies/gateway-sdk v0.0.1 // indirect
 	github.com/antihax/optional v1.0.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect

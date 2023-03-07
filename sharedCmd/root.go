@@ -3,6 +3,7 @@ package sharedCmd
 import (
 	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
+	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	"github.com/TykTechnologies/tykctl/cloudcmd"
 	"github.com/TykTechnologies/tykctl/gatewaycmd"
 	"github.com/TykTechnologies/tykctl/internal"
@@ -55,9 +56,16 @@ func Execute() {
 		Config: internal.ViperConfig{},
 	}
 	rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
+	apiConfig := apim.Configuration{
+		DefaultHeader: make(map[string]string),
+		Debug:         false,
+		Servers:       apim.ServerConfigurations{},
+	}
+	client := apim.NewAPIClient(&apiConfig)
+	gatewayFactory := internal.ApimFactory{Client: client}
+	rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(gatewayFactory))
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
 	rootCmd.AddCommand(NewCheckoutCmd())
-	rootCmd.AddCommand(gatewaycmd.NewGatewayCommand())
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

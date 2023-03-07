@@ -41,7 +41,8 @@ type builder struct {
 func NewCmd(use string) Builder {
 	return &builder{
 		cmd: cobra.Command{
-			Use: use,
+			Use:          use,
+			SilenceUsage: true,
 		},
 	}
 
@@ -195,6 +196,7 @@ func (b *builder) MaximumArgs(maxArgCount int, action func(context.Context, cobr
 func (b *builder) ExactArgs(argCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command {
 	b.cmd.Args = cobra.ExactArgs(argCount)
 	b.cmd.PreRunE = b.PreRun
+	b.cmd.SilenceUsage = true
 	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		return action(b.cmd.Context(), b.cmd, args)
 	}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/TykTechnologies/cloud-sdk/cloud"
+	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	"github.com/go-resty/resty/v2"
 	"net/http"
 )
@@ -257,8 +258,12 @@ func (c *cloudSdkClient) runBeforeRestyExecute() error {
 // ExtractErrorMessage returns the body error message from our response.
 func ExtractErrorMessage(err error) string {
 	var genericError *cloud.GenericSwaggerError
+	var genericOpenAPIError *apim.GenericOpenAPIError
 	if errors.As(err, &genericError) {
 		return string(genericError.Body())
+	}
+	if errors.As(err, &genericOpenAPIError) {
+		return string(genericOpenAPIError.Body())
 	}
 	return err.Error()
 }

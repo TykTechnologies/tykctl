@@ -104,6 +104,7 @@ func TestReloadSingleNode(t *testing.T) {
 func TestReloadGroup(t *testing.T) {
 	message := "success"
 	status := "ok"
+	administrativeAccess := "attempted administrative access"
 	tests := []struct {
 		name             string
 		want             *apim.ApiStatusMessage
@@ -142,13 +143,13 @@ func TestReloadGroup(t *testing.T) {
 		{
 			name:      "Test error returned by gateway",
 			want:      nil,
-			mockError: errors.New("attempted administrative access"),
+			mockError: errors.New(administrativeAccess),
 			mockHttpResponse: &http.Response{
-				Status:     "attempted administrative access",
+				Status:     administrativeAccess,
 				StatusCode: 401,
 			},
 			mockResponse:  &apim.ApiStatusMessage{},
-			ExpectedError: errors.New("attempted administrative access"),
+			ExpectedError: errors.New(administrativeAccess),
 		},
 	}
 	for _, tt := range tests {

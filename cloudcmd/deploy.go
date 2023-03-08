@@ -53,10 +53,12 @@ func validateFlagsAndStartDeployment(ctx context.Context, client internal.CloudC
 	if err != nil {
 		return nil, err
 	}
+
 	deployment, err := StartDeployment(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, deploymentID)
 	if err != nil {
 		return deployment, err
 	}
+
 	return deployment, nil
 }
 
@@ -65,11 +67,14 @@ func StartDeployment(ctx context.Context, client internal.CloudClient, orgID, te
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if (resp.StatusCode != http.StatusOK) && (resp.StatusCode != http.StatusCreated) {
 		return nil, ErrorStartingDeployment
 	}
+
 	if startResponse.Status != statusOK {
 		return nil, errors.New(startResponse.Error_)
 	}
+
 	return startResponse.Payload, nil
 }

@@ -55,12 +55,15 @@ func CreateDeployment(ctx context.Context, client internal.CloudClient, deployme
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusCreated {
 		return nil, ErrorCreatingDeployment
 	}
+
 	if deployResponse.Status != statusOK {
 		return nil, errors.New(deployResponse.Error_)
 	}
+
 	return deployResponse.Payload, nil
 }
 
@@ -83,6 +86,7 @@ func newDeployment() cloud.Deployment {
 		Tags:              make([]string, 0),
 		ZoneCode:          "",
 	}
+
 	return d
 }
 
@@ -91,25 +95,31 @@ func extractCommonDeploymentFlags(f *pflag.FlagSet, config internal.UserConfig) 
 	if err != nil {
 		return nil, err
 	}
+
 	deploymentName, err := f.GetString(name)
 	if err != nil {
 		return nil, err
 	}
+
 	if util.StringIsEmpty(deploymentName) {
 		return nil, ErrorNameRequired
 	}
+
 	zone, err := f.GetString(zone)
 	if err != nil {
 		return nil, err
 	}
+
 	if util.StringIsEmpty(zone) {
 		return nil, ErrorZoneCodeIsRequired
 	}
+
 	d := newDeployment()
 	d.ZoneCode = zone
 	d.Name = deploymentName
 	d.OID = deploymentFlags.OrgID
 	d.LID = deploymentFlags.EnvID
 	d.TID = deploymentFlags.TeamID
+
 	return &d, nil
 }

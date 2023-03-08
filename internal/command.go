@@ -55,6 +55,7 @@ func (b *builder) WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Bui
 	} else {
 		adder(b.cmd.Flags())
 	}
+
 	return b
 }
 
@@ -65,6 +66,7 @@ func (b *builder) WithExample(comment string) Builder {
 	}
 
 	b.cmd.Example += comment
+
 	return b
 }
 
@@ -91,6 +93,7 @@ func (b *builder) WithCommands(cmds ...*cobra.Command) *cobra.Command {
 	for _, cmd := range cmds {
 		b.cmd.AddCommand(cmd)
 	}
+
 	return &b.cmd
 }
 
@@ -115,6 +118,7 @@ func (b *builder) bindFlagonPreRun() error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -130,6 +134,7 @@ func (b *builder) bindFlagonPreRunWithCurrentContext() error {
 	if len(b.bindWithContextOnPreRun) == 0 {
 		return nil
 	}
+
 	currentUser := viper.GetString(currentCloudUser)
 	if currentUser == "" {
 		return ErrCurrentUserNotFound
@@ -137,16 +142,20 @@ func (b *builder) bindFlagonPreRunWithCurrentContext() error {
 
 	for _, flag := range b.bindWithContextOnPreRun {
 		currentUserCtx := fmt.Sprintf("cloud.%s.%s", currentUser, flag.Name)
+
 		var err error
+
 		if flag.Persistent {
 			err = viper.BindPFlag(currentUserCtx, b.cmd.PersistentFlags().Lookup(flag.Name))
 		} else {
 			err = viper.BindPFlag(currentUserCtx, b.cmd.Flags().Lookup(flag.Name))
 		}
+
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -158,6 +167,7 @@ func (b *builder) executePreRunFuncs(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -171,6 +181,7 @@ func (b *builder) PreRun(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	return b.executePreRunFuncs(cmd, args)
 }
 
@@ -181,6 +192,7 @@ func (b *builder) NoArgs(action func(context.Context, cobra.Command) error) *cob
 	b.cmd.RunE = func(*cobra.Command, []string) error {
 		return action(b.cmd.Context(), b.cmd)
 	}
+
 	return &b.cmd
 }
 
@@ -191,6 +203,7 @@ func (b *builder) MaximumArgs(maxArgCount int, action func(context.Context, cobr
 	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		return action(b.cmd.Context(), b.cmd, args)
 	}
+
 	return &b.cmd
 }
 
@@ -202,6 +215,7 @@ func (b *builder) ExactArgs(argCount int, action func(context.Context, cobra.Com
 	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		return action(b.cmd.Context(), b.cmd, args)
 	}
+
 	return &b.cmd
 }
 

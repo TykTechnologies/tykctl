@@ -28,12 +28,15 @@ func PrintJSON(body interface{}) error {
 	if err != nil {
 		return err
 	}
+
 	var prettyJSON bytes.Buffer
+
 	err = json.Indent(&prettyJSON, b, "", "  ")
 	if err != nil {
 		return err
 	}
 
 	fmt.Println(prettyJSON.String())
+
 	return nil
 }

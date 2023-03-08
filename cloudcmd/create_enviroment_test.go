@@ -28,6 +28,7 @@ func TestFlagsAreAddedToCreateEnvironment(t *testing.T) {
 	parentCmd := NewEnvironmentCmd(factory)
 	cmd := NewCreateEnvironmentCmd(factory)
 	parentCmd.AddCommand(cmd)
+
 	localFlags := []internal.Flag{{
 		Description: "Test team name is added.",
 		Name:        "name",
@@ -36,6 +37,7 @@ func TestFlagsAreAddedToCreateEnvironment(t *testing.T) {
 		Default:     "",
 	}}
 	testutil.TestFlags(t, cmd.Flags(), localFlags)
+
 	inheritedFlags := []internal.Flag{
 		{
 			Description: "Test team flag is added",
@@ -209,5 +211,6 @@ func generateEnvs(size int) []cloud.Loadout {
 			UID: strconv.Itoa(i + 1),
 		})
 	}
+
 	return loadouts
 }

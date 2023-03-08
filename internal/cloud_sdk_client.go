@@ -193,13 +193,17 @@ func (c *CloudSdkClient) GetDeploymentZones(ctx context.Context) (*ZoneResponse,
 	if err != nil {
 		return nil, nil, err
 	}
+
 	var zoneResponse ZoneResponse
 	request := c.dashboardClient.R().SetHeader(contentType, applicationJSON).SetResult(&zoneResponse)
+
 	request.SetContext(ctx)
+
 	response, err := request.Get(zonePath)
 	if err != nil {
 		return nil, nil, err
 	}
+
 	if response.StatusCode() != 200 {
 		return nil, nil, NewGenericHTTPError(response.String())
 	}
@@ -213,13 +217,16 @@ func (c *CloudSdkClient) GetUserInfo(ctx context.Context) (*UserInfo, *resty.Res
 	if err != nil {
 		return nil, nil, err
 	}
+
 	var userInfo UserInfo
 	request := c.dashboardClient.R().SetHeader(contentType, applicationJSON).SetResult(&userInfo)
 	request.SetContext(ctx)
+
 	response, err := request.Get(userInfoPath)
 	if err != nil {
 		return nil, nil, err
 	}
+
 	if response.StatusCode() != 200 {
 		return nil, nil, NewGenericHTTPError(response.String())
 	}
@@ -233,11 +240,13 @@ func (c *CloudSdkClient) GetOrgInfo(ctx context.Context, orgID string) (*OrgInfo
 	if err != nil {
 		return nil, nil, err
 	}
+
 	var orgInfo OrgInfo
 	request := c.dashboardClient.R().SetHeader(contentType, applicationJSON).SetResult(&orgInfo)
 	request.SetContext(ctx)
 
 	path := fmt.Sprintf("%s%s", orgInfoPath, orgID)
+
 	response, err := request.Get(path)
 	if err != nil {
 		return nil, nil, err
@@ -289,11 +298,11 @@ func (c *CloudSdkClient) runBeforeRestyExecute() error {
 // ExtractErrorMessage returns the body error message from our response.
 func ExtractErrorMessage(err error) string {
 	var genericError *cloud.GenericSwaggerError
-	var genericOpenAPIError *apim.GenericOpenAPIError
 	if errors.As(err, &genericError) {
 		return string(genericError.Body())
 	}
 
+	var genericOpenAPIError *apim.GenericOpenAPIError
 	if errors.As(err, &genericOpenAPIError) {
 		return string(genericOpenAPIError.Body())
 	}

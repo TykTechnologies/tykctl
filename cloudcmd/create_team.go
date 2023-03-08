@@ -62,14 +62,18 @@ func validateFlagsAndCreateTeam(ctx context.Context, client internal.CloudClient
 	if util.StringIsEmpty(orgID) {
 		return nil, ErrorOrgRequired
 	}
+
 	if util.StringIsEmpty(teamName) {
 		return nil, ErrorNameRequired
 	}
+
 	team := cloud.Team{Name: teamName}
+
 	createdTeam, err := CreateTeam(ctx, client, team, orgID)
 	if err != nil {
 		return nil, err
 	}
+
 	return createdTeam, nil
 }
 
@@ -84,11 +88,14 @@ func CreateTeam(ctx context.Context, client internal.CloudClient, team cloud.Tea
 	if err != nil {
 		return nil, err
 	}
+
 	if resp.StatusCode != http.StatusCreated {
 		return nil, ErrorCreatingTeam
 	}
+
 	if teamResponse.Status != statusOK {
 		return nil, errors.New(teamResponse.Error_)
 	}
+
 	return teamResponse.Payload, nil
 }

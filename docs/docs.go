@@ -19,17 +19,22 @@ func main() {
 		Client: nil,
 		Prompt: nil,
 	}
+
 	rootCmd.AddCommand(cloudcmd.NewCloudCommand(factory))
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
+
 	err := doc.GenMarkdownTree(rootCmd, "./")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	f, err := os.OpenFile("docs.md", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0o600)
 	if err != nil {
 		panic(err)
 	}
+
 	defer f.Close()
+
 	out := new(bytes.Buffer)
 	s := []*cobra.Command{
 		cloudcmd.NewLoginCommand(factory),
@@ -38,11 +43,13 @@ func main() {
 		cloudcmd.NewCreateTeamCmd(factory),
 		cloudcmd.NewFetchTeamCmd(factory),
 	}
+
 	for _, cmd := range s {
 		err := doc.GenMarkdown(cmd, out)
 		if err != nil {
 			panic(err)
 		}
+
 		if _, err = f.Write(out.Bytes()); err != nil {
 			panic(err)
 		}

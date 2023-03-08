@@ -63,17 +63,21 @@ func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient,
 	if util.StringIsEmpty(orgID) {
 		return nil, ErrorOrgRequired
 	}
+
 	if util.StringIsEmpty(teamID) {
 		return nil, ErrorTeamRequired
 	}
+
 	env := cloud.Loadout{Name: envName}
 	if util.StringIsEmpty(env.Name) {
 		return nil, ErrorNameRequired
 	}
+
 	environment, err := CreateEnvironment(ctx, client, env, orgID, teamID)
 	if err != nil {
 		return nil, err
 	}
+
 	return environment, nil
 }
 
@@ -83,11 +87,14 @@ func CreateEnvironment(ctx context.Context, client internal.CloudClient, env clo
 	if err != nil {
 		return nil, err
 	}
+
 	if resp.StatusCode != http.StatusCreated {
 		return nil, ErrorCreatingEnv
 	}
+
 	if envResponse.Status != statusOK {
 		return nil, errors.New(envResponse.Error_)
 	}
+
 	return envResponse.Payload, err
 }

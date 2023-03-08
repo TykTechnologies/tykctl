@@ -170,6 +170,7 @@ func TestNewLoginCommand(t *testing.T) {
 
 func extractTokenRequest(t *testing.T, model ExtractTestModel) {
 	t.Helper()
+
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		for _, cookie := range model.Cookies {
 			http.SetCookie(w, cookie)
@@ -177,6 +178,7 @@ func extractTokenRequest(t *testing.T, model ExtractTestModel) {
 		w.WriteHeader(model.StatusCode)
 	}))
 	defer s.Close()
+
 	response, err := mockHTTP(context.Background(), s.URL)
 	if err != nil {
 		t.Fatal(err)
@@ -186,9 +188,11 @@ func extractTokenRequest(t *testing.T, model ExtractTestModel) {
 	if !model.ShouldErr {
 		assert.NoError(t, err)
 	}
+
 	if model.ShouldErr && model.ExpectedError != nil {
 		assert.Error(t, err, model.Name)
 	}
+
 	assert.Equal(t, model.ExpectedError, err, model.Name)
 	assert.Equal(t, model.ExpectedJwt, token, "wrong token returned")
 }
@@ -215,6 +219,7 @@ func dashboardLoginRequestTest(t *testing.T, model DashBoardTestingModel) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer s.Close()
+
 	_, err := dashboardLogin(context.Background(), s.URL, model.Email, model.Password)
 	if err != nil {
 		t.Fatal(err)
@@ -241,6 +246,7 @@ func mockHTTP(ctx context.Context, url string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return http.DefaultClient.Do(req)
 }
 
@@ -310,6 +316,7 @@ func TestGetUserRole(t *testing.T) {
 			want:          nil,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			role, err := getUserRole(tt.roles)
@@ -371,6 +378,7 @@ func TestInitOrgInfo(t *testing.T) {
 			teamPromptCalls: 1,
 		},
 	}
+
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
@@ -430,6 +438,7 @@ func TestInitUserProfile(t *testing.T) {
 			ExpectedError: nil,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)

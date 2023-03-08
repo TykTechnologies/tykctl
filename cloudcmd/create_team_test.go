@@ -163,6 +163,7 @@ func TestAllFlagsAreAddedToCreateTeamCmd(t *testing.T) {
 	parentCmd := NewTeamCmd(factory)
 	cmd := NewCreateTeamCmd(factory)
 	parentCmd.AddCommand(cmd)
+
 	localFlags := []internal.Flag{{
 		Description: "Test name is added.",
 		Name:        "name",
@@ -171,6 +172,7 @@ func TestAllFlagsAreAddedToCreateTeamCmd(t *testing.T) {
 		Default:     "",
 	}}
 	testutil.TestFlags(t, cmd.Flags(), localFlags)
+
 	inheritedFlags := []internal.Flag{{
 		Description: "Test org is passed from parent",
 		Name:        "org",
@@ -190,5 +192,6 @@ func generateTeams(size int) []cloud.Team {
 			UID:          strconv.Itoa(i + 1),
 		})
 	}
+
 	return teams
 }

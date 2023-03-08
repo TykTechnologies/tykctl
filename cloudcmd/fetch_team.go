@@ -95,6 +95,7 @@ func FetchAndPrintTeamByID(ctx context.Context, client internal.CloudClient, out
 	if err != nil {
 		return err
 	}
+
 	if output == table {
 		var teams []cloud.Team
 		if team != nil {
@@ -119,9 +120,11 @@ func GetTeamByID(ctx context.Context, client internal.CloudClient, orgID, teamID
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingTeam
 	}
+
 	if teamResponse.Status != statusOK {
 		return nil, errors.New(teamResponse.Error_)
 	}
+
 	return teamResponse.Payload, nil
 }
 
@@ -131,6 +134,7 @@ func GetTeams(ctx context.Context, client internal.CloudClient, orgID string) ([
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingTeam
 	}
@@ -138,9 +142,11 @@ func GetTeams(ctx context.Context, client internal.CloudClient, orgID string) ([
 	if teamResponse.Status != statusOK {
 		return nil, errors.New(teamResponse.Error_)
 	}
+
 	if teamResponse.Payload == nil {
 		return nil, nil
 	}
+
 	return teamResponse.Payload.Teams, nil
 }
 
@@ -148,11 +154,13 @@ func GetTeams(ctx context.Context, client internal.CloudClient, orgID string) ([
 func CreateTeamHeadersAndRows(teams []cloud.Team) ([]string, [][]string) {
 	header := []string{"Name", "UID", "Environments", "Deployments"}
 	rows := make([][]string, 0)
+
 	for _, team := range teams {
 		row := []string{
 			team.Name, team.UID,
 		}
 		rows = append(rows, row)
 	}
+
 	return header, rows
 }

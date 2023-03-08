@@ -33,6 +33,7 @@ func TestStringIsEmpty(t *testing.T) {
 			want: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := StringIsEmpty(tt.args.v); got != tt.want {
@@ -73,6 +74,7 @@ func TestValidateEmail(t *testing.T) {
 			wantErr: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := ValidateEmail(tt.args.email); (err != nil) != tt.wantErr {
@@ -130,6 +132,7 @@ func TestAbbreviateDirection(t *testing.T) {
 			want:  "s",
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := AbbreviateDirection(tt.input); got != tt.want {

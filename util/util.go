@@ -19,6 +19,7 @@ func ValidateEmail(email string) error {
 	}
 
 	_, err := mail.ParseAddress(email)
+
 	return err
 }
 
@@ -28,6 +29,7 @@ func Contains[T comparable](elems []T, v T) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -58,9 +60,10 @@ func AbbreviateDirection(direction string) string {
 
 func GenerateURLFromZone(region string) (string, error) {
 	regionPart := strings.Split(region, "-")
+
 	if len(regionPart) != 4 {
 		return "", errors.New("the format of this region is wrong")
 	}
-	url := fmt.Sprintf("https://controller-aws-%s%s%s.cloud-ara.tyk.io:37001", regionPart[1], AbbreviateDirection(regionPart[2]), regionPart[3])
-	return url, nil
+
+	return fmt.Sprintf("https://controller-aws-%s%s%s.cloud-ara.tyk.io:37001", regionPart[1], AbbreviateDirection(regionPart[2]), regionPart[3]), nil
 }

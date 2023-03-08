@@ -23,10 +23,12 @@ type BindFlag struct {
 // SaveToConfig writes data to the config file provided by --config.
 func SaveToConfig(key, value string) error {
 	viper.Set(key, value)
+
 	err := viper.WriteConfig()
 	if err != nil {
 		return fmt.Errorf(configErrorMessage, err.Error())
 	}
+
 	return nil
 }
 
@@ -36,10 +38,12 @@ func SaveMapToConfig(data map[string]string) error {
 	for key, value := range data {
 		viper.Set(key, value)
 	}
+
 	err := viper.WriteConfig()
 	if err != nil {
 		return fmt.Errorf(configErrorMessage, err.Error())
 	}
+
 	return nil
 }
 
@@ -50,10 +54,12 @@ func SaveMapToCloudUserContext(userID string, data map[string]string) error {
 		cloudKey := fmt.Sprintf("cloud.%s.%s", userID, key)
 		viper.Set(cloudKey, value)
 	}
+
 	err := viper.WriteConfig()
 	if err != nil {
 		return fmt.Errorf(configErrorMessage, err.Error())
 	}
+
 	return nil
 }
 
@@ -65,7 +71,9 @@ func CreateKeyFromPath(paths ...string) string {
 		if i != 0 {
 			key += "."
 		}
+
 		key += path
 	}
+
 	return key
 }

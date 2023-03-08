@@ -30,15 +30,19 @@ func (o OrgInit) OrgInitToMap() map[string]string {
 	if o.Controller != "" {
 		m[controller] = o.Controller
 	}
+
 	if o.Org != "" {
 		m[org] = o.Org
 	}
+
 	if o.Team != "" {
 		m[team] = o.Team
 	}
+
 	if o.Env != "" {
 		m["env"] = o.Env
 	}
+
 	return m
 }
 
@@ -67,15 +71,19 @@ type Role struct {
 
 func (r Role) RoleToMap() map[string]string {
 	m := make(map[string]string)
+
 	if r.Role != "" {
 		m[userRole] = r.Role
 	}
+
 	if r.OrgID != "" {
 		m[org] = r.OrgID
 	}
+
 	if r.TeamID != "" {
 		m[team] = r.TeamID
 	}
+
 	return m
 }
 

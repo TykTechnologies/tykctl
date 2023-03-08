@@ -167,6 +167,7 @@ func TestGetEntitlements(t *testing.T) {
 		counter map[string]cloud.CounterEntitlement
 		key     string
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -201,6 +202,7 @@ func TestGetEntitlements(t *testing.T) {
 			want: "- of -",
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			assert.Equalf(t, tt.want, getEntitlements(tt.args.counter, tt.args.key), "getEntitlements(%v, %v)", tt.args.counter, tt.args.key)
@@ -212,6 +214,7 @@ func TestCreateOrgHeaderAndRows(t *testing.T) {
 	type args struct {
 		organizations []cloud.Organisation
 	}
+
 	tests := []struct {
 		name    string
 		args    args
@@ -259,6 +262,7 @@ func TestCreateOrgHeaderAndRows(t *testing.T) {
 			rows:    [][]string{{"test organisation-8e392d", "2c05d09d-f8cc-4333-9a3a-4531298e392d", "47 of 200", "27 of 51", "13 of 29", "4 of 7"}},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			returnedHeaders, returnedRows := CreateOrgHeaderAndRows(tt.args.organizations)
@@ -285,6 +289,7 @@ func TestFetchAndPrintOrgByID(t *testing.T) {
 		output        string
 		ExpectedError error
 	}
+
 	tests := []struct {
 		args args
 		name string
@@ -297,6 +302,7 @@ func TestFetchAndPrintOrgByID(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
@@ -313,6 +319,7 @@ func TestFetchAndPrintOrganizations(t *testing.T) {
 		ExpectedError error
 		output        string
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -325,6 +332,7 @@ func TestFetchAndPrintOrganizations(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)

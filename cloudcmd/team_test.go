@@ -22,6 +22,7 @@ func TestNewTeamCmdPersistentFlags(t *testing.T) {
 	}
 	cmd := NewTeamCmd(factory)
 	assert.Equal(t, true, cmd.PersistentFlags().HasFlags())
+
 	flags := []internal.Flag{{
 		Description: "Test Organization is added",
 		Name:        "org",

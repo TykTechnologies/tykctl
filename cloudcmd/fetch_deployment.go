@@ -63,10 +63,12 @@ func validateAndFetchDeploymentByID(ctx context.Context, client internal.CloudCl
 	if err != nil {
 		return err
 	}
+
 	deployment, err := GetDeploymentByID(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, id)
 	if err != nil {
 		return err
 	}
+
 	if deploymentFlags.OutPut == table {
 		var deployments []cloud.Deployment
 		if deployment != nil {
@@ -74,8 +76,10 @@ func validateAndFetchDeploymentByID(ctx context.Context, client internal.CloudCl
 		}
 
 		internal.Printable(CreateDeploymentHeadersAndRows(deployments))
+
 		return nil
 	}
+
 	return internal.PrintJSON(deployment)
 }
 
@@ -84,14 +88,17 @@ func validateAndFetchEnvDeployments(ctx context.Context, client internal.CloudCl
 	if err != nil {
 		return err
 	}
+
 	deployments, err := GetEnvDeployments(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID)
 	if err != nil {
 		return err
 	}
+
 	if deploymentFlags.OutPut == table {
 		internal.Printable(CreateDeploymentHeadersAndRows(deployments))
 		return nil
 	}
+
 	return internal.PrintJSON(deployments)
 }
 
@@ -100,15 +107,19 @@ func GetEnvDeployments(ctx context.Context, client internal.CloudClient, orgID, 
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingDeployments
 	}
+
 	if depResponse.Status != statusOK {
 		return nil, errors.New(depResponse.Error_)
 	}
+
 	if depResponse.Payload == nil {
 		return nil, nil
 	}
+
 	return depResponse.Payload.Deployments, nil
 }
 
@@ -117,12 +128,15 @@ func GetDeploymentByID(ctx context.Context, client internal.CloudClient, orgID, 
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingDeployments
 	}
+
 	if depResponse.Status != statusOK {
 		return nil, errors.New(depResponse.Error_)
 	}
+
 	return depResponse.Payload, nil
 }
 
@@ -131,25 +145,31 @@ func validateCommonDeploymentFetchFlags(f *pflag.FlagSet, config internal.UserCo
 	if err != nil {
 		return nil, err
 	}
+
 	output, err := f.GetString(outPut)
 	if err != nil {
 		return nil, err
 	}
+
 	deploymentFlag.OutPut = output
+
 	if output != table && output != jsonFormat {
 		return nil, ErrorOutPutFormat
 	}
+
 	return deploymentFlag, nil
 }
 
 func CreateDeploymentHeadersAndRows(deployments []cloud.Deployment) ([]string, [][]string) {
 	header := []string{"Name", "UID", "Kind", "Region", "State"}
 	rows := make([][]string, 0)
+
 	for _, deployment := range deployments {
 		row := []string{
 			deployment.Name, deployment.UID, deployment.Kind, deployment.ZoneCode, deployment.State,
 		}
 		rows = append(rows, row)
 	}
+
 	return header, rows
 }

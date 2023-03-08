@@ -35,6 +35,7 @@ func TestReloadFlags(t *testing.T) {
 			Default:     "false",
 		},
 	}
+
 	testutil.TestFlags(t, cmd.Flags(), localFlags)
 }
 
@@ -88,6 +89,7 @@ func TestReloadSingleNode(t *testing.T) {
 			ExpectedError: nil,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
@@ -153,6 +155,7 @@ func TestReloadGroup(t *testing.T) {
 			ExpectedError: errors.New(administrativeAccess),
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
@@ -219,6 +222,7 @@ func TestReloadGateway(t *testing.T) {
 			ExpectedError: nil,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)

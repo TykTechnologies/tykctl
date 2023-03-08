@@ -32,15 +32,18 @@ func NewReloadCmd(apimClient internal.ApimClient) *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			group, err := cmd.Flags().GetBool(group)
 			if err != nil {
 				return err
 			}
+
 			_, err = reloadGateway(cmd.Context(), apimClient.Client.HotReloadAPI, block, group)
 			if err != nil {
 				return err
 			}
 			cmd.Println("gateway reloaded successfully")
+
 			return nil
 		})
 }
@@ -58,9 +61,11 @@ func reloadSingleNode(ctx context.Context, hotReload apim.HotReloadAPI, block bo
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, errors.New(resp.Status)
 	}
+
 	return status, nil
 }
 
@@ -69,9 +74,11 @@ func reloadGroup(ctx context.Context, hotReload apim.HotReloadAPI) (*apim.ApiSta
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, errors.New(resp.Status)
 	}
+
 	return status, nil
 }
 

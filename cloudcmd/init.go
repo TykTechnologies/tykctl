@@ -39,12 +39,15 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 				cmd.Println("Please login in first before running thid command")
 				return errors.New("you need to login to run this command")
 			}
+
 			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg(), userID)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			cmd.Println("Config file initialized successfully")
+
 			return nil
 		})
 }
@@ -54,24 +57,30 @@ func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt intern
 	if err != nil {
 		return err
 	}
+
 	selectedTeam, err := prompt.TeamPrompt(info.Organisation.Teams)
 	if err != nil {
 		return err
 	}
+
 	var orgInit internal.OrgInit
 	if selectedTeam != nil {
 		orgInit.Team = selectedTeam.UID
+
 		selectedEnv, err := prompt.EnvPrompt(selectedTeam.Loadouts)
 		if err != nil {
 			return err
 		}
+
 		if selectedEnv != nil {
 			orgInit.Env = selectedEnv.UID
 		}
 	}
+
 	err = internal.SaveMapToCloudUserContext(userID, orgInit.OrgInitToMap())
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

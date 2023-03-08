@@ -43,10 +43,12 @@ func validateFlagsAndCheckStatus(ctx context.Context, client internal.CloudClien
 	if err != nil {
 		return nil, err
 	}
+
 	status, err := deploymentStatus(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, deploymentID)
 	if err != nil {
 		return nil, err
 	}
+
 	return status, err
 }
 
@@ -55,21 +57,27 @@ func deploymentStatus(ctx context.Context, client internal.CloudClient, orgID, t
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingDeploymentStatus
 	}
+
 	if deploymentStatus.Status != statusOK {
 		return nil, errors.New(deploymentStatus.Error_)
 	}
+
 	if deploymentStatus.Payload == nil {
 		return nil, nil
 	}
+
 	b, err := json.Marshal(deploymentStatus.Payload)
 	if err != nil {
 		return nil, err
 	}
+
 	var status Status
 	err = json.Unmarshal(b, &status)
+
 	return &status, err
 }
 

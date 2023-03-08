@@ -34,17 +34,22 @@ func NewCloudRbac(minAllowedUser Permission, config internal.UserConfig) CloudRb
 func (c CloudRbac) CloudRbac(cmd *cobra.Command, args []string) error {
 	role := c.Config.GetCurrentUserRole()
 	allowedRoles := []string{"org_admin", "team_admin", "team_member"}
+
 	if role == "" {
 		return ErrorNoRoleFound
 	}
+
 	if !slices.Contains(allowedRoles, role) {
 		return fmt.Errorf("%s is invalid", role)
 	}
+
 	if c.MinAllowedUser == TeamMember || role == "org_admin" {
 		return nil
 	}
+
 	if c.MinAllowedUser == TeamAdmin && role == "team_admin" {
 		return nil
 	}
+
 	return fmt.Errorf("user with role %s is not allowed to perform this action", role)
 }

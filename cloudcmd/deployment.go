@@ -44,18 +44,22 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 
 func validateCommonDeploymentFlags(config internal.UserConfig) (*DeploymentFlags, error) {
 	var deploymentFlag DeploymentFlags
+
 	deploymentFlag.OrgID = config.GetCurrentUserOrg()
 	if util.StringIsEmpty(deploymentFlag.OrgID) {
 		return nil, ErrorOrgRequired
 	}
+
 	deploymentFlag.TeamID = config.GetCurrentUserTeam()
 	if util.StringIsEmpty(deploymentFlag.TeamID) {
 		return nil, ErrorTeamRequired
 	}
+
 	deploymentFlag.EnvID = config.GetCurrentUserEnv()
 	if util.StringIsEmpty(deploymentFlag.EnvID) {
 		return nil, ErrorEnvRequired
 	}
+
 	return &deploymentFlag, nil
 }
 

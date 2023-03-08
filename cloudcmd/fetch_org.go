@@ -66,14 +66,17 @@ func FetchAndPrintOrganizations(ctx context.Context, client internal.CloudClient
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
+
 	org, err := GetOrgs(ctx, client)
 	if err != nil {
 		return err
 	}
+
 	if output == table {
 		internal.Printable(CreateOrgHeaderAndRows(org))
 		return nil
 	}
+
 	return internal.PrintJSON(org)
 }
 
@@ -82,10 +85,12 @@ func FetchAndPrintOrgByID(ctx context.Context, client internal.CloudClient, outp
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
+
 	organization, err := GetOrgByID(ctx, client, oid)
 	if err != nil {
 		return err
 	}
+
 	if output == table {
 		var organizations []cloud.Organisation
 		if organization != nil {
@@ -93,8 +98,10 @@ func FetchAndPrintOrgByID(ctx context.Context, client internal.CloudClient, outp
 		}
 
 		internal.Printable(CreateOrgHeaderAndRows(organizations))
+
 		return nil
 	}
+
 	return internal.PrintJSON(organization)
 }
 
@@ -104,12 +111,15 @@ func GetOrgByID(ctx context.Context, client internal.CloudClient, oid string) (*
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingOrg
 	}
+
 	if orgResponse.Status != statusOK {
 		return nil, errors.New(orgResponse.Error_)
 	}
+
 	return orgResponse.Payload, nil
 }
 
@@ -119,15 +129,19 @@ func GetOrgs(ctx context.Context, client internal.CloudClient) ([]cloud.Organisa
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingOrg
 	}
+
 	if orgResponse.Status != statusOK {
 		return nil, errors.New(orgResponse.Error_)
 	}
+
 	if orgResponse.Payload == nil {
 		return nil, nil
 	}
+
 	return orgResponse.Payload.Organisations, nil
 }
 
@@ -135,6 +149,7 @@ func GetOrgs(ctx context.Context, client internal.CloudClient) ([]cloud.Organisa
 func CreateOrgHeaderAndRows(organizations []cloud.Organisation) ([]string, [][]string) {
 	header := []string{"Name", "ID", "Teams", "Environments", "Control planes", "Edge"}
 	rows := make([][]string, 0)
+
 	for _, organization := range organizations {
 		row := []string{
 			organization.Name, organization.UID,
@@ -145,6 +160,7 @@ func CreateOrgHeaderAndRows(organizations []cloud.Organisation) ([]string, [][]s
 		}
 		rows = append(rows, row)
 	}
+
 	return header, rows
 }
 
@@ -152,5 +168,6 @@ func getEntitlements(counter map[string]cloud.CounterEntitlement, key string) st
 	if counterEntitlement, ok := counter[key]; ok {
 		return fmt.Sprintf("%d of %d", counterEntitlement.Consumed, counterEntitlement.Allowed)
 	}
+
 	return "- of -"
 }

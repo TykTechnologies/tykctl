@@ -42,7 +42,9 @@ func NewRestartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			cmd.Println(fmt.Sprintf("Successfully restarted deployment %s...", deployment.UID))
+
 			return nil
 		})
 }
@@ -52,10 +54,12 @@ func validateFlagsAndRestartDeployment(ctx context.Context, client internal.Clou
 	if err != nil {
 		return nil, err
 	}
+
 	deployment, err := restartDeployment(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, deploymentID)
 	if err != nil {
 		return nil, err
 	}
+
 	return deployment, nil
 }
 
@@ -65,11 +69,14 @@ func restartDeployment(ctx context.Context, client internal.CloudClient, orgID, 
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if (resp.StatusCode != http.StatusOK) && (resp.StatusCode != http.StatusCreated) {
 		return nil, ErrorRestartingDeployment
 	}
+
 	if deployment.Status != statusOK {
 		return nil, errors.New(deployment.Error_)
 	}
+
 	return deployment.Payload, nil
 }

@@ -10,8 +10,10 @@ import (
 
 func TestConfigFileNotOverWritten(t *testing.T) {
 	assert.FileExists(t, "./testdata/overwritten.yml")
+
 	err := CreateConfigFile("./testdata", "overwritten.yml")
 	assert.Nil(t, err)
+
 	content, err := os.ReadFile("./testdata/overwritten.yml")
 	assert.Nil(t, err)
 	assert.Equal(t, "data: testdata", string(content))
@@ -22,6 +24,7 @@ func TestCreateConfigFile(t *testing.T) {
 		dir  string
 		file string
 	}
+
 	tests := []struct {
 		name  string
 		args  args
@@ -36,6 +39,7 @@ func TestCreateConfigFile(t *testing.T) {
 			Error: nil,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := CreateConfigFile(tt.args.dir, tt.args.file)

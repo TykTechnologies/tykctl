@@ -69,6 +69,7 @@ func TestCloudRbacCloudRbac(t *testing.T) {
 			ExpectedError:  ErrorNoRoleFound,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)

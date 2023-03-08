@@ -59,13 +59,16 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			err = initUserConfigFile(ctx, factory)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			cmd.Println("Authentication successful")
 			cmd.Println("you can run `tykctl cloud init` to set default org,team,env in your config file")
+
 			return nil
 		})
 }
@@ -76,14 +79,17 @@ func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) erro
 	if err != nil {
 		return err
 	}
+
 	err = saveRoleToConfig(info)
 	if err != nil {
 		return err
 	}
+
 	err = saveOrgInfoToConfig(ctx, factory, info.ID)
 	if err != nil {
 		return err
 	}
+
 	return internal.SaveToConfig(currentCloudUser, info.ID)
 }
 
@@ -93,10 +99,12 @@ func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, use
 	if orgID == "" {
 		return ErrNoOrganization
 	}
+
 	orgInfo, err := initOrgInfo(ctx, factory.Client, factory.Prompt, orgID)
 	if err != nil {
 		return err
 	}
+
 	return internal.SaveMapToCloudUserContext(userID, orgInfo.OrgInitToMap())
 }
 
@@ -106,6 +114,7 @@ func saveRoleToConfig(info *internal.UserInfo) error {
 	if err != nil {
 		return err
 	}
+
 	return internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
 }
 
@@ -116,6 +125,7 @@ func initUserProfile(ctx context.Context, client internal.CloudClient) (*interna
 	if err != nil {
 		return nil, err
 	}
+
 	return getUserRole(userInfo.Roles)
 }
 
@@ -127,12 +137,14 @@ func GetUserInfo(ctx context.Context, client internal.CloudClient) (*internal.Us
 // / getUserRole returns the user role.
 func getUserRole(roles []internal.Role) (*internal.Role, error) {
 	roleList := []string{"org_admin", "team_admin", "team_member"}
+
 	for _, role := range roles {
 		contain := slices.Contains(roleList, role.Role)
 		if contain {
 			return &role, nil
 		}
 	}
+
 	return nil, ErrorNoRoleFound
 }
 
@@ -143,17 +155,21 @@ func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt intern
 	if err != nil {
 		return nil, err
 	}
+
 	controllerURL, err := util.GenerateURLFromZone(info.Organisation.Zone)
 	if err != nil {
 		return nil, err
 	}
+
 	var orgInit internal.OrgInit
 	orgInit.Controller = controllerURL
 	orgInit.Org = orgID
+
 	selectedTeam, err := prompt.TeamPrompt(info.Organisation.Teams)
 	if err != nil {
 		return nil, err
 	}
+
 	if selectedTeam != nil {
 		orgInit.Team = selectedTeam.UID
 	}
@@ -177,19 +193,24 @@ func dashboardLogin(ctx context.Context, baseURL, email, password string) (*http
 		Email:    email,
 		Password: password,
 	}
+
 	fullURL, err := url.JoinPath(baseURL, loginPath)
 	if err != nil {
 		return nil, err
 	}
+
 	req, err := internal.CreatePostRequest(ctx, fullURL, body, headers)
 	if err != nil {
 		return nil, err
 	}
+
 	loginClient := &http.Client{}
+
 	response, err := loginClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
+
 	return response, nil
 }
 
@@ -200,12 +221,14 @@ func extractToken(resp *http.Response) (string, error) {
 		if err != nil {
 			return "", err
 		}
+
 		return "", fmt.Errorf("login failed: %s", string(b))
 	} else if resp.StatusCode != http.StatusOK {
 		return "", ErrLoginFailed
 	}
-	var token string
-	var cookieSignature string
+
+	var token, cookieSignature string
+
 	for _, cookie := range resp.Cookies() {
 		switch cookie.Name {
 		case cookieAuthorisation:
@@ -214,12 +237,15 @@ func extractToken(resp *http.Response) (string, error) {
 			cookieSignature = cookie.Value
 		}
 	}
+
 	if len(token) == 0 {
 		return "", ErrTokenNotFound
 	}
+
 	if cookieSignature == "" {
 		return "", ErrSignatureNotFound
 	}
+
 	return fmt.Sprintf("%s.%s", token, cookieSignature), nil
 }
 
@@ -229,6 +255,7 @@ func validateAndLogin(ctx context.Context, f *pflag.FlagSet) error {
 	if err != nil {
 		return err
 	}
+
 	var loginBody *LoginBody
 	if isInteractive {
 		loginBody, err = loginInteractive(ctx)
@@ -241,17 +268,21 @@ func validateAndLogin(ctx context.Context, f *pflag.FlagSet) error {
 			return err
 		}
 	}
+
 	err = util.ValidateEmail(loginBody.Email)
 	if err != nil {
 		return err
 	}
+
 	if util.StringIsEmpty(loginBody.Password) {
 		return ErrPasswordIsRequired
 	}
+
 	err = getAndSaveToken(ctx, internal.DashboardURL, loginBody.Email, loginBody.Password)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -261,10 +292,12 @@ func loginWithFlag(f *pflag.FlagSet) (*LoginBody, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	password, err := f.GetString(password)
 	if err != nil {
 		return nil, err
 	}
+
 	return &LoginBody{
 		Email:    email,
 		Password: password,
@@ -277,10 +310,12 @@ func loginInteractive(ctx context.Context) (*LoginBody, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	password, err := internal.PasswordPrompt()
 	if err != nil {
 		return nil, err
 	}
+
 	return &LoginBody{
 		Email:    email,
 		Password: password,
@@ -293,10 +328,12 @@ func getAndSaveToken(ctx context.Context, url, email, password string) error {
 	if err != nil {
 		return err
 	}
+
 	token, err := extractToken(resp)
 	if err != nil {
 		return err
 	}
+
 	return internal.SaveToConfig(currentCloudToken, token)
 }
 

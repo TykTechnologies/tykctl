@@ -67,20 +67,25 @@ func validateFlagsAndPrintEnvs(ctx context.Context, client internal.CloudClient,
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
+
 	if util.StringIsEmpty(orgID) {
 		return ErrorOrgRequired
 	}
+
 	if util.StringIsEmpty(teamID) {
 		return ErrorTeamRequired
 	}
+
 	envs, err := GetEnvs(ctx, client, orgID, teamID)
 	if err != nil {
 		return err
 	}
+
 	if output == table {
 		internal.Printable(CreateEnvHeadersAndRows(envs))
 		return nil
 	}
+
 	return internal.PrintJSON(envs)
 }
 
@@ -88,19 +93,24 @@ func validateFlagsAndPrintEnvByID(ctx context.Context, client internal.CloudClie
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
+
 	if util.StringIsEmpty(orgID) {
 		return ErrorOrgRequired
 	}
+
 	if util.StringIsEmpty(teamID) {
 		return ErrorTeamRequired
 	}
+
 	if util.StringIsEmpty(envID) {
 		return ErrorEnvRequired
 	}
+
 	env, err := GetEnvByID(ctx, client, orgID, teamID, envID)
 	if err != nil {
 		return err
 	}
+
 	if output == table {
 		var envs []cloud.Loadout
 		if env != nil {
@@ -108,8 +118,10 @@ func validateFlagsAndPrintEnvByID(ctx context.Context, client internal.CloudClie
 		}
 
 		internal.Printable(CreateEnvHeadersAndRows(envs))
+
 		return nil
 	}
+
 	return internal.PrintJSON(env)
 }
 
@@ -119,12 +131,15 @@ func GetEnvByID(ctx context.Context, client internal.CloudClient, orgID, teamID,
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingEnvironment
 	}
+
 	if envResponse.Status != statusOK {
 		return nil, errors.New(envResponse.Error_)
 	}
+
 	return envResponse.Payload, nil
 }
 
@@ -134,15 +149,19 @@ func GetEnvs(ctx context.Context, client internal.CloudClient, orgID, teamID str
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingEnvironment
 	}
+
 	if envResponse.Status != statusOK {
 		return nil, errors.New(envResponse.Error_)
 	}
+
 	if envResponse.Payload == nil {
 		return nil, nil
 	}
+
 	return envResponse.Payload.Loadouts, nil
 }
 
@@ -150,11 +169,13 @@ func GetEnvs(ctx context.Context, client internal.CloudClient, orgID, teamID str
 func CreateEnvHeadersAndRows(envs []cloud.Loadout) ([]string, [][]string) {
 	header := []string{"Name", "UID", "Team", "Active Deployments"}
 	rows := make([][]string, 0)
+
 	for _, env := range envs {
 		row := []string{
 			env.Name, env.UID, env.TeamName,
 		}
 		rows = append(rows, row)
 	}
+
 	return header, rows
 }

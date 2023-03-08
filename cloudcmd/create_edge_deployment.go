@@ -58,32 +58,39 @@ func validateEdgeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	if err != nil {
 		return nil, err
 	}
+
 	controlPlane, err := f.GetString(linkedControlPlane)
 	if err != nil {
 		return nil, err
 	}
+
 	if util.StringIsEmpty(controlPlane) {
 		return nil, ErrorControlPlaneRequired
 	}
+
 	deployment.LinkedDeployments["LinkedMDCBID"] = controlPlane
 	deployment.Kind = gateway
+
 	deployHome, err := f.GetBool(deploy)
 	if err != nil {
 		return nil, err
 	}
+
 	deploymentResponse, err := CreateDeployment(ctx, client, *deployment, deployment.OID, deployment.TID, deployment.LID)
 	if err != nil {
 		return nil, err
 	}
 
 	log.Printf("deployment %s created successfully", deploymentResponse.UID)
+
 	if deployHome {
-		_, err := validateFlagsAndStartDeployment(ctx, client, config, deploymentResponse.UID)
+		_, err = validateFlagsAndStartDeployment(ctx, client, config, deploymentResponse.UID)
 		if err != nil {
 			return nil, err
 		}
 
 		log.Println("deploying...")
 	}
+
 	return deploymentResponse, nil
 }

@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
-var (
-	ErrCurrentUserNotFound = errors.New("current user not set/found")
-)
+var ErrCurrentUserNotFound = errors.New("current user not set/found")
 
 type Builder interface {
 	WithExample(comment string) Builder
@@ -45,7 +44,6 @@ func NewCmd(use string) Builder {
 			SilenceUsage: true,
 		},
 	}
-
 }
 
 // WithFlagAdder adds flags to the cloudcmd flags
@@ -65,6 +63,7 @@ func (b *builder) WithExample(comment string) Builder {
 	if b.cmd.Example != "" {
 		b.cmd.Example += "\n"
 	}
+
 	b.cmd.Example += comment
 	return b
 }
@@ -101,6 +100,7 @@ func (b *builder) WithBindFlagOnPreRun(flags []BindFlag) Builder {
 	b.bindOnPreRun = append(b.bindOnPreRun, flags...)
 	return b
 }
+
 func (b *builder) bindFlagonPreRun() error {
 	for _, flag := range b.bindOnPreRun {
 		if flag.Persistent {
@@ -134,6 +134,7 @@ func (b *builder) bindFlagonPreRunWithCurrentContext() error {
 	if currentUser == "" {
 		return ErrCurrentUserNotFound
 	}
+
 	for _, flag := range b.bindWithContextOnPreRun {
 		currentUserCtx := fmt.Sprintf("cloud.%s.%s", currentUser, flag.Name)
 		var err error
@@ -145,7 +146,6 @@ func (b *builder) bindFlagonPreRunWithCurrentContext() error {
 		if err != nil {
 			return err
 		}
-
 	}
 	return nil
 }
@@ -160,11 +160,13 @@ func (b *builder) executePreRunFuncs(cmd *cobra.Command, args []string) error {
 	}
 	return nil
 }
+
 func (b *builder) PreRun(cmd *cobra.Command, args []string) error {
 	err := b.bindFlagonPreRun()
 	if err != nil {
 		return err
 	}
+
 	err = b.bindFlagonPreRunWithCurrentContext()
 	if err != nil {
 		return err

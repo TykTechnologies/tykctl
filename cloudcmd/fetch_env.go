@@ -3,11 +3,13 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"net/http"
+
+	"github.com/spf13/cobra"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
-	"github.com/spf13/cobra"
-	"net/http"
 )
 
 const fetchEnvDesc = `
@@ -19,7 +21,7 @@ We support json and table as the output format.To set the output format use the 
 
 Sample usage of this command:
 
-tykctl cloud environments fetch --team=<teamId> --org=<orgID> --output=<json/table>
+tykctl cloud environments fetch --team=<teamID> --org=<orgID> --output=<json/table>
 `
 
 var (
@@ -33,7 +35,7 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(false, addOutPutFlags).
 		WithLongDescription(fetchEnvDesc).
 		WithDescription("fetch environments from a given team.").
-		WithExample("tykctl cloud environments fetch --team=<teamId> --org=<orgID>").
+		WithExample("tykctl cloud environments fetch --team=<teamID> --org=<orgID>").
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
@@ -44,14 +46,14 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 			org := factory.Config.GetCurrentUserOrg()
 			team := factory.Config.GetCurrentUserTeam()
 			if len(args) == 0 {
-				err := validateFlagsAndPrintEnvs(cmd.Context(), factory.Client, outPut, org, team)
+				err = validateFlagsAndPrintEnvs(cmd.Context(), factory.Client, outPut, org, team)
 				if err != nil {
 					cmd.PrintErrln(err)
 					return err
 				}
 				return nil
 			}
-			err = validateFlagsAndPrintEnvById(cmd.Context(), factory.Client, outPut, org, team, args[0])
+			err = validateFlagsAndPrintEnvByID(cmd.Context(), factory.Client, outPut, org, team, args[0])
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -61,17 +63,17 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 }
 
 // validateFlagsAndPrintEnvs validate flags passed to cloudcmd are not empty and prints env in a team .
-func validateFlagsAndPrintEnvs(ctx context.Context, client internal.CloudClient, output, orgId, teamId string) error {
+func validateFlagsAndPrintEnvs(ctx context.Context, client internal.CloudClient, output, orgID, teamID string) error {
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
-	if util.StringIsEmpty(orgId) {
+	if util.StringIsEmpty(orgID) {
 		return ErrorOrgRequired
 	}
-	if util.StringIsEmpty(teamId) {
+	if util.StringIsEmpty(teamID) {
 		return ErrorTeamRequired
 	}
-	envs, err := GetEnvs(ctx, client, orgId, teamId)
+	envs, err := GetEnvs(ctx, client, orgID, teamID)
 	if err != nil {
 		return err
 	}
@@ -79,22 +81,23 @@ func validateFlagsAndPrintEnvs(ctx context.Context, client internal.CloudClient,
 		internal.Printable(CreateEnvHeadersAndRows(envs))
 		return nil
 	}
-	return internal.PrintJson(envs)
+	return internal.PrintJSON(envs)
 }
-func validateFlagsAndPrintEnvById(ctx context.Context, client internal.CloudClient, output, orgId, teamId, envId string) error {
+
+func validateFlagsAndPrintEnvByID(ctx context.Context, client internal.CloudClient, output, orgID, teamID, envID string) error {
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
-	if util.StringIsEmpty(orgId) {
+	if util.StringIsEmpty(orgID) {
 		return ErrorOrgRequired
 	}
-	if util.StringIsEmpty(teamId) {
+	if util.StringIsEmpty(teamID) {
 		return ErrorTeamRequired
 	}
-	if util.StringIsEmpty(envId) {
+	if util.StringIsEmpty(envID) {
 		return ErrorEnvRequired
 	}
-	env, err := GetEnvById(ctx, client, orgId, teamId, envId)
+	env, err := GetEnvByID(ctx, client, orgID, teamID, envID)
 	if err != nil {
 		return err
 	}
@@ -103,15 +106,16 @@ func validateFlagsAndPrintEnvById(ctx context.Context, client internal.CloudClie
 		if env != nil {
 			envs = append(envs, *env)
 		}
+
 		internal.Printable(CreateEnvHeadersAndRows(envs))
 		return nil
 	}
-	return internal.PrintJson(env)
+	return internal.PrintJSON(env)
 }
 
-// GetEnvById gets an environment by its id.
-func GetEnvById(ctx context.Context, client internal.CloudClient, orgId, teamId, envId string) (*cloud.Loadout, error) {
-	envResponse, resp, err := client.GetEnvById(ctx, orgId, teamId, envId)
+// GetEnvByID gets an environment by its id.
+func GetEnvByID(ctx context.Context, client internal.CloudClient, orgID, teamID, envID string) (*cloud.Loadout, error) {
+	envResponse, resp, err := client.GetEnvByID(ctx, orgID, teamID, envID)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
@@ -125,8 +129,8 @@ func GetEnvById(ctx context.Context, client internal.CloudClient, orgId, teamId,
 }
 
 // GetEnvs gets all the environments in a team.
-func GetEnvs(ctx context.Context, client internal.CloudClient, orgId string, teamId string) ([]cloud.Loadout, error) {
-	envResponse, resp, err := client.GetEnvs(ctx, orgId, teamId)
+func GetEnvs(ctx context.Context, client internal.CloudClient, orgID, teamID string) ([]cloud.Loadout, error) {
+	envResponse, resp, err := client.GetEnvs(ctx, orgID, teamID)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}

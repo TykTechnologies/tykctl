@@ -1,14 +1,15 @@
 package shared
 
 import (
-	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	"github.com/spf13/viper"
+
+	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 )
 
-var (
+const (
+	xTykAuthorization = "x-tyk-authorization"
 	gatewaySecret     = "gateway.secret"
 	gatewayUrls       = "gateway.urls"
-	xTykAuthorization = "x-tyk-authorization"
 )
 
 func AddGatewaySecret(config *apim.Configuration) {
@@ -23,5 +24,4 @@ func AddGatewayServers(config *apim.Configuration) {
 			URL: url,
 		})
 	}
-
 }

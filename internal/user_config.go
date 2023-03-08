@@ -14,12 +14,9 @@ type UserConfig interface {
 	GetCurrentUserRole() string
 }
 
-var (
-	_ UserConfig = (*ViperConfig)(nil)
-)
+var _ UserConfig = (*ViperConfig)(nil)
 
-type ViperConfig struct {
-}
+type ViperConfig struct{}
 
 func (v ViperConfig) GetCurrentUserOrg() string {
 	return viper.GetString(CreateKeyFromPath(cloudPath, viper.GetString(currentCloudUser), org))

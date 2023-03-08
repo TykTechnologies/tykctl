@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
+	"github.com/spf13/cobra"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/spf13/cobra"
-	"net/http"
 )
 
 const deployDesc = `
@@ -51,15 +53,15 @@ func validateFlagsAndStartDeployment(ctx context.Context, client internal.CloudC
 	if err != nil {
 		return nil, err
 	}
-	deployment, err := StartDeployment(ctx, client, deploymentFlags.OrgId, deploymentFlags.TeamId, deploymentFlags.EnvId, deploymentID)
+	deployment, err := StartDeployment(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, deploymentID)
 	if err != nil {
 		return deployment, err
 	}
 	return deployment, nil
 }
 
-func StartDeployment(ctx context.Context, client internal.CloudClient, orgId, teamId, envId, id string) (*cloud.Deployment, error) {
-	startResponse, resp, err := client.StartDeployment(ctx, orgId, teamId, envId, id)
+func StartDeployment(ctx context.Context, client internal.CloudClient, orgID, teamID, envID, id string) (*cloud.Deployment, error) {
+	startResponse, resp, err := client.StartDeployment(ctx, orgID, teamID, envID, id)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}

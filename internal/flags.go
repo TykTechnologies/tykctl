@@ -2,12 +2,11 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
-var (
-	configErrorMessage = "Couldn't write config: %s\n"
-)
+var configErrorMessage = "Couldn't write config: %s\n"
 
 type Flag struct {
 	Description string
@@ -46,9 +45,9 @@ func SaveMapToConfig(data map[string]string) error {
 
 // SaveMapToCloudUserContext takes a map and write it to configuration file in the cloud service context
 // under a certain user context.
-func SaveMapToCloudUserContext(userId string, data map[string]string) error {
+func SaveMapToCloudUserContext(userID string, data map[string]string) error {
 	for key, value := range data {
-		cloudKey := fmt.Sprintf("cloud.%s.%s", userId, key)
+		cloudKey := fmt.Sprintf("cloud.%s.%s", userID, key)
 		viper.Set(cloudKey, value)
 	}
 	err := viper.WriteConfig()
@@ -61,11 +60,12 @@ func SaveMapToCloudUserContext(userId string, data map[string]string) error {
 // CreateKeyFromPath concatenate the paths provided to create a hierarchical config.
 func CreateKeyFromPath(paths ...string) string {
 	key := ""
+
 	for i, path := range paths {
 		if i != 0 {
-			key = key + "."
+			key += "."
 		}
-		key = key + path
+		key += path
 	}
 	return key
 }

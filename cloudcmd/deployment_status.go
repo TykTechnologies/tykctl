@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/spf13/cobra"
 	"net/http"
 	"time"
+
+	"github.com/spf13/cobra"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 const deploymentStatusDesc = `
@@ -34,22 +36,22 @@ func NewDeploymentStatusCmd(factory internal.CloudFactory) *cobra.Command {
 			cmd.Println(checkStatus.CurrentState)
 			return nil
 		})
-
 }
+
 func validateFlagsAndCheckStatus(ctx context.Context, client internal.CloudClient, config internal.UserConfig, deploymentID string) (*Status, error) {
 	deploymentFlags, err := validateCommonDeploymentFlags(config)
 	if err != nil {
 		return nil, err
 	}
-	status, err := deploymentStatus(ctx, client, deploymentFlags.OrgId, deploymentFlags.TeamId, deploymentFlags.EnvId, deploymentID)
+	status, err := deploymentStatus(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, deploymentID)
 	if err != nil {
 		return nil, err
 	}
 	return status, err
 }
 
-func deploymentStatus(ctx context.Context, client internal.CloudClient, orgId, teamId, envId, deploymentId string) (*Status, error) {
-	deploymentStatus, resp, err := client.GetDeploymentStatus(ctx, orgId, teamId, envId, deploymentId)
+func deploymentStatus(ctx context.Context, client internal.CloudClient, orgID, teamID, envID, deploymentID string) (*Status, error) {
+	deploymentStatus, resp, err := client.GetDeploymentStatus(ctx, orgID, teamID, envID, deploymentID)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}

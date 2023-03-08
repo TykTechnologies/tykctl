@@ -2,11 +2,13 @@ package cloudcmd
 
 import (
 	"context"
-	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/TykTechnologies/tykctl/util"
+	"strconv"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"strconv"
+
+	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/util"
 )
 
 const zonesDesc = `
@@ -48,14 +50,15 @@ func FetchZonesAndPrint(ctx context.Context, client internal.CloudClient, f *pfl
 		internal.Printable(ZonesTable(deploymentZones.Payload))
 		return nil
 	}
-	return internal.PrintJson(deploymentZones)
+	return internal.PrintJSON(deploymentZones)
 }
 
 func ZonesTable(response internal.Payload) ([]string, [][]string) {
 	header := []string{"Name", "Support Home", "Support Gateway"}
 	rows := make([][]string, 0)
 	for s, supported := range response.Tags {
-		row := []string{s,
+		row := []string{
+			s,
 			strconv.FormatBool(util.Contains(supported, "Home")),
 			strconv.FormatBool(util.Contains(supported, "Gateway")),
 		}

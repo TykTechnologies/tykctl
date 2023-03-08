@@ -169,7 +169,6 @@ func TestContains(t *testing.T) {
 }
 
 func TestGenerateUrlFromZone(t *testing.T) {
-
 	tests := []struct {
 		name    string
 		region  string
@@ -191,7 +190,7 @@ func TestGenerateUrlFromZone(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GenerateUrlFromZone(tt.region)
+			got, err := GenerateURLFromZone(tt.region)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GenerateUrlFromZone() error = %v, wantErr %v", err, tt.wantErr)
 				return

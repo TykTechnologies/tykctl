@@ -4,15 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/TykTechnologies/tykctl/util"
+	"io"
+	"net/http"
+	"net/url"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"golang.org/x/exp/slices"
-	"io"
-	"net/http"
-	"net/url"
+
+	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/util"
 )
 
 const (
@@ -66,7 +68,6 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 			cmd.Println("you can run `tykctl cloud init` to set default org,team,env in your config file")
 			return nil
 		})
-
 }
 
 // initUserConfigFile will fetch the user profile,organization and save them to the file.
@@ -87,16 +88,16 @@ func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) erro
 }
 
 // saveOrgInfoToConfig will save the organization details to the config file passed by the user.
-func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, userId string) error {
-	orgId := viper.GetString(internal.CreateKeyFromPath(cloudPath, userId, org))
-	if orgId == "" {
+func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, userID string) error {
+	orgID := viper.GetString(internal.CreateKeyFromPath(cloudPath, userID, org))
+	if orgID == "" {
 		return ErrNoOrganization
 	}
-	orgInfo, err := initOrgInfo(ctx, factory.Client, factory.Prompt, orgId)
+	orgInfo, err := initOrgInfo(ctx, factory.Client, factory.Prompt, orgID)
 	if err != nil {
 		return err
 	}
-	return internal.SaveMapToCloudUserContext(userId, orgInfo.OrgInitToMap())
+	return internal.SaveMapToCloudUserContext(userID, orgInfo.OrgInitToMap())
 }
 
 // saveRoleToConfig will save the user role to the config file passed by the user.
@@ -137,18 +138,18 @@ func getUserRole(roles []internal.Role) (*internal.Role, error) {
 
 // initOrgInfo will fetch the user organization and extract team and create a controllerUrl that
 // the user can use to connect to tyk cloud depending on their region.
-func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgId string) (*internal.OrgInit, error) {
-	info, _, err := client.GetOrgInfo(ctx, orgId)
+func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgID string) (*internal.OrgInit, error) {
+	info, _, err := client.GetOrgInfo(ctx, orgID)
 	if err != nil {
 		return nil, err
 	}
-	controllerUrl, err := util.GenerateUrlFromZone(info.Organisation.Zone)
+	controllerURL, err := util.GenerateURLFromZone(info.Organisation.Zone)
 	if err != nil {
 		return nil, err
 	}
 	var orgInit internal.OrgInit
-	orgInit.Controller = controllerUrl
-	orgInit.Org = orgId
+	orgInit.Controller = controllerURL
+	orgInit.Org = orgID
 	selectedTeam, err := prompt.TeamPrompt(info.Organisation.Teams)
 	if err != nil {
 		return nil, err
@@ -168,19 +169,19 @@ func addLoginFlags(f *pflag.FlagSet) {
 }
 
 // dashboardLogin send a request to ara dashboard to get a token to use to authenticate all other requests.
-func dashboardLogin(ctx context.Context, baseUrl, email, password string) (*http.Response, error) {
+func dashboardLogin(ctx context.Context, baseURL, email, password string) (*http.Response, error) {
 	headers := map[string]string{
-		contentType: applicationJson,
+		contentType: applicationJSON,
 	}
 	body := LoginBody{
 		Email:    email,
 		Password: password,
 	}
-	fullUrl, err := url.JoinPath(baseUrl, loginPath)
+	fullURL, err := url.JoinPath(baseURL, loginPath)
 	if err != nil {
 		return nil, err
 	}
-	req, err := internal.CreatePostRequest(ctx, fullUrl, body, headers)
+	req, err := internal.CreatePostRequest(ctx, fullURL, body, headers)
 	if err != nil {
 		return nil, err
 	}
@@ -199,11 +200,9 @@ func extractToken(resp *http.Response) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return "", fmt.Errorf("login failed: %s\n", string(b))
-
+		return "", fmt.Errorf("login failed: %s", string(b))
 	} else if resp.StatusCode != http.StatusOK {
 		return "", ErrLoginFailed
-
 	}
 	var token string
 	var cookieSignature string
@@ -211,12 +210,9 @@ func extractToken(resp *http.Response) (string, error) {
 		switch cookie.Name {
 		case cookieAuthorisation:
 			token = cookie.Value
-
 		case signature:
-
 			cookieSignature = cookie.Value
 		}
-
 	}
 	if len(token) == 0 {
 		return "", ErrTokenNotFound
@@ -252,7 +248,7 @@ func validateAndLogin(ctx context.Context, f *pflag.FlagSet) error {
 	if util.StringIsEmpty(loginBody.Password) {
 		return ErrPasswordIsRequired
 	}
-	err = getAndSaveToken(ctx, internal.DashboardUrl, loginBody.Email, loginBody.Password)
+	err = getAndSaveToken(ctx, internal.DashboardURL, loginBody.Email, loginBody.Password)
 	if err != nil {
 		return err
 	}
@@ -298,7 +294,6 @@ func getAndSaveToken(ctx context.Context, url, email, password string) error {
 		return err
 	}
 	token, err := extractToken(resp)
-
 	if err != nil {
 		return err
 	}

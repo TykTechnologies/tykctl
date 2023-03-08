@@ -3,12 +3,14 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"log"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"log"
 )
 
 const createHomeDeploymentDesc = ` 
@@ -70,7 +72,6 @@ func validateHomeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 			return nil, err
 		}
 		deployment.ExtraContext.Data["CFData"] = map[string]interface{}{"AWSSecret": aws.AwsSecret, "AWSKeyID": aws.AwsKeyID, "AWSRegion": aws.AwsRegion}
-
 	}
 	deployment.Kind = controlPlane
 	deployHome, err := f.GetBool(deploy)
@@ -81,14 +82,16 @@ func validateHomeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	if err != nil {
 		return nil, err
 	}
+
 	log.Printf("deployment %s created successfully", deploymentResponse.UID)
+
 	if deployHome {
 		_, err := validateFlagsAndStartDeployment(ctx, client, config, deploymentResponse.UID)
 		if err != nil {
 			return nil, err
 		}
-		log.Println("deploying...")
 
+		log.Println("deploying...")
 	}
 	return deploymentResponse, nil
 }

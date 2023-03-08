@@ -1,8 +1,9 @@
 package internal
 
 import (
-	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"time"
+
+	"github.com/TykTechnologies/cloud-sdk/cloud"
 )
 
 var (

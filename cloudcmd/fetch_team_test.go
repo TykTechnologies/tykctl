@@ -3,19 +3,21 @@ package cloudcmd
 import (
 	"context"
 	"errors"
-	"github.com/TykTechnologies/cloud-sdk/cloud"
-	mock "github.com/TykTechnologies/tykctl/internal/mocks"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/TykTechnologies/cloud-sdk/cloud"
+	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 )
 
-func TestGetTeamById(t *testing.T) {
+func TestGetTeamByID(t *testing.T) {
 	testCases := []struct {
 		name             string
 		mockResponse     cloud.InlineResponse2011
-		mockHttpResponse *http.Response
+		mockHTTPResponse *http.Response
 		mockError        error
 		ExpectedError    error
 		ExpectedTeam     *cloud.Team
@@ -27,7 +29,7 @@ func TestGetTeamById(t *testing.T) {
 				Payload: &generateTeams(1)[0],
 				Status:  "ok",
 			},
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			mockError:        nil,
 			ExpectedError:    nil,
 			ExpectedTeam:     &cloud.Team{OID: "1", UID: "1"},
@@ -38,21 +40,20 @@ func TestGetTeamById(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().GetTeamById(gomock.Any(), gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
-			team, err := GetTeamById(context.Background(), m, "orgId", "teamId")
+			m.EXPECT().GetTeamByID(gomock.Any(), gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
+			team, err := GetTeamByID(context.Background(), m, "orgID", "teamID")
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.ExpectedTeam, team)
-
 		})
 	}
-
 }
+
 func TestGetTeams(t *testing.T) {
 	testCases := []struct {
 		name              string
 		mockError         error
 		mockResponse      cloud.InlineResponse20017
-		mockHttpResponse  *http.Response
+		mockHTTPResponse  *http.Response
 		ExpectedOrgLength int
 		ExpectedError     error
 		ExpectedResponse  []cloud.Team
@@ -65,7 +66,7 @@ func TestGetTeams(t *testing.T) {
 				Payload: &cloud.Teams{Teams: generateTeams(3)},
 				Status:  "ok",
 			},
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusOK},
 			ExpectedOrgLength: 3,
 			ExpectedError:     nil,
 			ExpectedResponse:  nil,
@@ -74,7 +75,7 @@ func TestGetTeams(t *testing.T) {
 			name:              "Test error returned by cloud sdk",
 			mockError:         ErrorCreatingTeam,
 			mockResponse:      cloud.InlineResponse20017{},
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusOK},
 			ExpectedOrgLength: 0,
 			ExpectedError:     ErrorCreatingTeam,
 			ExpectedResponse:  nil,
@@ -87,14 +88,14 @@ func TestGetTeams(t *testing.T) {
 				Payload: nil,
 				Status:  "",
 			},
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusForbidden},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusForbidden},
 			ExpectedOrgLength: 0,
 			ExpectedError:     ErrorFetchingTeam,
 			ExpectedResponse:  nil,
 		},
 		{
 			name:              "Test payload has error",
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusOK},
 			ExpectedOrgLength: 0,
 			mockError:         nil,
 			mockResponse: cloud.InlineResponse20017{
@@ -107,7 +108,7 @@ func TestGetTeams(t *testing.T) {
 		},
 		{
 			name:              "Test nil payload",
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusOK},
 			ExpectedOrgLength: 0,
 			mockError:         nil,
 			mockResponse: cloud.InlineResponse20017{
@@ -124,7 +125,7 @@ func TestGetTeams(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().GetTeams(gomock.Any(), gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			m.EXPECT().GetTeams(gomock.Any(), gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
 			teams, err := GetTeams(context.Background(), m, "")
 			assert.Equal(t, tt.ExpectedError, err)
 			if tt.mockResponse.Payload != nil {

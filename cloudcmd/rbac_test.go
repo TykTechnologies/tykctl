@@ -2,16 +2,16 @@ package cloudcmd
 
 import (
 	"fmt"
-	"github.com/TykTechnologies/tykctl/internal"
-	mock "github.com/TykTechnologies/tykctl/internal/mocks"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"testing"
+
+	"github.com/TykTechnologies/tykctl/internal"
+	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 )
 
-var (
-	rbacError = "user with role %s is not allowed to perform this action"
-)
+var rbacError = "user with role %s is not allowed to perform this action"
 
 func TestCloudRbacCloudRbac(t *testing.T) {
 	tests := []struct {

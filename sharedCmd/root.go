@@ -2,16 +2,18 @@ package sharedCmd
 
 import (
 	"fmt"
+	"os"
+
+	"github.com/go-resty/resty/v2"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	"github.com/TykTechnologies/tykctl/cloudcmd"
 	"github.com/TykTechnologies/tykctl/gatewaycmd"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/go-resty/resty/v2"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
-	"os"
 )
 
 var cfgFile string
@@ -47,8 +49,8 @@ func Execute() {
 		DefaultHeader: map[string]string{},
 	}
 	sdkClient := internal.NewCloudSdkClient(&conf)
-	sdkClient.AddBeforeExecuteFunc(AddTokenAndBaseUrl)
-	sdkClient.AddBeforeRestyExecute(AddTokenAndBaseUrlToResty)
+	sdkClient.AddBeforeExecuteFunc(AddTokenAndBaseURL)
+	sdkClient.AddBeforeRestyExecute(AddTokenAndBaseURLToResty)
 	rootCmd := NewRootCmd()
 	cloudFactory := internal.CloudFactory{
 		Client: sdkClient,
@@ -62,8 +64,8 @@ func Execute() {
 		Servers:       apim.ServerConfigurations{},
 	}
 	client := apim.NewAPIClient(&apiConfig)
-	gatewayFactory := internal.ApimFactory{Client: client}
-	rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(gatewayFactory))
+	apimClient := internal.ApimClient{Client: client}
+	rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
 	rootCmd.AddCommand(NewCheckoutCmd())
 	err := rootCmd.Execute()
@@ -87,20 +89,20 @@ func init() {
 	cobra.OnInitialize(initConfig)
 }
 
-// AddTokenAndBaseUrl will add a user token from the configuration file to each request header.
-func AddTokenAndBaseUrl(client *cloud.APIClient, conf *cloud.Configuration) error {
-	baseUrl := viper.GetString(internal.CreateKeyFromPath("cloud", viper.GetString(currentCloudUser), controller))
-	client.ChangeBasePath(baseUrl)
+// AddTokenAndBaseURL will add a user token from the configuration file to each request header.
+func AddTokenAndBaseURL(client *cloud.APIClient, conf *cloud.Configuration) error {
+	baseURL := viper.GetString(internal.CreateKeyFromPath("cloud", viper.GetString(currentCloudUser), controller))
+	client.ChangeBasePath(baseURL)
 	token := fmt.Sprintf("Bearer %s", viper.GetString(currentCloudToken))
 	conf.AddDefaultHeader("Authorization", token)
 	return nil
-
 }
 
-// AddTokenAndBaseUrlToResty will add token and BaseUrl to the resty client.
-func AddTokenAndBaseUrlToResty(client *resty.Client) error {
+// AddTokenAndBaseURLToResty will add token and BaseUrl to the resty client.
+func AddTokenAndBaseURLToResty(client *resty.Client) error {
 	token := viper.GetString(currentCloudToken)
-	client.SetBaseURL(internal.DashboardUrl)
+
+	client.SetBaseURL(internal.DashboardURL)
 	client.SetAuthToken(token)
 	return nil
 }

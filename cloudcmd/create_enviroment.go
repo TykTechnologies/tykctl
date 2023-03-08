@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"net/http"
 )
 
 const createEnvDesc = `
@@ -23,9 +25,7 @@ Sample usage:
 tyk cloud environments create --name="staging"
 `
 
-var (
-	ErrorCreatingEnv = errors.New("error creating environment")
-)
+var ErrorCreatingEnv = errors.New("error creating environment")
 
 func NewCreateEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(create).
@@ -59,18 +59,18 @@ func createEnvironment(f *pflag.FlagSet) {
 }
 
 // validateFlagsAndCreateEnv validate that the cloudcmd flags are not empty and create environment in a team.
-func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient, envName, teamId, orgId string) (*cloud.Loadout, error) {
-	if util.StringIsEmpty(orgId) {
+func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient, envName, teamID, orgID string) (*cloud.Loadout, error) {
+	if util.StringIsEmpty(orgID) {
 		return nil, ErrorOrgRequired
 	}
-	if util.StringIsEmpty(teamId) {
+	if util.StringIsEmpty(teamID) {
 		return nil, ErrorTeamRequired
 	}
 	env := cloud.Loadout{Name: envName}
 	if util.StringIsEmpty(env.Name) {
 		return nil, ErrorNameRequired
 	}
-	environment, err := CreateEnvironment(ctx, client, env, orgId, teamId)
+	environment, err := CreateEnvironment(ctx, client, env, orgID, teamID)
 	if err != nil {
 		return nil, err
 	}
@@ -78,8 +78,8 @@ func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient,
 }
 
 // CreateEnvironment creates an environment is a given team.
-func CreateEnvironment(ctx context.Context, client internal.CloudClient, env cloud.Loadout, orgId, teamId string) (*cloud.Loadout, error) {
-	envResponse, resp, err := client.CreateEnv(ctx, env, orgId, teamId)
+func CreateEnvironment(ctx context.Context, client internal.CloudClient, env cloud.Loadout, orgID, teamID string) (*cloud.Loadout, error) {
+	envResponse, resp, err := client.CreateEnv(ctx, env, orgID, teamID)
 	if err != nil {
 		return nil, err
 	}

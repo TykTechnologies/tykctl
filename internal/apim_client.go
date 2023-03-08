@@ -2,6 +2,6 @@ package internal
 
 import "github.com/TykTechnologies/gateway-sdk/pkg/apim"
 
-type ApimFactory struct {
+type ApimClient struct {
 	Client *apim.APIClient
 }

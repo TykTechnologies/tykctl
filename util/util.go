@@ -9,7 +9,6 @@ import (
 
 // StringIsEmpty returns true is a string is empty.
 func StringIsEmpty(v string) bool {
-
 	return len(strings.TrimSpace(v)) == 0
 }
 
@@ -18,6 +17,7 @@ func ValidateEmail(email string) error {
 	if StringIsEmpty(email) {
 		return errors.New("email cannot be empty")
 	}
+
 	_, err := mail.ParseAddress(email)
 	return err
 }
@@ -56,7 +56,7 @@ func AbbreviateDirection(direction string) string {
 	return ""
 }
 
-func GenerateUrlFromZone(region string) (string, error) {
+func GenerateURLFromZone(region string) (string, error) {
 	regionPart := strings.Split(region, "-")
 	if len(regionPart) != 4 {
 		return "", errors.New("the format of this region is wrong")

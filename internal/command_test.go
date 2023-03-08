@@ -1,8 +1,9 @@
 package internal
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewCmdExample(t *testing.T) {
@@ -24,7 +25,6 @@ func TestNewCmdNoArgs(t *testing.T) {
 	assert.Nil(t, err, "expected nil error")
 	err = cmd.Args(cmd, []string{"test me"})
 	assert.Error(t, err, "expected an error")
-
 }
 
 func TestNewCmdHidden(t *testing.T) {
@@ -40,7 +40,6 @@ func TestNewCmdDescription(t *testing.T) {
 	cmd := NewCmd("team").WithDescription(description).NoArgs(nil)
 	assert.Equal(t, description, cmd.Short)
 	assert.Equal(t, "team", cmd.Use)
-
 }
 
 func TestNewCmdLongDescription(t *testing.T) {
@@ -48,5 +47,4 @@ func TestNewCmdLongDescription(t *testing.T) {
 	cmd := NewCmd("").WithLongDescription(longDescription).NoArgs(nil)
 	assert.Equal(t, longDescription, cmd.Long)
 	assert.Equal(t, "", cmd.Use)
-
 }

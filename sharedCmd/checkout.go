@@ -3,17 +3,17 @@ package sharedCmd
 import (
 	"context"
 	"fmt"
-	"github.com/TykTechnologies/tykctl/internal"
+
 	"github.com/spf13/cobra"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
-var (
-	checkoutLongDescription = `Set the current service to make sure you only see commands related to service you are using, eg.
+var checkoutLongDescription = `Set the current service to make sure you only see commands related to service you are using, eg.
 		
      "tykctl checkout cloud"
 	
      will set the current_service to cloud service`
-)
 
 const (
 	CurrentService = "current_service"

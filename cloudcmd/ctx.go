@@ -3,17 +3,17 @@ package cloudcmd
 import (
 	"context"
 	"fmt"
-	"github.com/TykTechnologies/tykctl/internal"
+
 	"github.com/spf13/cobra"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
-var (
-	ctxLongDescription = `Set config flags using arguments, eg.
+var ctxLongDescription = `Set config flags using arguments, eg.
 		
      "tykctl ctx org bar"
 	
      will set the variable "org" to "bar"`
-)
 
 func NewCtxCmd() *cobra.Command {
 	return internal.NewCmd(ctxCmd).

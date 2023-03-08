@@ -3,15 +3,17 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"net/http"
+	"strconv"
+	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 	"github.com/TykTechnologies/tykctl/testutil"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
-	"net/http"
-	"strconv"
-	"testing"
 )
 
 func TestFlagsAreAddedToCreateEnvironment(t *testing.T) {
@@ -57,7 +59,7 @@ func TestCreateEnvironment(t *testing.T) {
 	tests := []struct {
 		name                string
 		mockError           error
-		mockHttpResponse    *http.Response
+		mockHTTPResponse    *http.Response
 		mockResponse        cloud.InlineResponse2012
 		expectedEnvResponse *cloud.Loadout
 		ExpectedError       error
@@ -65,7 +67,7 @@ func TestCreateEnvironment(t *testing.T) {
 		{
 			name:             "Check status ok",
 			mockError:        nil,
-			mockHttpResponse: &http.Response{StatusCode: http.StatusCreated},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusCreated},
 			mockResponse: cloud.InlineResponse2012{
 				Error_:  "",
 				Payload: &generateEnvs(1)[0],
@@ -77,7 +79,7 @@ func TestCreateEnvironment(t *testing.T) {
 		{
 			name:             "Test status is not 201",
 			mockError:        nil,
-			mockHttpResponse: &http.Response{StatusCode: http.StatusBadGateway},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusBadGateway},
 			mockResponse: cloud.InlineResponse2012{
 				Error_:  "",
 				Payload: &generateEnvs(1)[0],
@@ -89,7 +91,7 @@ func TestCreateEnvironment(t *testing.T) {
 		{
 			name:             "Test payload status is not ok",
 			mockError:        nil,
-			mockHttpResponse: &http.Response{StatusCode: http.StatusCreated},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusCreated},
 			mockResponse: cloud.InlineResponse2012{
 				Error_:  "error found here 1",
 				Payload: &generateEnvs(3)[0],
@@ -101,7 +103,7 @@ func TestCreateEnvironment(t *testing.T) {
 		{
 			name:                "Test error returned by cloud",
 			mockError:           ErrorGenericError,
-			mockHttpResponse:    &http.Response{StatusCode: http.StatusCreated},
+			mockHTTPResponse:    &http.Response{StatusCode: http.StatusCreated},
 			mockResponse:        cloud.InlineResponse2012{},
 			expectedEnvResponse: nil,
 			ExpectedError:       ErrorGenericError,
@@ -112,7 +114,7 @@ func TestCreateEnvironment(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().CreateEnv(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			m.EXPECT().CreateEnv(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
 			env, err := CreateEnvironment(context.Background(), m, cloud.Loadout{}, "", "")
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.expectedEnvResponse, env)
@@ -127,11 +129,11 @@ func TestValidateFlagsAndCreateEnv(t *testing.T) {
 		ExpectedEnv          *cloud.Loadout
 		ExpectedMockFuncCall int
 		mockError            error
-		mockHttpResponse     *http.Response
+		mockHTTPResponse     *http.Response
 		mockResponse         cloud.InlineResponse2012
 		envName              string
-		orgId                string
-		teamId               string
+		orgID                string
+		teamID               string
 	}{
 		{
 			name:                 "Test success",
@@ -139,15 +141,15 @@ func TestValidateFlagsAndCreateEnv(t *testing.T) {
 			ExpectedEnv:          &generateEnvs(3)[0],
 			ExpectedMockFuncCall: 1,
 			mockError:            nil,
-			mockHttpResponse:     &http.Response{StatusCode: http.StatusCreated},
+			mockHTTPResponse:     &http.Response{StatusCode: http.StatusCreated},
 			mockResponse: cloud.InlineResponse2012{
 				Error_:  "",
 				Payload: &generateEnvs(3)[0],
 				Status:  "ok",
 			},
 			envName: "env name",
-			orgId:   "orgId here",
-			teamId:  "teamid here",
+			orgID:   "orgID here",
+			teamID:  "teamid here",
 		},
 		{
 			name:                 "Error organization id is required",
@@ -155,11 +157,11 @@ func TestValidateFlagsAndCreateEnv(t *testing.T) {
 			ExpectedEnv:          nil,
 			ExpectedMockFuncCall: 0,
 			mockError:            nil,
-			mockHttpResponse:     nil,
+			mockHTTPResponse:     nil,
 			mockResponse:         cloud.InlineResponse2012{},
 			envName:              "",
-			orgId:                "",
-			teamId:               "",
+			orgID:                "",
+			teamID:               "",
 		},
 		{
 			name:                 "Test Team is empty",
@@ -167,11 +169,11 @@ func TestValidateFlagsAndCreateEnv(t *testing.T) {
 			ExpectedEnv:          nil,
 			ExpectedMockFuncCall: 0,
 			mockError:            nil,
-			mockHttpResponse:     nil,
+			mockHTTPResponse:     nil,
 			mockResponse:         cloud.InlineResponse2012{},
 			envName:              "env here",
-			orgId:                "org here",
-			teamId:               "",
+			orgID:                "org here",
+			teamID:               "",
 		},
 		{
 			name:                 "Test env name is empty",
@@ -179,11 +181,11 @@ func TestValidateFlagsAndCreateEnv(t *testing.T) {
 			ExpectedEnv:          nil,
 			ExpectedMockFuncCall: 0,
 			mockError:            nil,
-			mockHttpResponse:     nil,
+			mockHTTPResponse:     nil,
 			mockResponse:         cloud.InlineResponse2012{},
 			envName:              "",
-			orgId:                "ijskhsnsn",
-			teamId:               "nbxdouert",
+			orgID:                "ijskhsnsn",
+			teamID:               "nbxdouert",
 		},
 	}
 	for _, tt := range testsCases {
@@ -191,14 +193,14 @@ func TestValidateFlagsAndCreateEnv(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().CreateEnv(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(tt.ExpectedMockFuncCall).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
-			env, err := validateFlagsAndCreateEnv(context.Background(), m, tt.envName, tt.teamId, tt.orgId)
+			m.EXPECT().CreateEnv(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(tt.ExpectedMockFuncCall).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
+			env, err := validateFlagsAndCreateEnv(context.Background(), m, tt.envName, tt.teamID, tt.orgID)
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.ExpectedEnv, env)
 		})
 	}
-
 }
+
 func generateEnvs(size int) []cloud.Loadout {
 	var loadouts []cloud.Loadout
 	for i := 0; i < size; i++ {

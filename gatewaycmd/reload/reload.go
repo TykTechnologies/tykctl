@@ -3,12 +3,14 @@ package reload
 import (
 	"context"
 	"errors"
+	"net/http"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/shared"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"net/http"
 )
 
 const (
@@ -17,12 +19,12 @@ const (
 	group  = "group"
 )
 
-func NewReloadCmd(factory internal.ApimFactory) *cobra.Command {
+func NewReloadCmd(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(reload).
 		WithFlagAdder(false, reloadFlags).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
-			shared.AddGatewaySecret(factory.Client.GetConfig())
-			shared.AddGatewayServers(factory.Client.GetConfig())
+			shared.AddGatewaySecret(apimClient.Client.GetConfig())
+			shared.AddGatewayServers(apimClient.Client.GetConfig())
 			return nil
 		}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
@@ -34,7 +36,7 @@ func NewReloadCmd(factory internal.ApimFactory) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			_, err = reloadGateway(cmd.Context(), factory.Client.HotReloadAPI, block, group)
+			_, err = reloadGateway(cmd.Context(), apimClient.Client.HotReloadAPI, block, group)
 			if err != nil {
 				return err
 			}
@@ -47,8 +49,10 @@ func reloadGateway(ctx context.Context, hotReload apim.HotReloadAPI, block, grou
 	if group {
 		return reloadGroup(ctx, hotReload)
 	}
+
 	return reloadSingleNode(ctx, hotReload, block)
 }
+
 func reloadSingleNode(ctx context.Context, hotReload apim.HotReloadAPI, block bool) (*apim.ApiStatusMessage, error) {
 	status, resp, err := hotReload.HotReloadExecute(hotReload.HotReload(ctx).Block(block))
 	if err != nil {
@@ -59,6 +63,7 @@ func reloadSingleNode(ctx context.Context, hotReload apim.HotReloadAPI, block bo
 	}
 	return status, nil
 }
+
 func reloadGroup(ctx context.Context, hotReload apim.HotReloadAPI) (*apim.ApiStatusMessage, error) {
 	status, resp, err := hotReload.HotReloadGroupExecute(hotReload.HotReloadGroup(ctx))
 	if err != nil {

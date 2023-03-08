@@ -2,9 +2,11 @@ package cloudcmd
 
 import (
 	"fmt"
-	"github.com/TykTechnologies/tykctl/internal"
+
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slices"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 type Permission int
@@ -20,9 +22,9 @@ type CloudRbac struct {
 	Config         internal.UserConfig
 }
 
-func NewCloudRbac(MinAllowedUser Permission, config internal.UserConfig) CloudRbac {
+func NewCloudRbac(minAllowedUser Permission, config internal.UserConfig) CloudRbac {
 	return CloudRbac{
-		MinAllowedUser: MinAllowedUser,
+		MinAllowedUser: minAllowedUser,
 		Config:         config,
 	}
 }

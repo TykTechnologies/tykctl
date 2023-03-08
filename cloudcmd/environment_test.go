@@ -1,11 +1,13 @@
 package cloudcmd
 
 import (
+	"testing"
+
+	"github.com/golang/mock/gomock"
+
 	"github.com/TykTechnologies/tykctl/internal"
 	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 	"github.com/TykTechnologies/tykctl/testutil"
-	"github.com/golang/mock/gomock"
-	"testing"
 )
 
 func TestNewEnvironmentCmd(t *testing.T) {
@@ -19,13 +21,14 @@ func TestNewEnvironmentCmd(t *testing.T) {
 	}
 	envCmd := NewEnvironmentCmd(factory)
 
-	flags := []internal.Flag{{
-		Description: "Test org is added",
-		Name:        "org",
-		Shorthand:   "",
-		Default:     "",
-		Value:       "",
-	},
+	flags := []internal.Flag{
+		{
+			Description: "Test org is added",
+			Name:        "org",
+			Shorthand:   "",
+			Default:     "",
+			Value:       "",
+		},
 		{
 			Description: "Test Team flag",
 			Name:        "team",
@@ -35,5 +38,4 @@ func TestNewEnvironmentCmd(t *testing.T) {
 		},
 	}
 	testutil.TestFlags(t, envCmd.PersistentFlags(), flags)
-
 }

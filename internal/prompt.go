@@ -2,20 +2,20 @@ package internal
 
 import (
 	"fmt"
+
 	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 )
 
-type SurveyPrompt struct {
-}
+type SurveyPrompt struct{}
 
-var (
-	_ CloudPrompt = (*SurveyPrompt)(nil)
-)
+var _ CloudPrompt = (*SurveyPrompt)(nil)
 
 func NewSurveyPrompt() *SurveyPrompt {
 	return &SurveyPrompt{}
 }
+
 func (s *SurveyPrompt) RegionPrompt(regions []string) (string, error) {
 	prompt := &survey.Select{
 		Message: "Select your home region",
@@ -28,6 +28,7 @@ func (s *SurveyPrompt) RegionPrompt(regions []string) (string, error) {
 	}
 	return region, nil
 }
+
 func (s *SurveyPrompt) OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation, error) {
 	if len(orgs) == 0 {
 		return nil, nil
@@ -36,6 +37,7 @@ func (s *SurveyPrompt) OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation
 		return &orgs[0], nil
 	}
 	var organizations []string
+
 	for _, org := range orgs {
 		organizations = append(organizations, fmt.Sprintf("%s:%s", org.Name, org.UID))
 	}

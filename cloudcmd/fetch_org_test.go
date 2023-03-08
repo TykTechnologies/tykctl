@@ -3,20 +3,22 @@ package cloudcmd
 import (
 	"context"
 	"errors"
-	"github.com/TykTechnologies/cloud-sdk/cloud"
-	mock "github.com/TykTechnologies/tykctl/internal/mocks"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strconv"
 	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/TykTechnologies/cloud-sdk/cloud"
+	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 )
 
 func TestGetOrg(t *testing.T) {
 	testCases := []struct {
 		name              string
 		mockResponse      cloud.InlineResponse20014
-		mockHttpResponse  *http.Response
+		mockHTTPResponse  *http.Response
 		mockError         error
 		ExpectedError     error
 		ExpectedOrgLength int
@@ -28,7 +30,7 @@ func TestGetOrg(t *testing.T) {
 				Payload: &cloud.Organisations{Organisations: generateOrgs(4)},
 				Status:  "ok",
 			},
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusOK},
 			ExpectedError:     nil,
 			mockError:         nil,
 			ExpectedOrgLength: 4,
@@ -41,7 +43,7 @@ func TestGetOrg(t *testing.T) {
 				Payload: &cloud.Organisations{Organisations: nil},
 			},
 			mockError:         nil,
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusForbidden},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusForbidden},
 			ExpectedError:     ErrorFetchingOrg,
 			ExpectedOrgLength: 0,
 		},
@@ -53,7 +55,7 @@ func TestGetOrg(t *testing.T) {
 				Error_:  "",
 			},
 			mockError:         ErrorGenericError,
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusOK},
 			ExpectedError:     ErrorGenericError,
 			ExpectedOrgLength: 0,
 		},
@@ -65,7 +67,7 @@ func TestGetOrg(t *testing.T) {
 				Error_:  "",
 			},
 			mockError:         nil,
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusOK},
 			ExpectedError:     nil,
 			ExpectedOrgLength: 0,
 		},
@@ -79,7 +81,7 @@ func TestGetOrg(t *testing.T) {
 				Error_:  "there is an error here",
 			},
 			mockError:        nil,
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 		},
 	}
 	for _, tt := range testCases {
@@ -87,7 +89,7 @@ func TestGetOrg(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().GetOrgs(gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			m.EXPECT().GetOrgs(gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
 			orgs, err := GetOrgs(context.Background(), m)
 			assert.Equal(t, tt.ExpectedError, err)
 			if tt.mockResponse.Payload != nil {
@@ -96,19 +98,19 @@ func TestGetOrg(t *testing.T) {
 			assert.Equal(t, tt.ExpectedOrgLength, len(orgs))
 		})
 	}
-
 }
+
 func TestGetOrgById(t *testing.T) {
 	testCases := []struct {
 		name             string
-		mockHttpResponse *http.Response
+		mockHTTPResponse *http.Response
 		mockResponse     cloud.InlineResponse2005
 		ExpectedError    error
 		mockError        error
 	}{
 		{
 			name:             "Check fetch org success",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			mockResponse: cloud.InlineResponse2005{
 				Error_:  "",
 				Payload: &generateOrgs(1)[0],
@@ -119,7 +121,7 @@ func TestGetOrgById(t *testing.T) {
 		},
 		{
 			name:             "Test Status code 403 ",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusForbidden},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusForbidden},
 			mockResponse: cloud.InlineResponse2005{
 				Error_:  "I have an error here",
 				Payload: nil,
@@ -130,7 +132,7 @@ func TestGetOrgById(t *testing.T) {
 		},
 		{
 			name:             "Test response body status is not success",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			mockResponse: cloud.InlineResponse2005{
 				Error_:  "i have an error here",
 				Payload: nil,
@@ -142,7 +144,7 @@ func TestGetOrgById(t *testing.T) {
 		{
 			name:             "Check when cloud returns an error",
 			mockResponse:     cloud.InlineResponse2005{},
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			mockError:        ErrorOutPutFormat,
 			ExpectedError:    ErrorOutPutFormat,
 		},
@@ -152,14 +154,14 @@ func TestGetOrgById(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().GetOrgById(gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
-			organization, err := GetOrgById(context.Background(), m, "oid")
+			m.EXPECT().GetOrgByID(gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
+			organization, err := GetOrgByID(context.Background(), m, "oid")
 			assert.Equal(t, organization, tt.mockResponse.Payload)
 			assert.Equal(t, tt.ExpectedError, err)
 		})
-
 	}
 }
+
 func TestGetEntitlements(t *testing.T) {
 	type args struct {
 		counter map[string]cloud.CounterEntitlement
@@ -276,10 +278,9 @@ func generateOrgs(size int) []cloud.Organisation {
 	}
 
 	return organizations
-
 }
 
-func TestFetchAndPrintOrgById(t *testing.T) {
+func TestFetchAndPrintOrgByID(t *testing.T) {
 	type args struct {
 		output        string
 		ExpectedError error
@@ -301,11 +302,12 @@ func TestFetchAndPrintOrgById(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			err := FetchAndPrintOrgById(context.Background(), m, tt.args.output, "test")
+			err := FetchAndPrintOrgByID(context.Background(), m, tt.args.output, "test")
 			assert.Equal(t, tt.args.ExpectedError, err)
 		})
 	}
 }
+
 func TestFetchAndPrintOrganizations(t *testing.T) {
 	type args struct {
 		ExpectedError error
@@ -330,7 +332,6 @@ func TestFetchAndPrintOrganizations(t *testing.T) {
 			m := mock.NewMockCloudClient(ctrl)
 			err := FetchAndPrintOrganizations(context.Background(), m, tt.args.output)
 			assert.Equal(t, tt.args.ExpectedError, err)
-
 		})
 	}
 }

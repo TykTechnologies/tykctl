@@ -84,11 +84,40 @@ linters:
     - misspell
     - godot
     - gofmt
+    - gofumpt
+    - goimports
+    - gocritic
+    - staticcheck
+    - whitespace
+    - revive
+    - ineffassign
+    - gosec
 
 linters-settings:
   errcheck:
     check-type-assertions: true
     check-blank: true
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: "github.com/TykTechnologies"
+  gocritic:
+    enabled-tags:
+      - performance
+    disabled-checks:
+      - hugeParam
+      - rangeValCopy
+  gofumpt:
+    extra-rules: true
+    lang-version: "1.19"
+  staticcheck:
+    # https://staticcheck.io/docs/options#checks
+    checks: [ "all" ]
+    # Select the Go version to target.
+    go: "1.19"
+  whitespace:
+    multi-if: false  # Enforces newlines (or comments) after every multi-line if statement
+    multi-func: false  # Enforces newlines (or comments) after every multi-line function signature
 
 issues:
   exclude-rules:

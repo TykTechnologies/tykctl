@@ -1,8 +1,9 @@
 package cloudcmd
 
 import (
-	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 const environmentDesc = `This is the parent command to all environment operations.

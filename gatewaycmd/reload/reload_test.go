@@ -3,40 +3,41 @@ package reload
 import (
 	"context"
 	"errors"
+	"net/http"
+	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	mock "github.com/TykTechnologies/tykctl/gatewaycmd/mocks"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/testutil"
-	"github.com/stretchr/testify/assert"
-
-	"github.com/golang/mock/gomock"
-	"net/http"
-	"testing"
 )
 
-var (
-	ErrorSecretRequired = errors.New("a secret is required to perform this action")
-)
+var ErrorSecretRequired = errors.New("a secret is required to perform this action")
 
 func TestReloadFlags(t *testing.T) {
-	factory := internal.ApimFactory{}
-	cmd := NewReloadCmd(factory)
-	localFlags := []internal.Flag{{
-		Description: "Test block flag",
-		Name:        "block",
-		Shorthand:   "b",
-		Value:       "false",
-		Default:     "false",
-	}, {
-		Description: "Test group flag",
-		Name:        "group",
-		Shorthand:   "g",
-		Value:       "false",
-		Default:     "false",
-	},
+	apimClient := internal.ApimClient{}
+	cmd := NewReloadCmd(apimClient)
+	localFlags := []internal.Flag{
+		{
+			Description: "Test block flag",
+			Name:        "block",
+			Shorthand:   "b",
+			Value:       "false",
+			Default:     "false",
+		}, {
+			Description: "Test group flag",
+			Name:        "group",
+			Shorthand:   "g",
+			Value:       "false",
+			Default:     "false",
+		},
 	}
 	testutil.TestFlags(t, cmd.Flags(), localFlags)
 }
+
 func TestReloadSingleNode(t *testing.T) {
 	message := "success"
 	status := "ok"
@@ -44,7 +45,7 @@ func TestReloadSingleNode(t *testing.T) {
 		name             string
 		want             *apim.ApiStatusMessage
 		mockError        error
-		mockHttpResponse *http.Response
+		mockHTTPResponse *http.Response
 		mockResponse     *apim.ApiStatusMessage
 		ExpectedError    error
 	}{
@@ -52,7 +53,7 @@ func TestReloadSingleNode(t *testing.T) {
 			name:      "Test gateway Error",
 			want:      nil,
 			mockError: ErrorSecretRequired,
-			mockHttpResponse: &http.Response{
+			mockHTTPResponse: &http.Response{
 				Status:     "secret is required",
 				StatusCode: 403,
 			},
@@ -63,7 +64,7 @@ func TestReloadSingleNode(t *testing.T) {
 			name:      "Test http error code",
 			want:      nil,
 			mockError: nil,
-			mockHttpResponse: &http.Response{
+			mockHTTPResponse: &http.Response{
 				Status:     "not found",
 				StatusCode: 404,
 			},
@@ -77,7 +78,7 @@ func TestReloadSingleNode(t *testing.T) {
 				Status:  &status,
 			},
 			mockError: nil,
-			mockHttpResponse: &http.Response{
+			mockHTTPResponse: &http.Response{
 				StatusCode: http.StatusOK,
 			},
 			mockResponse: &apim.ApiStatusMessage{
@@ -93,7 +94,7 @@ func TestReloadSingleNode(t *testing.T) {
 			defer ctrl.Finish()
 			m := mock.NewMockHotReloadAPI(ctrl)
 			m.EXPECT().HotReload(gomock.Any())
-			m.EXPECT().HotReloadExecute(gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			m.EXPECT().HotReloadExecute(gomock.Any()).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
 			got, err := reloadSingleNode(context.Background(), m, true)
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.want, got)
@@ -109,7 +110,7 @@ func TestReloadGroup(t *testing.T) {
 		name             string
 		want             *apim.ApiStatusMessage
 		mockError        error
-		mockHttpResponse *http.Response
+		mockHTTPResponse *http.Response
 		mockResponse     *apim.ApiStatusMessage
 		ExpectedError    error
 	}{
@@ -120,7 +121,7 @@ func TestReloadGroup(t *testing.T) {
 				Status:  &status,
 			},
 			mockError: nil,
-			mockHttpResponse: &http.Response{
+			mockHTTPResponse: &http.Response{
 				StatusCode: http.StatusOK,
 			},
 			mockResponse: &apim.ApiStatusMessage{
@@ -133,7 +134,7 @@ func TestReloadGroup(t *testing.T) {
 			name:      "Test http error 500",
 			want:      nil,
 			mockError: nil,
-			mockHttpResponse: &http.Response{
+			mockHTTPResponse: &http.Response{
 				Status:     "internal server error",
 				StatusCode: http.StatusInternalServerError,
 			},
@@ -144,7 +145,7 @@ func TestReloadGroup(t *testing.T) {
 			name:      "Test error returned by gateway",
 			want:      nil,
 			mockError: errors.New(administrativeAccess),
-			mockHttpResponse: &http.Response{
+			mockHTTPResponse: &http.Response{
 				Status:     administrativeAccess,
 				StatusCode: 401,
 			},
@@ -158,7 +159,7 @@ func TestReloadGroup(t *testing.T) {
 			defer ctrl.Finish()
 			m := mock.NewMockHotReloadAPI(ctrl)
 			m.EXPECT().HotReloadGroup(gomock.Any())
-			m.EXPECT().HotReloadGroupExecute(gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			m.EXPECT().HotReloadGroupExecute(gomock.Any()).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
 			got, err := reloadGroup(context.Background(), m)
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.want, got)
@@ -177,7 +178,7 @@ func TestReloadGateway(t *testing.T) {
 		numberOfTimesToCallReload int
 		want                      *apim.ApiStatusMessage
 		mockError                 error
-		mockHttpResponse          *http.Response
+		mockHTTPResponse          *http.Response
 		mockResponse              *apim.ApiStatusMessage
 		ExpectedError             error
 	}{
@@ -192,7 +193,7 @@ func TestReloadGateway(t *testing.T) {
 				Status:  &status,
 			},
 			mockError:        nil,
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			mockResponse: &apim.ApiStatusMessage{
 				Message: &message,
 				Status:  &status,
@@ -210,7 +211,7 @@ func TestReloadGateway(t *testing.T) {
 				Status:  &status,
 			},
 			mockError:        nil,
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			mockResponse: &apim.ApiStatusMessage{
 				Message: &message,
 				Status:  &status,
@@ -224,9 +225,9 @@ func TestReloadGateway(t *testing.T) {
 			defer ctrl.Finish()
 			m := mock.NewMockHotReloadAPI(ctrl)
 			m.EXPECT().HotReloadGroup(gomock.Any()).Times(tt.numberOfTimesToCallGroup)
-			m.EXPECT().HotReloadGroupExecute(gomock.Any()).Times(tt.numberOfTimesToCallGroup).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			m.EXPECT().HotReloadGroupExecute(gomock.Any()).Times(tt.numberOfTimesToCallGroup).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
 			m.EXPECT().HotReload(gomock.Any()).Times(tt.numberOfTimesToCallReload)
-			m.EXPECT().HotReloadExecute(gomock.Any()).Times(tt.numberOfTimesToCallReload).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			m.EXPECT().HotReloadExecute(gomock.Any()).Times(tt.numberOfTimesToCallReload).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
 			got, err := reloadGateway(context.Background(), m, tt.block, tt.group)
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.want, got)

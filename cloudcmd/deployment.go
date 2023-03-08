@@ -1,9 +1,10 @@
 package cloudcmd
 
 import (
+	"github.com/spf13/cobra"
+
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
-	"github.com/spf13/cobra"
 )
 
 const deploymentDesc = `This is the parent command to all deployment operation.Such as creating teams and fetching teams.
@@ -39,29 +40,28 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 			NewStartDeploymentCmd(factory),
 			NewDeploymentStatusCmd(factory),
 			NewRestartDeploymentCmd(factory))
-
 }
 
 func validateCommonDeploymentFlags(config internal.UserConfig) (*DeploymentFlags, error) {
 	var deploymentFlag DeploymentFlags
-	deploymentFlag.OrgId = config.GetCurrentUserOrg()
-	if util.StringIsEmpty(deploymentFlag.OrgId) {
+	deploymentFlag.OrgID = config.GetCurrentUserOrg()
+	if util.StringIsEmpty(deploymentFlag.OrgID) {
 		return nil, ErrorOrgRequired
 	}
-	deploymentFlag.TeamId = config.GetCurrentUserTeam()
-	if util.StringIsEmpty(deploymentFlag.TeamId) {
+	deploymentFlag.TeamID = config.GetCurrentUserTeam()
+	if util.StringIsEmpty(deploymentFlag.TeamID) {
 		return nil, ErrorTeamRequired
 	}
-	deploymentFlag.EnvId = config.GetCurrentUserEnv()
-	if util.StringIsEmpty(deploymentFlag.EnvId) {
+	deploymentFlag.EnvID = config.GetCurrentUserEnv()
+	if util.StringIsEmpty(deploymentFlag.EnvID) {
 		return nil, ErrorEnvRequired
 	}
 	return &deploymentFlag, nil
 }
 
 type DeploymentFlags struct {
-	OrgId  string
-	TeamId string
-	EnvId  string
+	OrgID  string
+	TeamID string
+	EnvID  string
 	OutPut string
 }

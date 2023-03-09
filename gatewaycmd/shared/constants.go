@@ -1,5 +1,6 @@
 package shared
 
 const (
-	Fetch = "fetch"
+	Fetch  = "fetch"
+	Delete = "delete"
 )

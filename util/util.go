@@ -9,7 +9,6 @@ import (
 
 // StringIsEmpty returns true is a string is empty.
 func StringIsEmpty(v string) bool {
-
 	return len(strings.TrimSpace(v)) == 0
 }
 
@@ -18,7 +17,9 @@ func ValidateEmail(email string) error {
 	if StringIsEmpty(email) {
 		return errors.New("email cannot be empty")
 	}
+
 	_, err := mail.ParseAddress(email)
+
 	return err
 }
 
@@ -28,6 +29,7 @@ func Contains[T comparable](elems []T, v T) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -56,11 +58,12 @@ func AbbreviateDirection(direction string) string {
 	return ""
 }
 
-func GenerateUrlFromZone(region string) (string, error) {
+func GenerateURLFromZone(region string) (string, error) {
 	regionPart := strings.Split(region, "-")
+
 	if len(regionPart) != 4 {
 		return "", errors.New("the format of this region is wrong")
 	}
-	url := fmt.Sprintf("https://controller-aws-%s%s%s.cloud-ara.tyk.io:37001", regionPart[1], AbbreviateDirection(regionPart[2]), regionPart[3])
-	return url, nil
+
+	return fmt.Sprintf("https://controller-aws-%s%s%s.cloud-ara.tyk.io:37001", regionPart[1], AbbreviateDirection(regionPart[2]), regionPart[3]), nil
 }

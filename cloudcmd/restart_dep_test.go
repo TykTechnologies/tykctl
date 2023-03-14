@@ -3,19 +3,20 @@ package cloudcmd
 import (
 	"context"
 	"errors"
-	"github.com/TykTechnologies/cloud-sdk/cloud"
-	mock "github.com/TykTechnologies/tykctl/internal/mocks"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/TykTechnologies/cloud-sdk/cloud"
+	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 )
 
 func TestRestartDeployment(t *testing.T) {
-
 	tests := []struct {
 		name             string
-		mockHttpResponse *http.Response
+		mockHTTPResponse *http.Response
 		mockResponse     cloud.InlineResponse2001
 		mockError        error
 		want             *cloud.Deployment
@@ -23,7 +24,7 @@ func TestRestartDeployment(t *testing.T) {
 	}{
 		{
 			name:             "Check Successful request",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			mockResponse: cloud.InlineResponse2001{
 				Error_: "",
 				Payload: &cloud.Deployment{
@@ -38,7 +39,7 @@ func TestRestartDeployment(t *testing.T) {
 		},
 		{
 			name:             "Check http status 401",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusUnauthorized},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusUnauthorized},
 			mockResponse:     cloud.InlineResponse2001{},
 			mockError:        nil,
 			want:             nil,
@@ -46,7 +47,7 @@ func TestRestartDeployment(t *testing.T) {
 		},
 		{
 			name:             "Check Payload status field is not okay",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			mockResponse: cloud.InlineResponse2001{
 				Error_:  "an error occurred on the server",
 				Payload: nil,
@@ -62,11 +63,10 @@ func TestRestartDeployment(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().RestartDeployment(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
+			m.EXPECT().RestartDeployment(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
 			got, err := restartDeployment(context.Background(), m, "", "", "", "")
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.want, got)
-
 		})
 	}
 }

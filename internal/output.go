@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/olekukonko/tablewriter"
 	"os"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 // Printable will print the data as a table on the terminal.
@@ -21,18 +22,21 @@ func Printable(headers []string, data [][]string) {
 	table.Render()
 }
 
-// PrintJson print an interface as json.
-func PrintJson(body interface{}) error {
+// PrintJSON print an interface as json.
+func PrintJSON(body interface{}) error {
 	b, err := json.Marshal(body)
 	if err != nil {
 		return err
 	}
+
 	var prettyJSON bytes.Buffer
+
 	err = json.Indent(&prettyJSON, b, "", "  ")
 	if err != nil {
 		return err
 	}
-	fmt.Println(prettyJSON.String())
-	return nil
 
+	fmt.Println(prettyJSON.String())
+
+	return nil
 }

@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
-var (
-	ErrCurrentUserNotFound = errors.New("current user not set/found")
-)
+var ErrCurrentUserNotFound = errors.New("current user not set/found")
 
 type Builder interface {
 	WithExample(comment string) Builder
@@ -41,10 +40,10 @@ type builder struct {
 func NewCmd(use string) Builder {
 	return &builder{
 		cmd: cobra.Command{
-			Use: use,
+			Use:          use,
+			SilenceUsage: true,
 		},
 	}
-
 }
 
 // WithFlagAdder adds flags to the cloudcmd flags
@@ -56,6 +55,7 @@ func (b *builder) WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Bui
 	} else {
 		adder(b.cmd.Flags())
 	}
+
 	return b
 }
 
@@ -64,7 +64,9 @@ func (b *builder) WithExample(comment string) Builder {
 	if b.cmd.Example != "" {
 		b.cmd.Example += "\n"
 	}
+
 	b.cmd.Example += comment
+
 	return b
 }
 
@@ -91,6 +93,7 @@ func (b *builder) WithCommands(cmds ...*cobra.Command) *cobra.Command {
 	for _, cmd := range cmds {
 		b.cmd.AddCommand(cmd)
 	}
+
 	return &b.cmd
 }
 
@@ -100,6 +103,7 @@ func (b *builder) WithBindFlagOnPreRun(flags []BindFlag) Builder {
 	b.bindOnPreRun = append(b.bindOnPreRun, flags...)
 	return b
 }
+
 func (b *builder) bindFlagonPreRun() error {
 	for _, flag := range b.bindOnPreRun {
 		if flag.Persistent {
@@ -114,6 +118,7 @@ func (b *builder) bindFlagonPreRun() error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -129,23 +134,28 @@ func (b *builder) bindFlagonPreRunWithCurrentContext() error {
 	if len(b.bindWithContextOnPreRun) == 0 {
 		return nil
 	}
+
 	currentUser := viper.GetString(currentCloudUser)
 	if currentUser == "" {
 		return ErrCurrentUserNotFound
 	}
+
 	for _, flag := range b.bindWithContextOnPreRun {
 		currentUserCtx := fmt.Sprintf("cloud.%s.%s", currentUser, flag.Name)
+
 		var err error
+
 		if flag.Persistent {
 			err = viper.BindPFlag(currentUserCtx, b.cmd.PersistentFlags().Lookup(flag.Name))
 		} else {
 			err = viper.BindPFlag(currentUserCtx, b.cmd.Flags().Lookup(flag.Name))
 		}
+
 		if err != nil {
 			return err
 		}
-
 	}
+
 	return nil
 }
 
@@ -157,17 +167,21 @@ func (b *builder) executePreRunFuncs(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	}
+
 	return nil
 }
+
 func (b *builder) PreRun(cmd *cobra.Command, args []string) error {
 	err := b.bindFlagonPreRun()
 	if err != nil {
 		return err
 	}
+
 	err = b.bindFlagonPreRunWithCurrentContext()
 	if err != nil {
 		return err
 	}
+
 	return b.executePreRunFuncs(cmd, args)
 }
 
@@ -178,6 +192,7 @@ func (b *builder) NoArgs(action func(context.Context, cobra.Command) error) *cob
 	b.cmd.RunE = func(*cobra.Command, []string) error {
 		return action(b.cmd.Context(), b.cmd)
 	}
+
 	return &b.cmd
 }
 
@@ -188,6 +203,7 @@ func (b *builder) MaximumArgs(maxArgCount int, action func(context.Context, cobr
 	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		return action(b.cmd.Context(), b.cmd, args)
 	}
+
 	return &b.cmd
 }
 
@@ -195,9 +211,11 @@ func (b *builder) MaximumArgs(maxArgCount int, action func(context.Context, cobr
 func (b *builder) ExactArgs(argCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command {
 	b.cmd.Args = cobra.ExactArgs(argCount)
 	b.cmd.PreRunE = b.PreRun
+	b.cmd.SilenceUsage = true
 	b.cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		return action(b.cmd.Context(), b.cmd, args)
 	}
+
 	return &b.cmd
 }
 

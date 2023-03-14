@@ -1,9 +1,11 @@
 package cloudcmd
 
 import (
-	"github.com/TykTechnologies/cloud-sdk/cloud"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/TykTechnologies/cloud-sdk/cloud"
 )
 
 func TestCreateDeploymentHeadersAndRows(t *testing.T) {

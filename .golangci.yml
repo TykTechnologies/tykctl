@@ -84,12 +84,68 @@ linters:
     - misspell
     - godot
     - gofmt
+    - gofumpt
+    - goimports
+    - gocritic
+    - staticcheck
+    - whitespace
+    - revive
+    - ineffassign
+    - gosec
+    - wsl
 
 linters-settings:
   errcheck:
     check-type-assertions: true
     check-blank: true
-
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: "github.com/TykTechnologies"
+  gocritic:
+    enabled-tags:
+      - performance
+    disabled-checks:
+      - hugeParam
+      - rangeValCopy
+  gofumpt:
+    extra-rules: true
+    lang-version: "1.19"
+  staticcheck:
+    # https://staticcheck.io/docs/options#checks
+    checks: [ "all" ]
+    # Select the Go version to target.
+    go: "1.19"
+  whitespace:
+    multi-if: false  # Enforces newlines (or comments) after every multi-line if statement
+    multi-func: false  # Enforces newlines (or comments) after every multi-line function signature
+  wsl:
+    # Controls if you may cuddle assignments and anything without needing an empty line between them.
+    allow-assign-and-anything: false
+    # Allow calls and assignments to be cuddled as long as the lines have any matching variables, fields or types.
+    # Default is true.
+    allow-assign-and-call: true
+    # Controls if you may end case statements with a whitespace.
+    allow-case-trailing-whitespace: true
+    # Allow declarations (var) to be cuddled.
+    allow-cuddle-declarations: true
+    # Allow multiline assignments to be cuddled. Default is true.
+    allow-multiline-assign: true
+    # This option allows whitespace after each comment group that begins a block.
+    allow-separated-leading-comment: false
+    # Allow trailing comments in ending of blocks
+    allow-trailing-comment: false
+    # Enforces that an if statement checking an error variable
+    # is cuddled with the line that assigned that error variable.
+    enforce-err-cuddling: true
+    # Force newlines in end of case at this limit (0 = never).
+    force-case-trailing-whitespace: 0
+    # Enforces that an assignment which is actually a short declaration (using :=)
+    # is only allowed to cuddle with other short declarations, and not plain assignments, blocks, etc.
+    force-short-decl-cuddling: false
+    # Append is only allowed to be cuddled if appending value is matching variables, fields or types on line above.
+    # Default is true.
+    strict-append: true
 issues:
   exclude-rules:
     - path: _test\.go

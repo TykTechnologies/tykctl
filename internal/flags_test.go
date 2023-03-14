@@ -1,12 +1,12 @@
 package internal
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateKeyFromPath(t *testing.T) {
-
 	tests := []struct {
 		name  string
 		paths []string

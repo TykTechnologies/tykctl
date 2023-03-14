@@ -2,8 +2,10 @@ package cloudcmd
 
 import (
 	"context"
-	"github.com/TykTechnologies/tykctl/internal"
+
 	"github.com/spf13/cobra"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 const updateTeamDesc = `
@@ -32,7 +34,7 @@ func NewUpdateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 		})
 }
 
-/*func updateTeam(ctx context.Context, client internal.CloudClient, orgId, teamId, teamName string) {
+/*func updateTeam(ctx context.Context, client internal.CloudClient, orgID, teamID, teamName string) {
 	teamPayload, response, err := client.UpdateTeam(ctx)
 	if err != nil {
 		return nil, err

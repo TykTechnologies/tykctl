@@ -2,11 +2,13 @@ package cloudcmd
 
 import (
 	"context"
-	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/TykTechnologies/tykctl/util"
+	"strconv"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"strconv"
+
+	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/util"
 )
 
 const zonesDesc = `
@@ -26,8 +28,10 @@ func NewZonesCmd(factory internal.CloudFactory) *cobra.Command {
 			err := FetchZonesAndPrint(ctx, factory.Client, cmd.Flags())
 			if err != nil {
 				cmd.PrintErrln(err)
+
 				return err
 			}
+
 			return nil
 		})
 }
@@ -37,29 +41,36 @@ func FetchZonesAndPrint(ctx context.Context, client internal.CloudClient, f *pfl
 	if err != nil {
 		return err
 	}
+
 	if format != table && format != jsonFormat {
 		return ErrorOutPutFormat
 	}
+
 	deploymentZones, _, err := client.GetDeploymentZones(ctx)
 	if err != nil {
 		return err
 	}
+
 	if format == table {
 		internal.Printable(ZonesTable(deploymentZones.Payload))
 		return nil
 	}
-	return internal.PrintJson(deploymentZones)
+
+	return internal.PrintJSON(deploymentZones)
 }
 
 func ZonesTable(response internal.Payload) ([]string, [][]string) {
 	header := []string{"Name", "Support Home", "Support Gateway"}
 	rows := make([][]string, 0)
+
 	for s, supported := range response.Tags {
-		row := []string{s,
+		row := []string{
+			s,
 			strconv.FormatBool(util.Contains(supported, "Home")),
 			strconv.FormatBool(util.Contains(supported, "Gateway")),
 		}
 		rows = append(rows, row)
 	}
+
 	return header, rows
 }

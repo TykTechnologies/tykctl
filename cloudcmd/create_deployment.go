@@ -3,13 +3,15 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"net/http"
+	"time"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"net/http"
-	"time"
 )
 
 const createDeploymentDesc = `This is the parent command for 
@@ -48,17 +50,20 @@ func addDeploymentFlag(f *pflag.FlagSet) {
 	f.Bool(deploy, false, "deploy the deployment after create")
 }
 
-func CreateDeployment(ctx context.Context, client internal.CloudClient, deployment cloud.Deployment, orgId, teamId, envId string) (*cloud.Deployment, error) {
-	deployResponse, resp, err := client.CreateDeployment(ctx, deployment, orgId, teamId, envId)
+func CreateDeployment(ctx context.Context, client internal.CloudClient, deployment cloud.Deployment, orgID, teamID, envID string) (*cloud.Deployment, error) {
+	deployResponse, resp, err := client.CreateDeployment(ctx, deployment, orgID, teamID, envID)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusCreated {
 		return nil, ErrorCreatingDeployment
 	}
+
 	if deployResponse.Status != statusOK {
 		return nil, errors.New(deployResponse.Error_)
 	}
+
 	return deployResponse.Payload, nil
 }
 
@@ -81,6 +86,7 @@ func newDeployment() cloud.Deployment {
 		Tags:              make([]string, 0),
 		ZoneCode:          "",
 	}
+
 	return d
 }
 
@@ -89,25 +95,31 @@ func extractCommonDeploymentFlags(f *pflag.FlagSet, config internal.UserConfig) 
 	if err != nil {
 		return nil, err
 	}
+
 	deploymentName, err := f.GetString(name)
 	if err != nil {
 		return nil, err
 	}
+
 	if util.StringIsEmpty(deploymentName) {
 		return nil, ErrorNameRequired
 	}
+
 	zone, err := f.GetString(zone)
 	if err != nil {
 		return nil, err
 	}
+
 	if util.StringIsEmpty(zone) {
 		return nil, ErrorZoneCodeIsRequired
 	}
+
 	d := newDeployment()
 	d.ZoneCode = zone
 	d.Name = deploymentName
-	d.OID = deploymentFlags.OrgId
-	d.LID = deploymentFlags.EnvId
-	d.TID = deploymentFlags.TeamId
+	d.OID = deploymentFlags.OrgID
+	d.LID = deploymentFlags.EnvID
+	d.TID = deploymentFlags.TeamID
+
 	return &d, nil
 }

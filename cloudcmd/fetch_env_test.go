@@ -3,18 +3,20 @@ package cloudcmd
 import (
 	"context"
 	"errors"
-	"github.com/TykTechnologies/cloud-sdk/cloud"
-	mock "github.com/TykTechnologies/tykctl/internal/mocks"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/TykTechnologies/cloud-sdk/cloud"
+	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 )
 
-func TestGetEnvById(t *testing.T) {
+func TestGetEnvByID(t *testing.T) {
 	testCases := []struct {
 		name             string
-		mockHttpResponse *http.Response
+		mockHTTPResponse *http.Response
 		ExpectedError    error
 		mockError        error
 		ExpectedEnv      *cloud.Loadout
@@ -22,7 +24,7 @@ func TestGetEnvById(t *testing.T) {
 	}{
 		{
 			name:             "Test Success response",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			ExpectedError:    nil,
 			mockError:        nil,
 			ExpectedEnv:      &cloud.Loadout{OID: "2", UID: "2"},
@@ -34,7 +36,7 @@ func TestGetEnvById(t *testing.T) {
 		},
 		{
 			name:             "Test error returned by client",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusForbidden},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusForbidden},
 			ExpectedError:    ErrorGenericError,
 			mockError:        ErrorGenericError,
 			ExpectedEnv:      nil,
@@ -46,7 +48,7 @@ func TestGetEnvById(t *testing.T) {
 		},
 		{
 			name:             "Test response status is not 200",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusInternalServerError},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusInternalServerError},
 			ExpectedError:    ErrorFetchingEnvironment,
 			mockError:        nil,
 			ExpectedEnv:      nil,
@@ -54,7 +56,7 @@ func TestGetEnvById(t *testing.T) {
 		},
 		{
 			name:             "Test payload status is not ok",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			ExpectedError:    errors.New("error was found here"),
 			mockError:        nil,
 			ExpectedEnv:      nil,
@@ -70,17 +72,18 @@ func TestGetEnvById(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().GetEnvById(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
-			env, err := GetEnvById(context.Background(), m, "orgId", "teamId", "envId")
+			m.EXPECT().GetEnvByID(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
+			env, err := GetEnvByID(context.Background(), m, "orgID", "teamID", "envId")
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.ExpectedEnv, env)
 		})
 	}
 }
+
 func TestGetEnvs(t *testing.T) {
 	testCases := []struct {
 		name              string
-		mockHttpResponse  *http.Response
+		mockHTTPResponse  *http.Response
 		ExpectedError     error
 		mockError         error
 		ExpectedEnvs      []cloud.Loadout
@@ -89,7 +92,7 @@ func TestGetEnvs(t *testing.T) {
 	}{
 		{
 			name:              "Test Success",
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusOK},
 			ExpectedError:     nil,
 			mockError:         nil,
 			ExpectedEnvs:      generateEnvs(3),
@@ -102,7 +105,7 @@ func TestGetEnvs(t *testing.T) {
 		},
 		{
 			name:             "Test error returned by client",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusNotFound},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusNotFound},
 			ExpectedError:    ErrorOutPutFormat,
 			mockError:        ErrorOutPutFormat,
 			ExpectedEnvs:     nil,
@@ -115,7 +118,7 @@ func TestGetEnvs(t *testing.T) {
 		},
 		{
 			name:              "Test http response is not 200",
-			mockHttpResponse:  &http.Response{StatusCode: http.StatusBadGateway},
+			mockHTTPResponse:  &http.Response{StatusCode: http.StatusBadGateway},
 			ExpectedError:     ErrorFetchingEnvironment,
 			mockError:         nil,
 			ExpectedEnvs:      nil,
@@ -124,7 +127,7 @@ func TestGetEnvs(t *testing.T) {
 		},
 		{
 			name:             "Test Payload status is not ok",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			ExpectedError:    errors.New("i am an error"),
 			mockError:        nil,
 			ExpectedEnvs:     nil,
@@ -137,7 +140,7 @@ func TestGetEnvs(t *testing.T) {
 		},
 		{
 			name:             "Test payload is nil",
-			mockHttpResponse: &http.Response{StatusCode: http.StatusOK},
+			mockHTTPResponse: &http.Response{StatusCode: http.StatusOK},
 			ExpectedError:    nil,
 			mockError:        nil,
 			ExpectedEnvs:     nil,
@@ -154,8 +157,8 @@ func TestGetEnvs(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			m.EXPECT().GetEnvs(gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHttpResponse, tt.mockError)
-			envs, err := GetEnvs(context.Background(), m, "orgId", "teamId")
+			m.EXPECT().GetEnvs(gomock.Any(), gomock.Any(), gomock.Any()).Times(1).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
+			envs, err := GetEnvs(context.Background(), m, "orgID", "teamID")
 			assert.Equal(t, tt.ExpectedError, err)
 			if tt.mockResponse.Payload != nil {
 				assert.Equal(t, tt.mockResponse.Payload.Loadouts, envs)
@@ -163,8 +166,8 @@ func TestGetEnvs(t *testing.T) {
 			assert.Equal(t, tt.ExpectedOrgLength, len(envs))
 		})
 	}
-
 }
+
 func TestCreateEnvHeadersAndRows(t *testing.T) {
 	tests := []struct {
 		name    string

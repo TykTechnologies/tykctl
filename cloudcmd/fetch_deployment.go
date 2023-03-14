@@ -3,11 +3,13 @@ package cloudcmd
 import (
 	"context"
 	"errors"
-	"github.com/TykTechnologies/cloud-sdk/cloud"
-	"github.com/TykTechnologies/tykctl/internal"
+	"net/http"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"net/http"
+
+	"github.com/TykTechnologies/cloud-sdk/cloud"
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 const fetchDeploymentDesc = `
@@ -40,7 +42,6 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			if len(args) == 0 {
-
 				err := validateAndFetchEnvDeployments(cmd.Context(), factory.Client, factory.Config, cmd.Flags())
 				if err != nil {
 					cmd.PrintErrln(err)
@@ -48,7 +49,7 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 				}
 				return nil
 			}
-			err := validateAndFetchDeploymentById(ctx, factory.Client, factory.Config, cmd.Flags(), args[0])
+			err := validateAndFetchDeploymentByID(ctx, factory.Client, factory.Config, cmd.Flags(), args[0])
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -56,68 +57,86 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 			return nil
 		})
 }
-func validateAndFetchDeploymentById(ctx context.Context, client internal.CloudClient, config internal.UserConfig, f *pflag.FlagSet, id string) error {
+
+func validateAndFetchDeploymentByID(ctx context.Context, client internal.CloudClient, config internal.UserConfig, f *pflag.FlagSet, id string) error {
 	deploymentFlags, err := validateCommonDeploymentFetchFlags(f, config)
 	if err != nil {
 		return err
 	}
-	deployment, err := GetDeploymentById(ctx, client, deploymentFlags.OrgId, deploymentFlags.TeamId, deploymentFlags.EnvId, id)
+
+	deployment, err := GetDeploymentByID(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, id)
 	if err != nil {
 		return err
 	}
+
 	if deploymentFlags.OutPut == table {
 		var deployments []cloud.Deployment
 		if deployment != nil {
 			deployments = append(deployments, *deployment)
 		}
+
 		internal.Printable(CreateDeploymentHeadersAndRows(deployments))
+
 		return nil
 	}
-	return internal.PrintJson(deployment)
+
+	return internal.PrintJSON(deployment)
 }
+
 func validateAndFetchEnvDeployments(ctx context.Context, client internal.CloudClient, config internal.UserConfig, f *pflag.FlagSet) error {
 	deploymentFlags, err := validateCommonDeploymentFetchFlags(f, config)
 	if err != nil {
 		return err
 	}
-	deployments, err := GetEnvDeployments(ctx, client, deploymentFlags.OrgId, deploymentFlags.TeamId, deploymentFlags.EnvId)
+
+	deployments, err := GetEnvDeployments(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID)
 	if err != nil {
 		return err
 	}
+
 	if deploymentFlags.OutPut == table {
 		internal.Printable(CreateDeploymentHeadersAndRows(deployments))
 		return nil
 	}
-	return internal.PrintJson(deployments)
+
+	return internal.PrintJSON(deployments)
 }
 
-func GetEnvDeployments(ctx context.Context, client internal.CloudClient, orgId, teamId, envId string) ([]cloud.Deployment, error) {
-	depResponse, resp, err := client.GetEnvDeployments(ctx, orgId, teamId, envId)
+func GetEnvDeployments(ctx context.Context, client internal.CloudClient, orgID, teamID, envID string) ([]cloud.Deployment, error) {
+	depResponse, resp, err := client.GetEnvDeployments(ctx, orgID, teamID, envID)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingDeployments
 	}
+
 	if depResponse.Status != statusOK {
 		return nil, errors.New(depResponse.Error_)
 	}
+
 	if depResponse.Payload == nil {
 		return nil, nil
 	}
+
 	return depResponse.Payload.Deployments, nil
 }
-func GetDeploymentById(ctx context.Context, client internal.CloudClient, orgId, teamId, envId, id string) (*cloud.Deployment, error) {
-	depResponse, resp, err := client.GetDeploymentById(ctx, orgId, teamId, envId, id, nil)
+
+func GetDeploymentByID(ctx context.Context, client internal.CloudClient, orgID, teamID, envID, id string) (*cloud.Deployment, error) {
+	depResponse, resp, err := client.GetDeploymentByID(ctx, orgID, teamID, envID, id, nil)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, ErrorFetchingDeployments
 	}
+
 	if depResponse.Status != statusOK {
 		return nil, errors.New(depResponse.Error_)
 	}
+
 	return depResponse.Payload, nil
 }
 
@@ -126,25 +145,31 @@ func validateCommonDeploymentFetchFlags(f *pflag.FlagSet, config internal.UserCo
 	if err != nil {
 		return nil, err
 	}
+
 	output, err := f.GetString(outPut)
 	if err != nil {
 		return nil, err
 	}
+
 	deploymentFlag.OutPut = output
+
 	if output != table && output != jsonFormat {
 		return nil, ErrorOutPutFormat
 	}
+
 	return deploymentFlag, nil
 }
 
 func CreateDeploymentHeadersAndRows(deployments []cloud.Deployment) ([]string, [][]string) {
 	header := []string{"Name", "UID", "Kind", "Region", "State"}
 	rows := make([][]string, 0)
+
 	for _, deployment := range deployments {
 		row := []string{
 			deployment.Name, deployment.UID, deployment.Kind, deployment.ZoneCode, deployment.State,
 		}
 		rows = append(rows, row)
 	}
+
 	return header, rows
 }

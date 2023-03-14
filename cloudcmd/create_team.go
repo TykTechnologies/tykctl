@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"net/http"
 )
 
 const createTeamDesc = `
@@ -56,18 +58,22 @@ func NewCreateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 }
 
 // validateFlagsAndCreateTeam validate that org and name are not empty and send request to create a team.
-func validateFlagsAndCreateTeam(ctx context.Context, client internal.CloudClient, teamName, orgId string) (*cloud.Team, error) {
-	if util.StringIsEmpty(orgId) {
+func validateFlagsAndCreateTeam(ctx context.Context, client internal.CloudClient, teamName, orgID string) (*cloud.Team, error) {
+	if util.StringIsEmpty(orgID) {
 		return nil, ErrorOrgRequired
 	}
+
 	if util.StringIsEmpty(teamName) {
 		return nil, ErrorNameRequired
 	}
+
 	team := cloud.Team{Name: teamName}
-	createdTeam, err := CreateTeam(ctx, client, team, orgId)
+
+	createdTeam, err := CreateTeam(ctx, client, team, orgID)
 	if err != nil {
 		return nil, err
 	}
+
 	return createdTeam, nil
 }
 
@@ -77,16 +83,19 @@ func createTeamFlags(f *pflag.FlagSet) {
 }
 
 // CreateTeam the team send a request to the cloud to create a team.
-func CreateTeam(ctx context.Context, client internal.CloudClient, team cloud.Team, orgId string) (*cloud.Team, error) {
-	teamResponse, resp, err := client.CreateTeam(ctx, team, orgId)
+func CreateTeam(ctx context.Context, client internal.CloudClient, team cloud.Team, orgID string) (*cloud.Team, error) {
+	teamResponse, resp, err := client.CreateTeam(ctx, team, orgID)
 	if err != nil {
 		return nil, err
 	}
+
 	if resp.StatusCode != http.StatusCreated {
 		return nil, ErrorCreatingTeam
 	}
+
 	if teamResponse.Status != statusOK {
 		return nil, errors.New(teamResponse.Error_)
 	}
+
 	return teamResponse.Payload, nil
 }

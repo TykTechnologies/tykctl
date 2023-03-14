@@ -1,9 +1,10 @@
 package cloudcmd
 
 import (
+	"testing"
+
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/testutil"
-	"testing"
 )
 
 func TestAddOutPutFlags(t *testing.T) {

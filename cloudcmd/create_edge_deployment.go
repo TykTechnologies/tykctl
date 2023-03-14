@@ -3,12 +3,14 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"log"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/TykTechnologies/tykctl/util"
-	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"log"
 )
 
 const createEdgeDeploymentDesc = ` 
@@ -27,9 +29,7 @@ Sample usage for this command
  		tykctl cloud deployments create edge --name="test deployment"
 `
 
-var (
-	ErrorControlPlaneRequired = errors.New("error control plane to link the gateway to is required")
-)
+var ErrorControlPlaneRequired = errors.New("error control plane to link the gateway to is required")
 
 func NewCreateEdgeDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(edge).
@@ -58,30 +58,39 @@ func validateEdgeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	if err != nil {
 		return nil, err
 	}
+
 	controlPlane, err := f.GetString(linkedControlPlane)
 	if err != nil {
 		return nil, err
 	}
+
 	if util.StringIsEmpty(controlPlane) {
 		return nil, ErrorControlPlaneRequired
 	}
+
 	deployment.LinkedDeployments["LinkedMDCBID"] = controlPlane
 	deployment.Kind = gateway
+
 	deployHome, err := f.GetBool(deploy)
 	if err != nil {
 		return nil, err
 	}
+
 	deploymentResponse, err := CreateDeployment(ctx, client, *deployment, deployment.OID, deployment.TID, deployment.LID)
 	if err != nil {
 		return nil, err
 	}
+
 	log.Printf("deployment %s created successfully", deploymentResponse.UID)
+
 	if deployHome {
-		_, err := validateFlagsAndStartDeployment(ctx, client, config, deploymentResponse.UID)
+		_, err = validateFlagsAndStartDeployment(ctx, client, config, deploymentResponse.UID)
 		if err != nil {
 			return nil, err
 		}
+
 		log.Println("deploying...")
 	}
+
 	return deploymentResponse, nil
 }

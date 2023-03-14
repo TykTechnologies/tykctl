@@ -39,9 +39,9 @@ func (m *MockCloudClient) EXPECT() *MockCloudClientMockRecorder {
 }
 
 // CreateDeployment mocks base method.
-func (m *MockCloudClient) CreateDeployment(ctx context.Context, deployment cloud.Deployment, orgId, teamId, envId string) (cloud.InlineResponse2001, *http.Response, error) {
+func (m *MockCloudClient) CreateDeployment(ctx context.Context, deployment cloud.Deployment, orgID, teamID, envID string) (cloud.InlineResponse2001, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateDeployment", ctx, deployment, orgId, teamId, envId)
+	ret := m.ctrl.Call(m, "CreateDeployment", ctx, deployment, orgID, teamID, envID)
 	ret0, _ := ret[0].(cloud.InlineResponse2001)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
@@ -49,15 +49,15 @@ func (m *MockCloudClient) CreateDeployment(ctx context.Context, deployment cloud
 }
 
 // CreateDeployment indicates an expected call of CreateDeployment.
-func (mr *MockCloudClientMockRecorder) CreateDeployment(ctx, deployment, orgId, teamId, envId interface{}) *gomock.Call {
+func (mr *MockCloudClientMockRecorder) CreateDeployment(ctx, deployment, orgID, teamID, envID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDeployment", reflect.TypeOf((*MockCloudClient)(nil).CreateDeployment), ctx, deployment, orgId, teamId, envId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDeployment", reflect.TypeOf((*MockCloudClient)(nil).CreateDeployment), ctx, deployment, orgID, teamID, envID)
 }
 
 // CreateEnv mocks base method.
-func (m *MockCloudClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgId, teamId string) (cloud.InlineResponse2012, *http.Response, error) {
+func (m *MockCloudClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgID, teamID string) (cloud.InlineResponse2012, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateEnv", ctx, env, orgId, teamId)
+	ret := m.ctrl.Call(m, "CreateEnv", ctx, env, orgID, teamID)
 	ret0, _ := ret[0].(cloud.InlineResponse2012)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
@@ -65,9 +65,9 @@ func (m *MockCloudClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgI
 }
 
 // CreateEnv indicates an expected call of CreateEnv.
-func (mr *MockCloudClientMockRecorder) CreateEnv(ctx, env, orgId, teamId interface{}) *gomock.Call {
+func (mr *MockCloudClientMockRecorder) CreateEnv(ctx, env, orgID, teamID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEnv", reflect.TypeOf((*MockCloudClient)(nil).CreateEnv), ctx, env, orgId, teamId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEnv", reflect.TypeOf((*MockCloudClient)(nil).CreateEnv), ctx, env, orgID, teamID)
 }
 
 // CreateTeam mocks base method.
@@ -86,26 +86,26 @@ func (mr *MockCloudClientMockRecorder) CreateTeam(ctx, team, oid interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeam", reflect.TypeOf((*MockCloudClient)(nil).CreateTeam), ctx, team, oid)
 }
 
-// GetDeploymentById mocks base method.
-func (m *MockCloudClient) GetDeploymentById(ctx context.Context, orgId, teamId, envId, id string, localVarOptionals *cloud.DeploymentsApiGetDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
+// GetDeploymentByID mocks base method.
+func (m *MockCloudClient) GetDeploymentByID(ctx context.Context, orgID, teamID, envID, id string, localVarOptionals *cloud.DeploymentsApiGetDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDeploymentById", ctx, orgId, teamId, envId, id, localVarOptionals)
+	ret := m.ctrl.Call(m, "GetDeploymentByID", ctx, orgID, teamID, envID, id, localVarOptionals)
 	ret0, _ := ret[0].(cloud.InlineResponse2001)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
 
-// GetDeploymentById indicates an expected call of GetDeploymentById.
-func (mr *MockCloudClientMockRecorder) GetDeploymentById(ctx, orgId, teamId, envId, id, localVarOptionals interface{}) *gomock.Call {
+// GetDeploymentByID indicates an expected call of GetDeploymentByID.
+func (mr *MockCloudClientMockRecorder) GetDeploymentByID(ctx, orgID, teamID, envID, id, localVarOptionals interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentById", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentById), ctx, orgId, teamId, envId, id, localVarOptionals)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentByID", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentByID), ctx, orgID, teamID, envID, id, localVarOptionals)
 }
 
 // GetDeploymentStatus mocks base method.
-func (m *MockCloudClient) GetDeploymentStatus(ctx context.Context, orgId, teamId, envId, deploymentId string) (cloud.Payload, *http.Response, error) {
+func (m *MockCloudClient) GetDeploymentStatus(ctx context.Context, orgID, teamID, envID, deploymentID string) (cloud.Payload, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDeploymentStatus", ctx, orgId, teamId, envId, deploymentId)
+	ret := m.ctrl.Call(m, "GetDeploymentStatus", ctx, orgID, teamID, envID, deploymentID)
 	ret0, _ := ret[0].(cloud.Payload)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
@@ -113,9 +113,9 @@ func (m *MockCloudClient) GetDeploymentStatus(ctx context.Context, orgId, teamId
 }
 
 // GetDeploymentStatus indicates an expected call of GetDeploymentStatus.
-func (mr *MockCloudClientMockRecorder) GetDeploymentStatus(ctx, orgId, teamId, envId, deploymentId interface{}) *gomock.Call {
+func (mr *MockCloudClientMockRecorder) GetDeploymentStatus(ctx, orgID, teamID, envID, deploymentID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentStatus", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentStatus), ctx, orgId, teamId, envId, deploymentId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentStatus", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentStatus), ctx, orgID, teamID, envID, deploymentID)
 }
 
 // GetDeploymentZones mocks base method.
@@ -134,20 +134,20 @@ func (mr *MockCloudClientMockRecorder) GetDeploymentZones(ctx interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeploymentZones", reflect.TypeOf((*MockCloudClient)(nil).GetDeploymentZones), ctx)
 }
 
-// GetEnvById mocks base method.
-func (m *MockCloudClient) GetEnvById(ctx context.Context, orgId, teamId, envId string) (cloud.InlineResponse2012, *http.Response, error) {
+// GetEnvByID mocks base method.
+func (m *MockCloudClient) GetEnvByID(ctx context.Context, orgID, teamID, envID string) (cloud.InlineResponse2012, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnvById", ctx, orgId, teamId, envId)
+	ret := m.ctrl.Call(m, "GetEnvByID", ctx, orgID, teamID, envID)
 	ret0, _ := ret[0].(cloud.InlineResponse2012)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
 
-// GetEnvById indicates an expected call of GetEnvById.
-func (mr *MockCloudClientMockRecorder) GetEnvById(ctx, orgId, teamId, envId interface{}) *gomock.Call {
+// GetEnvByID indicates an expected call of GetEnvByID.
+func (mr *MockCloudClientMockRecorder) GetEnvByID(ctx, orgID, teamID, envID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnvById", reflect.TypeOf((*MockCloudClient)(nil).GetEnvById), ctx, orgId, teamId, envId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnvByID", reflect.TypeOf((*MockCloudClient)(nil).GetEnvByID), ctx, orgID, teamID, envID)
 }
 
 // GetEnvDeployments mocks base method.
@@ -167,9 +167,9 @@ func (mr *MockCloudClientMockRecorder) GetEnvDeployments(ctx, oid, tid, lid inte
 }
 
 // GetEnvs mocks base method.
-func (m *MockCloudClient) GetEnvs(ctx context.Context, orgId, teamId string) (cloud.InlineResponse20016, *http.Response, error) {
+func (m *MockCloudClient) GetEnvs(ctx context.Context, orgID, teamID string) (cloud.InlineResponse20016, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEnvs", ctx, orgId, teamId)
+	ret := m.ctrl.Call(m, "GetEnvs", ctx, orgID, teamID)
 	ret0, _ := ret[0].(cloud.InlineResponse20016)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
@@ -177,31 +177,31 @@ func (m *MockCloudClient) GetEnvs(ctx context.Context, orgId, teamId string) (cl
 }
 
 // GetEnvs indicates an expected call of GetEnvs.
-func (mr *MockCloudClientMockRecorder) GetEnvs(ctx, orgId, teamId interface{}) *gomock.Call {
+func (mr *MockCloudClientMockRecorder) GetEnvs(ctx, orgID, teamID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnvs", reflect.TypeOf((*MockCloudClient)(nil).GetEnvs), ctx, orgId, teamId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEnvs", reflect.TypeOf((*MockCloudClient)(nil).GetEnvs), ctx, orgID, teamID)
 }
 
-// GetOrgById mocks base method.
-func (m *MockCloudClient) GetOrgById(ctx context.Context, oid string) (cloud.InlineResponse2005, *http.Response, error) {
+// GetOrgByID mocks base method.
+func (m *MockCloudClient) GetOrgByID(ctx context.Context, oid string) (cloud.InlineResponse2005, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOrgById", ctx, oid)
+	ret := m.ctrl.Call(m, "GetOrgByID", ctx, oid)
 	ret0, _ := ret[0].(cloud.InlineResponse2005)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
 
-// GetOrgById indicates an expected call of GetOrgById.
-func (mr *MockCloudClientMockRecorder) GetOrgById(ctx, oid interface{}) *gomock.Call {
+// GetOrgByID indicates an expected call of GetOrgByID.
+func (mr *MockCloudClientMockRecorder) GetOrgByID(ctx, oid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgById", reflect.TypeOf((*MockCloudClient)(nil).GetOrgById), ctx, oid)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgByID", reflect.TypeOf((*MockCloudClient)(nil).GetOrgByID), ctx, oid)
 }
 
 // GetOrgInfo mocks base method.
-func (m *MockCloudClient) GetOrgInfo(ctx context.Context, orgId string) (*internal.OrgInfo, *resty.Response, error) {
+func (m *MockCloudClient) GetOrgInfo(ctx context.Context, orgID string) (*internal.OrgInfo, *resty.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOrgInfo", ctx, orgId)
+	ret := m.ctrl.Call(m, "GetOrgInfo", ctx, orgID)
 	ret0, _ := ret[0].(*internal.OrgInfo)
 	ret1, _ := ret[1].(*resty.Response)
 	ret2, _ := ret[2].(error)
@@ -209,9 +209,9 @@ func (m *MockCloudClient) GetOrgInfo(ctx context.Context, orgId string) (*intern
 }
 
 // GetOrgInfo indicates an expected call of GetOrgInfo.
-func (mr *MockCloudClientMockRecorder) GetOrgInfo(ctx, orgId interface{}) *gomock.Call {
+func (mr *MockCloudClientMockRecorder) GetOrgInfo(ctx, orgID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgInfo", reflect.TypeOf((*MockCloudClient)(nil).GetOrgInfo), ctx, orgId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgInfo", reflect.TypeOf((*MockCloudClient)(nil).GetOrgInfo), ctx, orgID)
 }
 
 // GetOrgs mocks base method.
@@ -230,20 +230,20 @@ func (mr *MockCloudClientMockRecorder) GetOrgs(ctx interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrgs", reflect.TypeOf((*MockCloudClient)(nil).GetOrgs), ctx)
 }
 
-// GetTeamById mocks base method.
-func (m *MockCloudClient) GetTeamById(ctx context.Context, oid, tid string) (cloud.InlineResponse2011, *http.Response, error) {
+// GetTeamByID mocks base method.
+func (m *MockCloudClient) GetTeamByID(ctx context.Context, oid, tid string) (cloud.InlineResponse2011, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTeamById", ctx, oid, tid)
+	ret := m.ctrl.Call(m, "GetTeamByID", ctx, oid, tid)
 	ret0, _ := ret[0].(cloud.InlineResponse2011)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }
 
-// GetTeamById indicates an expected call of GetTeamById.
-func (mr *MockCloudClientMockRecorder) GetTeamById(ctx, oid, tid interface{}) *gomock.Call {
+// GetTeamByID indicates an expected call of GetTeamByID.
+func (mr *MockCloudClientMockRecorder) GetTeamByID(ctx, oid, tid interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeamById", reflect.TypeOf((*MockCloudClient)(nil).GetTeamById), ctx, oid, tid)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTeamByID", reflect.TypeOf((*MockCloudClient)(nil).GetTeamByID), ctx, oid, tid)
 }
 
 // GetTeams mocks base method.
@@ -295,9 +295,9 @@ func (mr *MockCloudClientMockRecorder) RestartDeployment(ctx, oid, tid, lid, id 
 }
 
 // StartDeployment mocks base method.
-func (m *MockCloudClient) StartDeployment(ctx context.Context, orgID, teamId, envId, id string) (cloud.InlineResponse2001, *http.Response, error) {
+func (m *MockCloudClient) StartDeployment(ctx context.Context, orgID, teamID, envID, id string) (cloud.InlineResponse2001, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "StartDeployment", ctx, orgID, teamId, envId, id)
+	ret := m.ctrl.Call(m, "StartDeployment", ctx, orgID, teamID, envID, id)
 	ret0, _ := ret[0].(cloud.InlineResponse2001)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
@@ -305,15 +305,15 @@ func (m *MockCloudClient) StartDeployment(ctx context.Context, orgID, teamId, en
 }
 
 // StartDeployment indicates an expected call of StartDeployment.
-func (mr *MockCloudClientMockRecorder) StartDeployment(ctx, orgID, teamId, envId, id interface{}) *gomock.Call {
+func (mr *MockCloudClientMockRecorder) StartDeployment(ctx, orgID, teamID, envID, id interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartDeployment", reflect.TypeOf((*MockCloudClient)(nil).StartDeployment), ctx, orgID, teamId, envId, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartDeployment", reflect.TypeOf((*MockCloudClient)(nil).StartDeployment), ctx, orgID, teamID, envID, id)
 }
 
 // UpdateTeam mocks base method.
-func (m *MockCloudClient) UpdateTeam(ctx context.Context, team cloud.Team, orgId, teamId string) (cloud.InlineResponse2011, *http.Response, error) {
+func (m *MockCloudClient) UpdateTeam(ctx context.Context, team cloud.Team, orgID, teamID string) (cloud.InlineResponse2011, *http.Response, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateTeam", ctx, team, orgId, teamId)
+	ret := m.ctrl.Call(m, "UpdateTeam", ctx, team, orgID, teamID)
 	ret0, _ := ret[0].(cloud.InlineResponse2011)
 	ret1, _ := ret[1].(*http.Response)
 	ret2, _ := ret[2].(error)
@@ -321,7 +321,7 @@ func (m *MockCloudClient) UpdateTeam(ctx context.Context, team cloud.Team, orgId
 }
 
 // UpdateTeam indicates an expected call of UpdateTeam.
-func (mr *MockCloudClientMockRecorder) UpdateTeam(ctx, team, orgId, teamId interface{}) *gomock.Call {
+func (mr *MockCloudClientMockRecorder) UpdateTeam(ctx, team, orgID, teamID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeam", reflect.TypeOf((*MockCloudClient)(nil).UpdateTeam), ctx, team, orgId, teamId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTeam", reflect.TypeOf((*MockCloudClient)(nil).UpdateTeam), ctx, team, orgID, teamID)
 }

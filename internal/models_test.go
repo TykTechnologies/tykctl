@@ -1,12 +1,12 @@
 package internal
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOrgInitOrgInitToMap(t *testing.T) {
-
 	tests := []struct {
 		name    string
 		orgInit OrgInit
@@ -31,9 +31,10 @@ func TestOrgInitOrgInitToMap(t *testing.T) {
 				Org:        "DX org",
 				Team:       "My Team",
 			},
-			want: map[string]string{"controller": "https://tyk.io/us-west",
-				"team": "My Team",
-				"org":  "DX org",
+			want: map[string]string{
+				"controller": "https://tyk.io/us-west",
+				"team":       "My Team",
+				"org":        "DX org",
 			},
 		},
 	}
@@ -50,7 +51,6 @@ func TestRoleToMap(t *testing.T) {
 		role Role
 		want map[string]string
 	}{
-
 		{
 			name: "Test has empty team",
 			role: Role{

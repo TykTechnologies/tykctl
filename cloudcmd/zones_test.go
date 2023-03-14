@@ -1,9 +1,11 @@
 package cloudcmd
 
 import (
-	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 func TestZonesTable(t *testing.T) {

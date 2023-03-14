@@ -14,14 +14,14 @@ func NewGenericFlagError(flagName string) GenericFlagError {
 	return GenericFlagError{FlagName: flagName}
 }
 
-func NewGenericHttpError(body string) GenericHttpError {
-	return GenericHttpError{Body: body}
+func NewGenericHTTPError(body string) GenericHTTPError {
+	return GenericHTTPError{Body: body}
 }
 
-type GenericHttpError struct {
+type GenericHTTPError struct {
 	Body string
 }
 
-func (g GenericHttpError) Error() string {
+func (g GenericHTTPError) Error() string {
 	return g.Body
 }

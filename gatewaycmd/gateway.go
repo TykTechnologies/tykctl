@@ -1,12 +1,15 @@
 package gatewaycmd
 
 import (
-	"github.com/TykTechnologies/tykctl/internal"
 	"github.com/spf13/cobra"
+
+	"github.com/TykTechnologies/tykctl/gatewaycmd/reload"
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 // NewGatewayCommand  creates the gateway service parent command.
-func NewGatewayCommand() *cobra.Command {
-	return internal.NewCmd("gateway").WithCommands(NewPolicyCommand())
-
+func NewGatewayCommand(apimClient internal.ApimClient) *cobra.Command {
+	return internal.NewCmd(gateway).
+		WithCommands(
+			reload.NewReloadCmd(apimClient))
 }

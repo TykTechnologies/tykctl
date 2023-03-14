@@ -44,8 +44,12 @@ github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63n
 github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2/go.mod h1:HBCaDeC1lPdgDeDbhX8XFpy1jqjK0IBG8W5K+xYqA0w=
 github.com/TykTechnologies/cloud-sdk v0.0.0-20221209030246-43880c352640 h1:ZWOs1QH3IJvZiB/mIdo/To4z5Ljbi7qf41kmzmDSspg=
 github.com/TykTechnologies/cloud-sdk v0.0.0-20221209030246-43880c352640/go.mod h1:6D7lyko2ug9uELZxO9rPH55rH6tbZ/rCgnevDFkETFw=
+github.com/TykTechnologies/gateway-sdk v0.0.2 h1:zrYJ4kSUv2jHYTE7YZTg2cXSlaQH4hZ1ZNvdBMUJSXU=
+github.com/TykTechnologies/gateway-sdk v0.0.2/go.mod h1:ZHK9SAWDAvN2+QnoQy981XBHLZoQHu4rpKjgNOTLcoc=
 github.com/antihax/optional v1.0.0 h1:xK2lYat7ZLaVVcIuj82J8kIro4V6kDe0AUDFboUCwcg=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
+github.com/bombsimon/wsl/v3 v3.4.0 h1:RkSxjT3tmlptwfgEgTgU+KYKLI35p/tviNXNXiL2aNU=
+github.com/bombsimon/wsl/v3 v3.4.0/go.mod h1:KkIB+TXkqy6MvK9BDZVbZxKNYsE1/oLRJbIFtf14qqo=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=

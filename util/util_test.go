@@ -33,6 +33,7 @@ func TestStringIsEmpty(t *testing.T) {
 			want: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := StringIsEmpty(tt.args.v); got != tt.want {
@@ -73,6 +74,7 @@ func TestValidateEmail(t *testing.T) {
 			wantErr: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := ValidateEmail(tt.args.email); (err != nil) != tt.wantErr {
@@ -130,6 +132,7 @@ func TestAbbreviateDirection(t *testing.T) {
 			want:  "s",
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := AbbreviateDirection(tt.input); got != tt.want {
@@ -169,7 +172,6 @@ func TestContains(t *testing.T) {
 }
 
 func TestGenerateUrlFromZone(t *testing.T) {
-
 	tests := []struct {
 		name    string
 		region  string
@@ -191,7 +193,7 @@ func TestGenerateUrlFromZone(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GenerateUrlFromZone(tt.region)
+			got, err := GenerateURLFromZone(tt.region)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GenerateUrlFromZone() error = %v, wantErr %v", err, tt.wantErr)
 				return

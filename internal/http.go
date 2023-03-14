@@ -13,6 +13,7 @@ func CreatePostRequest(ctx context.Context, url string, data interface{}, header
 	if err != nil {
 		return nil, err
 	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewBuffer(b))
 	if err != nil {
 		return nil, err

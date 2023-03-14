@@ -3,9 +3,11 @@ package cloudcmd
 import (
 	"context"
 	"errors"
-	"github.com/TykTechnologies/tykctl/internal"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 const initDesc = `
@@ -32,43 +34,53 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 		WithExample("tykctl cloud init").
 		WithDescription("initialize the cli and set the default region and organization.").
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			userId := viper.GetString(currentCloudUser)
-			if userId == "" {
+			userID := viper.GetString(currentCloudUser)
+			if userID == "" {
 				cmd.Println("Please login in first before running thid command")
 				return errors.New("you need to login to run this command")
 			}
-			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg(), userId)
+
+			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg(), userID)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			cmd.Println("Config file initialized successfully")
+
 			return nil
 		})
 }
-func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgId, userId string) error {
-	info, _, err := client.GetOrgInfo(ctx, orgId)
+
+func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgID, userID string) error {
+	info, _, err := client.GetOrgInfo(ctx, orgID)
 	if err != nil {
 		return err
 	}
+
 	selectedTeam, err := prompt.TeamPrompt(info.Organisation.Teams)
 	if err != nil {
 		return err
 	}
+
 	var orgInit internal.OrgInit
 	if selectedTeam != nil {
 		orgInit.Team = selectedTeam.UID
+
 		selectedEnv, err := prompt.EnvPrompt(selectedTeam.Loadouts)
 		if err != nil {
 			return err
 		}
+
 		if selectedEnv != nil {
 			orgInit.Env = selectedEnv.UID
 		}
 	}
-	err = internal.SaveMapToCloudUserContext(userId, orgInit.OrgInitToMap())
+
+	err = internal.SaveMapToCloudUserContext(userID, orgInit.OrgInitToMap())
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

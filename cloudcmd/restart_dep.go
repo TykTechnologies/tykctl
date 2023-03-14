@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
+	"github.com/spf13/cobra"
+
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/spf13/cobra"
-	"net/http"
 )
 
 const restartDepDesc = `
@@ -29,7 +31,8 @@ func NewRestartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{
 			{Name: env, Persistent: false},
 			{Name: team, Persistent: false},
-			{Name: org, Persistent: false}}).
+			{Name: org, Persistent: false},
+		}).
 		WithLongDescription(restartDepDesc).
 		WithDescription("restart a home or edge gateway deployment given its uuid").
 		WithExample("tykctl cloud dep restart <deployment id> --org=<org here> --team=<team here> --env=<environment here> ").
@@ -39,7 +42,9 @@ func NewRestartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			cmd.Println(fmt.Sprintf("Successfully restarted deployment %s...", deployment.UID))
+
 			return nil
 		})
 }
@@ -49,24 +54,29 @@ func validateFlagsAndRestartDeployment(ctx context.Context, client internal.Clou
 	if err != nil {
 		return nil, err
 	}
-	deployment, err := restartDeployment(ctx, client, deploymentFlags.OrgId, deploymentFlags.TeamId, deploymentFlags.EnvId, deploymentID)
+
+	deployment, err := restartDeployment(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, deploymentID)
 	if err != nil {
 		return nil, err
 	}
+
 	return deployment, nil
 }
 
 // restartDeployment will make a http request to tyk cloud to restart the deployment.
-func restartDeployment(ctx context.Context, client internal.CloudClient, orgId, teamId, envId, id string) (*cloud.Deployment, error) {
-	deployment, resp, err := client.RestartDeployment(ctx, orgId, teamId, envId, id)
+func restartDeployment(ctx context.Context, client internal.CloudClient, orgID, teamID, envID, id string) (*cloud.Deployment, error) {
+	deployment, resp, err := client.RestartDeployment(ctx, orgID, teamID, envID, id)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if (resp.StatusCode != http.StatusOK) && (resp.StatusCode != http.StatusCreated) {
 		return nil, ErrorRestartingDeployment
 	}
+
 	if deployment.Status != statusOK {
 		return nil, errors.New(deployment.Error_)
 	}
+
 	return deployment.Payload, nil
 }

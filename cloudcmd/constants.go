@@ -5,7 +5,7 @@ const (
 	cloudPath              = "cloud"
 	list                   = "list"
 	fetch                  = "fetch"
-	applicationJson        = "application/json"
+	applicationJSON        = "application/json"
 	loginPath              = "/api/login"
 	login                  = "login"
 	cookieAuthorisation    = "cookieAuthorisation"

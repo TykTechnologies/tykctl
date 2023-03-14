@@ -9,9 +9,11 @@ import (
 func addOrgFlag(f *pflag.FlagSet) {
 	f.String(org, "", "The organization to use")
 }
+
 func addTeamFlag(f *pflag.FlagSet) {
 	f.String(team, "", "The team to use")
 }
+
 func addEnvFlag(f *pflag.FlagSet) {
 	f.String(env, "", "The environment to use")
 }

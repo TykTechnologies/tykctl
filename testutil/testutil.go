@@ -1,14 +1,17 @@
 package testutil
 
 import (
-	"github.com/TykTechnologies/tykctl/internal"
+	"testing"
+
 	flag "github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
-	"testing"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 func TestFlags(t *testing.T, f *flag.FlagSet, flags []internal.Flag) {
 	t.Helper()
+
 	for _, tt := range flags {
 		t.Run(tt.Description, func(t *testing.T) {
 			l := f.Lookup(tt.Name)
@@ -18,8 +21,6 @@ func TestFlags(t *testing.T, f *flag.FlagSet, flags []internal.Flag) {
 				assert.Equal(t, tt.Shorthand, l.Shorthand, tt.Description)
 				assert.Equal(t, tt.Default, l.DefValue, tt.Description)
 			}
-
 		})
-
 	}
 }

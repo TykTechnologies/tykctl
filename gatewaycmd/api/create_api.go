@@ -10,12 +10,8 @@ import (
 	"github.com/TykTechnologies/tykctl/internal"
 )
 
-const (
-	apis = "apis"
-)
-
-func NewCreateApiCmd(apimClient internal.ApimClient) *cobra.Command {
-	return internal.NewCmd(apis).
+func NewCreateAPICmd(apimClient internal.ApimClient) *cobra.Command {
+	return internal.NewCmd(shared.Create).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
 			shared.AddGatewaySecret(apimClient.Client.GetConfig())
 			shared.AddGatewayServers(apimClient.Client.GetConfig())
@@ -27,5 +23,5 @@ func NewCreateApiCmd(apimClient internal.ApimClient) *cobra.Command {
 		})
 }
 
-func CreateApi(ctx context.Context, aPIsAPI apim.APIsAPI) {
+func CreateAPI(ctx context.Context, aPIsAPI apim.APIsAPI) {
 }

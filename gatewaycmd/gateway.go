@@ -5,6 +5,7 @@ import (
 
 	"github.com/TykTechnologies/tykctl/gatewaycmd/api"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/reload"
+	"github.com/TykTechnologies/tykctl/gatewaycmd/templates"
 	"github.com/TykTechnologies/tykctl/internal"
 )
 
@@ -17,5 +18,7 @@ func NewGatewayCommand(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(gateway).
 		WithCommands(
 			reload.NewReloadCmd(apimClient),
-			api.NewApisCmd(apimClient))
+			api.NewApisCmd(apimClient),
+			templates.NewTemplateCmd(),
+		)
 }

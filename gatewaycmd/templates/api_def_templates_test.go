@@ -7,7 +7,8 @@ import (
 )
 
 func TestCreateFullProtectedApiDefinition(t *testing.T) {
-	got, err := createFullProtectedApiDefinition()
+	got, err := createFullProtectedAPIDefinition()
+
 	assert.Nil(t, err)
 	assert.NotNil(t, got)
 	assert.Equal(t, "4a77d8bfe76f41ad7ae5875b2259df3f", *got.ApiId)

@@ -26,5 +26,6 @@ func createLeanKeyTemplate() *apim.SessionState {
 		},
 	}
 	sessionState.AccessRights = &accessRight
+
 	return sessionState
 }

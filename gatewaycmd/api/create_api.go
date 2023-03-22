@@ -5,7 +5,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/shared"
 	"github.com/TykTechnologies/tykctl/internal"
 )
@@ -21,7 +20,4 @@ func NewCreateAPICmd(apimClient internal.ApimClient) *cobra.Command {
 		NoArgs(func(ctx context.Context, command cobra.Command) error {
 			return nil
 		})
-}
-
-func CreateAPI(ctx context.Context, aPIsAPI apim.APIsAPI) {
 }

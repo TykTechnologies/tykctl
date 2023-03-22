@@ -12,7 +12,7 @@ import (
 	"github.com/TykTechnologies/tykctl/util"
 )
 
-func createLeanKeylessApiDefinition() *apim.APIDefinition {
+func createLeanKeylessAPIDefinition() *apim.APIDefinition {
 	api := apim.APIDefinition{}
 	api.Active = util.GetBoolPtr(true)
 	api.Name = util.GetStrPtr("test1")
@@ -32,10 +32,11 @@ func createLeanKeylessApiDefinition() *apim.APIDefinition {
 		},
 	}
 	api.VersionData.Versions = &dt
+
 	return &api
 }
 
-func createFullProtectedApiDefinition() (*apim.APIDefinition, error) {
+func createFullProtectedAPIDefinition() (*apim.APIDefinition, error) {
 	definitions := `{
 		"api_id": "4a77d8bfe76f41ad7ae5875b2259df3f",
 		"jwt_issued_at_validation_skew": 0,
@@ -449,6 +450,7 @@ func createFullProtectedApiDefinition() (*apim.APIDefinition, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return api, nil
 }
 

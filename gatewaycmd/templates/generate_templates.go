@@ -29,25 +29,27 @@ func generateTemplates(dir string) error {
 	if err != nil {
 		return err
 	}
+
 	err = generateApis(dir)
 	if err != nil {
 		return err
 	}
+
 	return generateKeys(dir)
 }
 
 func generateApis(dir string) error {
-	err := SaveTemplateToFile("lean-keyless-api", dir, createLeanKeylessApiDefinition())
+	err := SaveTemplateToFile("lean-keyless-api", dir, createLeanKeylessAPIDefinition())
 	if err != nil {
 		return err
 	}
 
-	fullProtectedApiDef, err := createFullProtectedApiDefinition()
+	fullProtectedAPIDef, err := createFullProtectedAPIDefinition()
 	if err != nil {
 		return err
 	}
 
-	return SaveTemplateToFile("full-protected-api", dir, fullProtectedApiDef)
+	return SaveTemplateToFile("full-protected-api", dir, fullProtectedAPIDef)
 }
 
 func generateKeys(dir string) error {

@@ -37,6 +37,7 @@ func deleteKeyByID(ctx context.Context, keysAPI apim.KeysAPI, id string) (*apim.
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, errors.New(resp.Status)
 	}

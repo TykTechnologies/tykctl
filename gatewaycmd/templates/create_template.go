@@ -23,7 +23,7 @@ import (
 
 const (
 	fromTemplate = "from-template"
-	fromAPi      = "from-api"
+	fromAPI      = "from-api"
 	tempDIR      = "template-dir"
 )
 
@@ -74,15 +74,18 @@ func createFromTemplate(name, dir, template string, sets []string) error {
 	if !errors.Is(err, fs.ErrNotExist) {
 		return err
 	}
+
 	var api *apim.APIDefinition
+
 	if template == shared.HTTPBin {
-		api = createLeanKeylessApiDefinition()
+		api = createLeanKeylessAPIDefinition()
 	}
 
-	api, err = createApi(name, api, sets)
+	api, err = createAPI(name, api, sets)
 	if err != nil {
 		return err
 	}
+
 	f, err := os.Create(path)
 	if err != nil {
 		return err
@@ -94,6 +97,7 @@ func createFromTemplate(name, dir, template string, sets []string) error {
 	if err != nil {
 		return err
 	}
+
 	_, err = f.Write(bytes)
 
 	return err
@@ -101,34 +105,42 @@ func createFromTemplate(name, dir, template string, sets []string) error {
 
 func templateFlags(f *pflag.FlagSet) {
 	f.StringP(fromTemplate, "t", "httpbin", "Templates to use to create the template file")
+	f.StringP(fromAPI, "a", "", "Api definition to use to create the template file")
 	f.StringP(tempDIR, "d", ".", "where to store the template")
 	f.StringArrayP(shared.SetFlag, "s", nil, "Set template API definition field value")
 }
 
-func createApi(name string, api *apim.APIDefinition, sets []string) (*apim.APIDefinition, error) {
+func createAPI(name string, api *apim.APIDefinition, sets []string) (*apim.APIDefinition, error) {
 	if api == nil {
 		api = new(apim.APIDefinition)
 	}
+
 	api.Name = util.GetStrPtr(name)
 	api.Slug = util.GetStrPtr(name)
+
 	if api.Proxy == nil {
 		api.Proxy = new(apim.APIDefinitionProxy)
 	}
+
 	api.Proxy.ListenPath = util.GetStrPtr(name)
-	apiJson, err := json.Marshal(api)
+
+	apiJSON, err := json.Marshal(api)
 	if err != nil {
 		return nil, err
 	}
 
-	j := string(apiJson)
+	j := string(apiJSON)
 
 	for _, set := range sets {
 		keyValue := strings.Split(set, "=")
 		if keyValue[1] == "true" || keyValue[1] == "false" {
-			value, err := strconv.ParseBool(keyValue[1])
+			var value bool
+
+			value, err = strconv.ParseBool(keyValue[1])
 			if err != nil {
 				return nil, err
 			}
+
 			j, err = sjson.Set(j, keyValue[0], value)
 		} else {
 			j, err = sjson.Set(j, keyValue[0], keyValue[1])
@@ -138,6 +150,7 @@ func createApi(name string, api *apim.APIDefinition, sets []string) (*apim.APIDe
 			return nil, err
 		}
 	}
+
 	err = json.Unmarshal([]byte(j), &api)
 	if nil != err {
 		return nil, err

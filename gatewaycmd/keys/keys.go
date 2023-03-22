@@ -11,5 +11,6 @@ func NewKeysCmd(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(shared.Keys).
 		WithCommands(
 			NewFetchKeysCmd(apimClient),
+			NewDeleteKeyCmd(apimClient),
 		)
 }

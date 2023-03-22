@@ -11,6 +11,7 @@ import (
 
 	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	mock "github.com/TykTechnologies/tykctl/gatewaycmd/mocks"
+	"github.com/TykTechnologies/tykctl/util"
 )
 
 func TestCreateKeysHeadersAndRows(t *testing.T) {
@@ -97,6 +98,16 @@ func TestFetchKeys(t *testing.T) {
 }
 
 func TestFetchKeyByID(t *testing.T) {
+	sessionState := apim.SessionState{
+		Tags:          []string{"da79826a-e39a-4f69-946c-0a5b4918b8f2"},
+		AccessRights:  nil,
+		Alias:         util.GetStrPtr("alias"),
+		ApplyPolicies: []string{"34", "40"},
+		Certificate:   util.GetStrPtr("my-certificate"),
+		IsInactive:    util.GetBoolPtr(true),
+		OrgId:         util.GetStrPtr("third-org"),
+	}
+
 	tests := []struct {
 		want             *apim.SessionState
 		name             string
@@ -107,15 +118,33 @@ func TestFetchKeyByID(t *testing.T) {
 		id               string
 	}{
 		{
-			name:             "Test Success",
-			want:             nil,
-			mockError:        nil,
-			mockHTTPResponse: nil,
-			mockResponse: &apim.SessionState{
-				Tags: []string{"da79826a-e39a-4f69-946c-0a5b4918b8f2"},
+			name:      "Test Success",
+			want:      &sessionState,
+			mockError: nil,
+			mockHTTPResponse: &http.Response{
+				StatusCode: http.StatusOK,
 			},
+			mockResponse:  &sessionState,
 			ExpectedError: nil,
 			id:            "d5455edf-7047-41ee-87d7-5657fa972bc8",
+		},
+		{
+			want:             nil,
+			name:             "Test http error code",
+			mockError:        nil,
+			mockHTTPResponse: &http.Response{StatusCode: 405, Status: "method not allowed"},
+			mockResponse:     nil,
+			ExpectedError:    errors.New("method not allowed"),
+			id:               "5678583f",
+		},
+		{
+			want:             nil,
+			name:             "Test gateway error",
+			mockError:        errors.New("key not found"),
+			mockHTTPResponse: &http.Response{StatusCode: 404, Status: "not found"},
+			mockResponse:     nil,
+			ExpectedError:    errors.New("key not found"),
+			id:               "6786546",
 		},
 	}
 	for _, tt := range tests {

@@ -14,6 +14,8 @@ import (
 	"github.com/TykTechnologies/tykctl/cloudcmd"
 	"github.com/TykTechnologies/tykctl/gatewaycmd"
 	"github.com/TykTechnologies/tykctl/internal"
+
+	cc "github.com/ivanpirog/coloredcobra"
 )
 
 var cfgFile string
@@ -45,6 +47,7 @@ func NewRootCmd() *cobra.Command {
 }
 
 func Execute() {
+
 	conf := cloud.Configuration{
 		DefaultHeader: map[string]string{},
 	}
@@ -54,6 +57,18 @@ func Execute() {
 	sdkClient.AddBeforeRestyExecute(AddTokenAndBaseURLToResty)
 
 	rootCmd := NewRootCmd()
+
+	cc.Init(&cc.Config{
+        RootCmd:       rootCmd,
+        Headings:      cc.HiCyan + cc.Bold + cc.Underline,
+        Commands:      cc.HiYellow + cc.Bold,
+		CmdShortDescr: cc.HiBlue,
+        Example:       cc.HiGreen + cc.Italic,
+        ExecName:      cc.Red + cc.Bold,
+        Flags:         cc.HiMagenta + cc.Bold,
+		FlagsDescr:    cc.HiBlue,
+    })
+	
 	cloudFactory := internal.CloudFactory{
 		Client: sdkClient,
 		Prompt: internal.NewSurveyPrompt(),

@@ -76,7 +76,7 @@ func createFromTemplate(name, dir, template string, sets []string) error {
 	}
 	var api *apim.APIDefinition
 	if template == shared.HTTPBin {
-		api = createHTTpBinApiDefinition()
+		api = createLeanKeylessApiDefinition()
 	}
 
 	api, err = createApi(name, api, sets)

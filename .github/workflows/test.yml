@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     env:
-      GOPRIVATE: github.com/TykTechnologies/cloud-sdk
+      GOPRIVATE: github.com/TykTechnologies
       GH_ACCESS_TOKEN: ${{ secrets.ORG_GH_TOKEN }}
     steps:
       - uses: actions/checkout@v2
@@ -20,8 +20,3 @@ jobs:
       - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - name: Testing
         run: make tests
-      #- name: Check Test coverage with Sonar cloud
-        #uses: sonarsource/sonarcloud-github-action@master
-        #env:
-        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

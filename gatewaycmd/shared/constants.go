@@ -1,9 +1,14 @@
 package shared
 
 const (
-	Fetch   = "fetch"
-	Delete  = "delete"
-	Create  = "create"
-	HTTPBin = "httpbin"
-	SetFlag = "set"
+	Create   = "create"
+	HTTPBin  = "httpbin"
+	SetFlag  = "set"
+	Gateway  = "gateway"
+	Fetch    = "fetch"
+	Delete   = "delete"
+	Keys     = "keys"
+	OutPut   = "output"
+	Table    = "table"
+	Generate = "generate"
 )

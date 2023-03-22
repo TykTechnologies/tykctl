@@ -14,5 +14,6 @@ func NewTemplateCmd() *cobra.Command {
 	return internal.NewCmd(template).
 		WithCommands(
 			NewCreateTemplate(),
+			NewGenerateTemplatesCmd(),
 		)
 }

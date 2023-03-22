@@ -86,3 +86,11 @@ func GetStrPtr(str string) *string {
 func GetBoolPtr(value bool) *bool {
 	return &value
 }
+
+func GetFloat64Ptr(value float64) *float64 {
+	return &value
+}
+
+func GetInt64(value int64) *int64 {
+	return &value
+}

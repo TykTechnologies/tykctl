@@ -17,6 +17,7 @@ func createLeanKeylessAPIDefinition() *apim.APIDefinition {
 	api.Active = util.GetBoolPtr(true)
 	api.Name = util.GetStrPtr("test1")
 	api.ApiId = util.GetStrPtr("test1")
+	api.Slug = util.GetStrPtr("test1")
 	api.UseKeyless = util.GetBoolPtr(true)
 	api.Proxy = new(apim.APIDefinitionProxy)
 	api.Proxy.ListenPath = util.GetStrPtr("/test1/")

@@ -9,11 +9,7 @@ import (
 	"github.com/TykTechnologies/tykctl/internal"
 )
 
-var checkoutLongDescription = `Set the current service to make sure you only see commands related to service you are using, eg.
-		
-     "tykctl checkout cloud"
-	
-     will set the current_service to cloud service`
+var checkoutLongDescription = `Set the current service to make sure you only see commands related to service you are using, eg. "tykctl checkout cloud" will set the current_service to cloud service`
 
 const (
 	CurrentService = "current_service"
@@ -23,7 +19,7 @@ const (
 
 func NewCheckoutCmd() *cobra.Command {
 	return internal.NewCmd("checkout").
-		WithDescription(checkoutLongDescription).
+		WithDescription("Sets tykctl to present commands within the context of the chosen service.").
 		WithLongDescription(checkoutLongDescription).
 		WithExample("tykctl checkout cloud").
 		WithValidArgs([]string{Cloud, Gateway}).

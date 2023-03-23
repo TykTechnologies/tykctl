@@ -61,12 +61,7 @@ func readTemplateAndCreateAPI(ctx context.Context, api apim.APIsAPI, reader inte
 		return nil, err
 	}
 
-	status, err := createAPI(ctx, api, definition)
-	if err != nil {
-		return nil, err
-	}
-
-	return status, nil
+	return createAPI(ctx, api, definition)
 }
 
 func createAPIFlags(f *pflag.FlagSet) {

@@ -47,6 +47,7 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 					cmd.PrintErrln(err)
 					return err
 				}
+
 				return nil
 			}
 			err := validateAndFetchDeploymentByID(ctx, factory.Client, factory.Config, cmd.Flags(), args[0])
@@ -54,6 +55,7 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			return nil
 		})
 }

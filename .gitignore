@@ -3,3 +3,5 @@ ara-client-sdk/.idea
 dist/
 
 dist/
+tempDir
+tempDir/

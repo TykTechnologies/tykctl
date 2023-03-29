@@ -42,6 +42,7 @@ func NewCmd(use string) Builder {
 		cmd: cobra.Command{
 			Use:          use,
 			SilenceUsage: true,
+			Version:      Version,
 		},
 	}
 }
@@ -55,7 +56,6 @@ func (b *builder) WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Bui
 	} else {
 		adder(b.cmd.Flags())
 	}
-
 	return b
 }
 

@@ -56,6 +56,7 @@ func (b *builder) WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Bui
 	} else {
 		adder(b.cmd.Flags())
 	}
+
 	return b
 }
 

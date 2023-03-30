@@ -12,4 +12,6 @@ const (
 	Table    = "table"
 	Generate = "generate"
 	Policy   = "policy"
+	Certs    = "certs"
+	OrgID    = "orgId"
 )

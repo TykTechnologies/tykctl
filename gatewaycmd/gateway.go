@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/TykTechnologies/tykctl/gatewaycmd/api"
+	"github.com/TykTechnologies/tykctl/gatewaycmd/policy"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/reload"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/templates"
 
@@ -21,5 +22,6 @@ func NewGatewayCommand(apimClient internal.ApimClient) *cobra.Command {
 			api.NewApisCmd(apimClient),
 			templates.NewTemplateCmd(),
 			keys.NewKeysCmd(apimClient),
+			policy.NewPolicyCmd(apimClient),
 		)
 }

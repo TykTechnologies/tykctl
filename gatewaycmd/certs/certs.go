@@ -10,5 +10,6 @@ import (
 func NewCertsCmd(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(shared.Certs).WithCommands(
 		NewFetchCertsCmd(apimClient),
+		NewDeleteCerts(apimClient),
 	)
 }

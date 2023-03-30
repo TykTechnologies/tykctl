@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/TykTechnologies/tykctl/gatewaycmd/api"
+
 	"github.com/TykTechnologies/tykctl/gatewaycmd/certs"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/policy"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/reload"

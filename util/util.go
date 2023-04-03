@@ -3,7 +3,9 @@ package util
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"net/mail"
+	"os"
 	"strings"
 )
 
@@ -66,4 +68,21 @@ func GenerateURLFromZone(region string) (string, error) {
 	}
 
 	return fmt.Sprintf("https://controller-aws-%s%s%s.cloud-ara.tyk.io:37001", regionPart[1], AbbreviateDirection(regionPart[2]), regionPart[3]), nil
+}
+
+func CheckDirectory(dir string) error {
+	_, err := os.Stat(dir)
+	if errors.Is(err, fs.ErrNotExist) {
+		return os.MkdirAll(dir, os.ModePerm)
+	}
+
+	return err
+}
+
+func GetStrPtr(str string) *string {
+	return &str
+}
+
+func GetBoolPtr(value bool) *bool {
+	return &value
 }

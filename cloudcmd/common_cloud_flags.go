@@ -29,3 +29,7 @@ func getValues(f *pflag.FlagSet) {
 func setValues(f *pflag.FlagSet) {
 	f.StringSlice(set, []string{}, "set a value for the object using dot-notation")
 }
+
+func envValues(f *pflag.FlagSet) {
+	f.StringSlice(envValue, []string{}, "change a deployment's environment variables using dot-notation")
+}

@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/antihax/optional"
 	"github.com/spf13/cobra"
@@ -16,6 +18,7 @@ import (
 func NewUpdateDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(update).
 		WithFlagAdder(false, setValues).
+		WithFlagAdder(false, envValues).
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			deployment, err := validateDeploymentFlagsAndUpdate(ctx, factory.Client, factory.Config, cmd.Flags(), args[0])
 			if err != nil {
@@ -49,7 +52,17 @@ func validateDeploymentFlagsAndUpdate(ctx context.Context, client internal.Cloud
 		return nil, err
 	}
 
-	return UpdateDeployment(ctx, client, *dep, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, id)
+	envVars, err := f.GetStringSlice(envValue)
+	if err != nil {
+		return nil, err
+	}
+
+	deployment, err := handleEnvVariables(*dep, envVars)
+	if err != nil {
+		return nil, err
+	}
+
+	return UpdateDeployment(ctx, client, *deployment, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, id)
 }
 
 func UpdateDeployment(ctx context.Context, client internal.CloudClient, deployment cloud.Deployment, orgID, teamID, envID, id string) (*cloud.Deployment, error) {
@@ -63,4 +76,29 @@ func UpdateDeployment(ctx context.Context, client internal.CloudClient, deployme
 	}
 
 	return deployResponse.Payload, nil
+}
+
+func handleEnvVariables(deployment cloud.Deployment, sets []string) (*cloud.Deployment, error) {
+	values := map[string]interface{}{}
+	///deployment.ExtraContext.Data["EnvData"]
+	for _, set := range sets {
+		var value bool
+		var err error
+
+		keyValue := strings.Split(set, "=")
+		if keyValue[1] == "true" || keyValue[1] == "false" {
+			value, err = strconv.ParseBool(keyValue[1])
+			if err != nil {
+				return nil, err
+			}
+
+			values[keyValue[0]] = value
+		} else {
+			values[keyValue[0]] = keyValue[1]
+		}
+	}
+
+	deployment.ExtraContext.Data["EnvData"] = values
+
+	return &deployment, nil
 }

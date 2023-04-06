@@ -58,4 +58,5 @@ const (
 	currentCloudToken      = "cloud.current_token"
 	get                    = "get"
 	set                    = "set"
+	envValue               = "envVar"
 )

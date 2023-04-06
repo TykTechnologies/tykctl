@@ -33,6 +33,7 @@ var ErrorControlPlaneRequired = errors.New("error control plane to link the gate
 
 func NewCreateEdgeDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(edge).
+		WithFlagAdder(false, setValues).
 		WithLongDescription(createEdgeDeploymentDesc).
 		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithDescription("will create the edge gateway in a given environment").
@@ -72,6 +73,16 @@ func validateEdgeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	deployment.Kind = gateway
 
 	deployHome, err := f.GetBool(deploy)
+	if err != nil {
+		return nil, err
+	}
+
+	setVals, err := f.GetStringSlice(set)
+	if err != nil {
+		return nil, err
+	}
+
+	err = internal.HandleSets(deployment, setVals)
 	if err != nil {
 		return nil, err
 	}

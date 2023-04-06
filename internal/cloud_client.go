@@ -29,4 +29,5 @@ type CloudClient interface {
 	GetDeploymentZones(ctx context.Context) (*ZoneResponse, *resty.Response, error)
 	GetUserInfo(ctx context.Context) (*UserInfo, *resty.Response, error)
 	GetOrgInfo(ctx context.Context, orgID string) (*OrgInfo, *resty.Response, error)
+	UpdateDeployment(ctx context.Context, body cloud.Deployment, orgID, teamID, envID, id string, localVarOptionals *cloud.DeploymentsApiUpdateDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error)
 }

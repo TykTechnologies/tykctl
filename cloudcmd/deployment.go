@@ -39,7 +39,9 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 			NewFetchDeploymentCmd(factory),
 			NewStartDeploymentCmd(factory),
 			NewDeploymentStatusCmd(factory),
-			NewRestartDeploymentCmd(factory))
+			NewRestartDeploymentCmd(factory),
+			NewUpdateDeployment(factory),
+		)
 }
 
 func validateCommonDeploymentFlags(config internal.UserConfig) (*DeploymentFlags, error) {

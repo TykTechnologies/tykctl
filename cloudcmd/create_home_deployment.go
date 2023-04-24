@@ -85,12 +85,7 @@ func validateHomeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 		return nil, err
 	}
 
-	setVals, err := f.GetStringSlice(set)
-	if err != nil {
-		return nil, err
-	}
-
-	err = internal.HandleSets(deployment, setVals)
+	err = handleDeploymentDynamicVars(deployment, f)
 	if err != nil {
 		return nil, err
 	}

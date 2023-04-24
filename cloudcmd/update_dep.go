@@ -3,6 +3,7 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"reflect"
 	"strconv"
@@ -14,12 +15,14 @@ import (
 
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/util"
 )
 
 func NewUpdateDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(update).
 		WithFlagAdder(false, setValues).
 		WithFlagAdder(false, envValues).
+		WithFlagAdder(false, updateDeploymentFlag).
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			deployment, err := validateDeploymentFlagsAndUpdate(ctx, factory.Client, factory.Config, cmd.Flags(), args[0])
 			if err != nil {
@@ -28,8 +31,30 @@ func NewUpdateDeployment(factory internal.CloudFactory) *cobra.Command {
 
 			cmd.Printf("updated %s\n", deployment.UID)
 
+			deployAfterUpdate, err := cmd.Flags().GetBool(deploy)
+			if err != nil {
+				return err
+			}
+
+			if deployAfterUpdate {
+				_, err = validateFlagsAndStartDeployment(ctx, factory.Client, factory.Config, deployment.UID)
+
+				if err != nil {
+					return err
+				}
+
+				log.Println("deploying...")
+				return nil
+			}
+
 			return nil
 		})
+}
+
+func updateDeploymentFlag(f *pflag.FlagSet) {
+	f.String(zone, "", "the region you want to deploy into e.g aws-eu-west-2")
+	f.String(domain, "", "custom domain for your deployment")
+	f.Bool(deploy, false, "deploy the deployment after create")
 }
 
 func validateDeploymentFlagsAndUpdate(ctx context.Context, client internal.CloudClient, config internal.UserConfig, f *pflag.FlagSet, id string) (*cloud.Deployment, error) {
@@ -43,22 +68,16 @@ func validateDeploymentFlagsAndUpdate(ctx context.Context, client internal.Cloud
 		return nil, err
 	}
 
-	setVals, err := f.GetStringSlice(set)
+	zone, err := f.GetString(zone)
 	if err != nil {
 		return nil, err
 	}
 
-	err = internal.HandleSets(dep, setVals)
-	if err != nil {
-		return nil, err
+	if !util.StringIsEmpty(zone) {
+		dep.ZoneCode = zone
 	}
 
-	envVars, err := f.GetStringSlice(envValue)
-	if err != nil {
-		return nil, err
-	}
-
-	err = handleEnvVariables(dep, envVars)
+	err = handleDeploymentDynamicVars(dep, f)
 	if err != nil {
 		return nil, err
 	}
@@ -99,6 +118,30 @@ func handleEnvVariables(deployment *cloud.Deployment, sets []string) error {
 		} else {
 			deployment.ExtraContext.Data["EnvData"][keyValue[0]] = keyValue[1]
 		}
+	}
+
+	return nil
+}
+
+func handleDeploymentDynamicVars(deployment *cloud.Deployment, f *pflag.FlagSet) error {
+	setVals, err := f.GetStringSlice(set)
+	if err != nil {
+		return err
+	}
+
+	err = internal.HandleSets(deployment, setVals)
+	if err != nil {
+		return err
+	}
+
+	envVars, err := f.GetStringSlice(envValue)
+	if err != nil {
+		return err
+	}
+
+	err = handleEnvVariables(deployment, envVars)
+	if err != nil {
+		return err
 	}
 
 	return nil

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -57,12 +58,12 @@ func validateDeploymentFlagsAndUpdate(ctx context.Context, client internal.Cloud
 		return nil, err
 	}
 
-	deployment, err := handleEnvVariables(*dep, envVars)
+	err = handleEnvVariables(dep, envVars)
 	if err != nil {
 		return nil, err
 	}
 
-	return UpdateDeployment(ctx, client, *deployment, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, id)
+	return UpdateDeployment(ctx, client, *dep, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, id)
 }
 
 func UpdateDeployment(ctx context.Context, client internal.CloudClient, deployment cloud.Deployment, orgID, teamID, envID, id string) (*cloud.Deployment, error) {
@@ -78,9 +79,11 @@ func UpdateDeployment(ctx context.Context, client internal.CloudClient, deployme
 	return deployResponse.Payload, nil
 }
 
-func handleEnvVariables(deployment cloud.Deployment, sets []string) (*cloud.Deployment, error) {
-	values := map[string]interface{}{}
-	///deployment.ExtraContext.Data["EnvData"]
+func handleEnvVariables(deployment *cloud.Deployment, sets []string) error {
+	if reflect.ValueOf(deployment).Kind() != reflect.Ptr {
+		return errors.New("out put must be a pointer")
+	}
+
 	for _, set := range sets {
 		var value bool
 		var err error
@@ -89,16 +92,14 @@ func handleEnvVariables(deployment cloud.Deployment, sets []string) (*cloud.Depl
 		if keyValue[1] == "true" || keyValue[1] == "false" {
 			value, err = strconv.ParseBool(keyValue[1])
 			if err != nil {
-				return nil, err
+				return err
 			}
 
-			values[keyValue[0]] = value
+			deployment.ExtraContext.Data["EnvData"][keyValue[0]] = value
 		} else {
-			values[keyValue[0]] = keyValue[1]
+			deployment.ExtraContext.Data["EnvData"][keyValue[0]] = keyValue[1]
 		}
 	}
 
-	deployment.ExtraContext.Data["EnvData"] = values
-
-	return &deployment, nil
+	return nil
 }

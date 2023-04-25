@@ -59,14 +59,17 @@ func TestHandleDeploymentDynamicVars(t *testing.T) {
 		fmt.Sprintf("--envVar=%s", "TYK_DB_EMAILBACKEND_CODE=sendgri"),
 		fmt.Sprintf("--envVar=%s", "DB=tm"),
 	})
+
 	err := cmd.Execute()
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	deployment := &cloud.Deployment{
 		ExtraContext: &cloud.MetaDataStore{Data: map[string]map[string]interface{}{"EnvData": {"company": "tyk", "DB": "ty"}}},
 	}
 	err = handleDeploymentDynamicVars(deployment, cmd.Flags())
+
 	assert.Equal(t, nil, err)
 	assert.Equal(t, &cloud.MetaDataStore{Data: map[string]map[string]interface{}{"EnvData": {"DB": "tm", "company": "tyk", "TYK_DB_EMAILBACKEND_DEFAULTFROMEMAIL": "no-reply@tyk.io", "TYK_DB_EMAILBACKEND_CODE": "sendgri", "TYK_DB_EMAILBACKEND_ENABLEEMAILNOTIFICATIONS": true}}}, deployment.ExtraContext)
 }

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"reflect"
 	"strconv"
 	"strings"
 
@@ -99,8 +98,13 @@ func UpdateDeployment(ctx context.Context, client internal.CloudClient, deployme
 }
 
 func handleEnvVariables(deployment *cloud.Deployment, sets []string) error {
-	if reflect.ValueOf(deployment).Kind() != reflect.Ptr {
-		return errors.New("out put must be a pointer")
+	if len(sets) > 0 && (deployment.ExtraContext == nil || deployment.ExtraContext.Data == nil) {
+		deployment.ExtraContext = &cloud.MetaDataStore{}
+		deployment.ExtraContext.Data = make(map[string]map[string]interface{})
+	}
+
+	if deployment.ExtraContext.Data["EnvData"] == nil {
+		deployment.ExtraContext.Data["EnvData"] = make(map[string]interface{})
 	}
 
 	for _, set := range sets {
@@ -124,12 +128,12 @@ func handleEnvVariables(deployment *cloud.Deployment, sets []string) error {
 }
 
 func handleDeploymentDynamicVars(deployment *cloud.Deployment, f *pflag.FlagSet) error {
-	setVals, err := f.GetStringSlice(set)
+	setVal, err := f.GetStringSlice(set)
 	if err != nil {
 		return err
 	}
 
-	err = internal.HandleSets(deployment, setVals)
+	err = internal.HandleSets(deployment, setVal)
 	if err != nil {
 		return err
 	}

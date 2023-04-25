@@ -1,31 +1,20 @@
-## tykctl cloud deployments status
+## tykctl cloud deployments update
 
-output the status of a deployment given its uuid.
-
-### Synopsis
-
-
-This command will output the status of a deployment given its uuid.
-You will receive an error if the deployment does not exist.
-
-Sample usage for this command:
-tykctl cloud deployments status b5c503e8-c632-4ce0-9629-b0ee3e3c2c62 
 
 
 ```
-tykctl cloud deployments status [flags]
-```
-
-### Examples
-
-```
-tykctl cloud deployments status <deployment uuid>
+tykctl cloud deployments update [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for status
+      --deploy           deploy the deployment after create
+      --domain string    custom domain for your deployment
+      --envVar strings   change a deployment's environment variables using dot-notation
+  -h, --help             help for update
+      --set strings      set a value for the object using dot-notation
+      --zone string      the region you want to deploy into e.g aws-eu-west-2
 ```
 
 ### Options inherited from parent commands

@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	envString = "--envVar=%s"
-	setString = "--set=%s"
+	envFormatString = "--envVar=%s"
+	setFormatString = "--set=%s"
 )
 
 func TestHandleEnvVariables(t *testing.T) {
@@ -55,14 +55,13 @@ func TestHandleEnvVariables(t *testing.T) {
 func TestHandleDeploymentDynamicVars(t *testing.T) {
 	cmd := internal.NewCmd("test").
 		WithFlagAdder(false, setValues).
-		WithFlagAdder(false, envValues).
-		WithCommands()
+		WithFlagAdder(false, envValues).WithCommands()
 	cmd.SetArgs([]string{
-		fmt.Sprintf(setString, "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_CODE=sendgrid"),
-		fmt.Sprintf(envString, "TYK_DB_EMAILBACKEND_ENABLEEMAILNOTIFICATIONS=true"),
-		fmt.Sprintf(setString, "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_DEFAULTFROMEMAIL=no-reply@tyk.io"),
-		fmt.Sprintf(envString, "TYK_DB_EMAILBACKEND_CODE=sendgri"),
-		fmt.Sprintf(envString, "DB=tm"),
+		fmt.Sprintf(setFormatString, "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_CODE=sendgrid"),
+		fmt.Sprintf(envFormatString, "TYK_DB_EMAILBACKEND_ENABLEEMAILNOTIFICATIONS=true"),
+		fmt.Sprintf(setFormatString, "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_DEFAULTFROMEMAIL=no-reply@tyk.io"),
+		fmt.Sprintf(envFormatString, "TYK_DB_EMAILBACKEND_CODE=sendgri"),
+		fmt.Sprintf(envFormatString, "DB=tm"),
 	})
 
 	err := cmd.Execute()

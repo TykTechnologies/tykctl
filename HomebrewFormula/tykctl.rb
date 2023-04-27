@@ -5,20 +5,20 @@
 class Tykctl < Formula
   desc ""
   homepage ""
-  version "0.0.26"
+  version "0.0.27"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.26/tykctl_0.0.26_Darwin_x86_64.tar.gz"
-      sha256 "f880e5800522d895620a6338d8a18b4cfc51f98d616fe5b1d33c27cc9fcfbae6"
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.27/tykctl_0.0.27_Darwin_x86_64.tar.gz"
+      sha256 "5540526a9f1b39455dc73a07e78ff7ab66ca7a401ea4130a2e11fa161d051163"
 
       def install
         bin.install "tykctl"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.26/tykctl_0.0.26_Darwin_arm64.tar.gz"
-      sha256 "05e65a864ce212a070d4a9312551aff55c16c5bb845bf7934eecc9bf43b98b89"
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.27/tykctl_0.0.27_Darwin_arm64.tar.gz"
+      sha256 "7c17d9de89ddc8e64a986328613ac3b79dd24b4217bca89e0cf2ff0895f1fe6b"
 
       def install
         bin.install "tykctl"
@@ -27,17 +27,17 @@ class Tykctl < Formula
   end
 
   on_linux do
-    if Hardware::CPU.intel?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.26/tykctl_0.0.26_Linux_x86_64.tar.gz"
-      sha256 "320028aebd8a02732aef2a8e5f6887322cfb106a16e4a0c77984193d22d28dbf"
+    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.27/tykctl_0.0.27_Linux_arm64.tar.gz"
+      sha256 "a78f9a63ebc0d413eeead6ff5e31d123ac9f98ae792582155bac5bb8568d5f96"
 
       def install
         bin.install "tykctl"
       end
     end
-    if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.26/tykctl_0.0.26_Linux_arm64.tar.gz"
-      sha256 "ff6518d588618d9f4ed976d9ab8105b1d2e5cfdffc29659dc9946127bed2c120"
+    if Hardware::CPU.intel?
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.27/tykctl_0.0.27_Linux_x86_64.tar.gz"
+      sha256 "62d4260f7be1a508456e55328c4a35f809d4b005c5976aa400068a7d181a9b57"
 
       def install
         bin.install "tykctl"

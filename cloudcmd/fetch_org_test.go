@@ -308,7 +308,7 @@ func TestFetchAndPrintOrgByID(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
-			err := FetchAndPrintOrgByID(context.Background(), m, tt.args.output, "test")
+			err := FetchAndPrintOrgByID(context.Background(), m, tt.args.output, "test", nil)
 			assert.Equal(t, tt.args.ExpectedError, err)
 		})
 	}

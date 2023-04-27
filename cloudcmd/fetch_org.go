@@ -35,6 +35,7 @@ func NewOrgListCommand(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
 		WithExample("tykctl cloud orgs fetch --output<json/table>").
 		WithFlagAdder(false, addOutPutFlags).
+		WithFlagAdder(false, getValues).
 		WithLongDescription(fetchOrgDesc).
 		WithDescription("fetch the organizations you belong to.").
 		AddPreRunFuncs(NewCloudRbac(OrgAdmin, factory.Config).CloudRbac).
@@ -45,7 +46,12 @@ func NewOrgListCommand(factory internal.CloudFactory) *cobra.Command {
 				return err
 			}
 			if len(args) == 1 {
-				err = FetchAndPrintOrgByID(cmd.Context(), factory.Client, outPut, args[0])
+				getVals, err := cmd.Flags().GetStringSlice(get)
+				if err != nil {
+					return err
+				}
+
+				err = FetchAndPrintOrgByID(cmd.Context(), factory.Client, outPut, args[0], getVals)
 				if err != nil {
 					cmd.PrintErrln(err)
 					return err
@@ -81,13 +87,18 @@ func FetchAndPrintOrganizations(ctx context.Context, client internal.CloudClient
 }
 
 // FetchAndPrintOrgByID send a prints a single organization either as json or as a table.
-func FetchAndPrintOrgByID(ctx context.Context, client internal.CloudClient, output, oid string) error {
+func FetchAndPrintOrgByID(ctx context.Context, client internal.CloudClient, output, oid string, getValues []string) error {
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
 
 	organization, err := GetOrgByID(ctx, client, oid)
 	if err != nil {
+		return err
+	}
+
+	if len(getValues) > 0 {
+		err = internal.HandleGets(organization, getValues)
 		return err
 	}
 

@@ -64,7 +64,7 @@ func AddSetValues(jsonString string, sets []string) (string, error) {
 
 func HandleSets(object interface{}, sets []string) error {
 	if reflect.ValueOf(object).Kind() != reflect.Ptr {
-		return errors.New("out put must be a pointer")
+		return errors.New("input must be a pointer")
 	}
 
 	bytes, err := json.Marshal(object)

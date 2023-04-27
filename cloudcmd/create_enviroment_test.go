@@ -196,7 +196,7 @@ func TestValidateFlagsAndCreateEnv(t *testing.T) {
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
 			m.EXPECT().CreateEnv(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Times(tt.ExpectedMockFuncCall).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
-			env, err := validateFlagsAndCreateEnv(context.Background(), m, tt.envName, tt.teamID, tt.orgID)
+			env, err := validateFlagsAndCreateEnv(context.Background(), m, tt.envName, tt.teamID, tt.orgID, nil)
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.ExpectedEnv, env)
 		})

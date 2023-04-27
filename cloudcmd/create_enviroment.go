@@ -33,21 +33,30 @@ func NewCreateEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(createEnvDesc).
 		WithDescription("creates an environment in a given team.").
 		WithFlagAdder(false, createEnvironment).
+		WithFlagAdder(false, setValues).
 		WithExample("tyk cloud environments create --name='staging'").
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			org := factory.Config.GetCurrentUserOrg()
 			team := factory.Config.GetCurrentUserTeam()
+
 			envName, err := cmd.Flags().GetString(name)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
-			env, err := validateFlagsAndCreateEnv(ctx, factory.Client, envName, team, org)
+
+			setVal, err := cmd.Flags().GetStringSlice(set)
+			if err != nil {
+				return err
+			}
+
+			env, err := validateFlagsAndCreateEnv(ctx, factory.Client, envName, team, org, setVal)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			cmd.Println(fmt.Sprintf("Environment %s created successfully", env.UID))
 			return nil
 		})
@@ -59,7 +68,7 @@ func createEnvironment(f *pflag.FlagSet) {
 }
 
 // validateFlagsAndCreateEnv validate that the cloudcmd flags are not empty and create environment in a team.
-func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient, envName, teamID, orgID string) (*cloud.Loadout, error) {
+func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient, envName, teamID, orgID string, sets []string) (*cloud.Loadout, error) {
 	if util.StringIsEmpty(orgID) {
 		return nil, ErrorOrgRequired
 	}
@@ -71,6 +80,11 @@ func validateFlagsAndCreateEnv(ctx context.Context, client internal.CloudClient,
 	env := cloud.Loadout{Name: envName}
 	if util.StringIsEmpty(env.Name) {
 		return nil, ErrorNameRequired
+	}
+
+	err := internal.HandleSets(&env, sets)
+	if err != nil {
+		return nil, err
 	}
 
 	environment, err := CreateEnvironment(ctx, client, env, orgID, teamID)

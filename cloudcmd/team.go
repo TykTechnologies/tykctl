@@ -24,6 +24,7 @@ tykctl cloud init
 
 func NewTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(teams).
+		WithAliases([]string{team}).
 		WithFlagAdder(true, addOrgFlag).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: true}}).
 		WithLongDescription(teamDesc).

@@ -78,10 +78,12 @@ func validateAndFetchDeploymentByID(ctx context.Context, client internal.CloudCl
 	if err != nil {
 		return err
 	}
+
 	envVars, err := f.GetStringSlice(envValue)
 	if err != nil {
 		return err
 	}
+
 	values := combineGetsValues(getVals, envVars)
 	if len(values) > 0 {
 		err := internal.HandleGets(deployment, values)
@@ -198,5 +200,6 @@ func combineGetsValues(getKeys, getEnvkeys []string) []string {
 		fullKey := fmt.Sprintf("ExtraContext.Data.EnvData.%s", key)
 		getKeys = append(getKeys, fullKey)
 	}
+
 	return getKeys
 }

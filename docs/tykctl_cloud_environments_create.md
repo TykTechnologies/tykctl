@@ -30,6 +30,7 @@ tyk cloud environments create --name='staging'
 ```
   -h, --help          help for create
   -n, --name string   name for the environment you want to create.
+      --set strings   set a value for the object using dot-notation
 ```
 
 ### Options inherited from parent commands

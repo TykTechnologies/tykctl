@@ -3,6 +3,7 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -37,6 +38,7 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		AddPreRunFuncs(NewCloudRbac(TeamMember, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
 		WithFlagAdder(false, getValues).
+		WithFlagAdder(false, getEnvValues).
 		WithLongDescription(fetchDeploymentDesc).
 		WithDescription("fetch deployment from an environment.").
 		WithExample("tykctl cloud deployments fetch").
@@ -76,9 +78,13 @@ func validateAndFetchDeploymentByID(ctx context.Context, client internal.CloudCl
 	if err != nil {
 		return err
 	}
-
-	if len(getVals) > 0 {
-		err := internal.HandleGets(deployment, getVals)
+	envVars, err := f.GetStringSlice(envValue)
+	if err != nil {
+		return err
+	}
+	values := combineGetsValues(getVals, envVars)
+	if len(values) > 0 {
+		err := internal.HandleGets(deployment, values)
 		return err
 	}
 
@@ -185,4 +191,12 @@ func CreateDeploymentHeadersAndRows(deployments []cloud.Deployment) ([]string, [
 	}
 
 	return header, rows
+}
+
+func combineGetsValues(getKeys, getEnvkeys []string) []string {
+	for _, key := range getEnvkeys {
+		fullKey := fmt.Sprintf("ExtraContext.Data.EnvData.%s", key)
+		getKeys = append(getKeys, fullKey)
+	}
+	return getKeys
 }

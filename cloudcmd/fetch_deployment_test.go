@@ -39,3 +39,38 @@ func TestCreateDeploymentHeadersAndRows(t *testing.T) {
 		})
 	}
 }
+
+func TestCombineGetsValues(t *testing.T) {
+	tests := []struct {
+		name          string
+		getkeys       []string
+		getEnvValKeys []string
+		want          []string
+	}{
+		{
+			name:          "Test has both envVar and get keys",
+			getkeys:       []string{"ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_CODE", "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_DEFAULTFROMEMAIL"},
+			getEnvValKeys: []string{"TYK_DB_EMAILBACKEND_ENABLEEMAILNOTIFICATIONS"},
+			want:          []string{"ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_CODE", "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_DEFAULTFROMEMAIL", "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_ENABLEEMAILNOTIFICATIONS"},
+		},
+		{
+			name:          "Test has envVar only",
+			getkeys:       []string{},
+			getEnvValKeys: []string{"TYK_DB_EMAILBACKEND_ENABLEEMAILNOTIFICATIONS", "test"},
+			want:          []string{"ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_ENABLEEMAILNOTIFICATIONS", "ExtraContext.Data.EnvData.test"},
+		},
+		{
+			name:          "Test has getVars only",
+			getkeys:       []string{"ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_CODE", "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_DEFAULTFROMEMAIL"},
+			getEnvValKeys: nil,
+			want:          []string{"ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_CODE", "ExtraContext.Data.EnvData.TYK_DB_EMAILBACKEND_DEFAULTFROMEMAIL"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			results := combineGetsValues(tt.getkeys, tt.getEnvValKeys)
+			assert.Equal(t, tt.want, results)
+			assert.Equal(t, len(tt.want), len(results))
+		})
+	}
+}

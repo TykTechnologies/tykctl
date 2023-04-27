@@ -32,6 +32,7 @@ tyckctl cloud teams create --name='first team' --org=<org uuid>
 ```
   -h, --help          help for create
   -n, --name string   name for the team you want to create.
+      --set strings   set a value for the object using dot-notation
 ```
 
 ### Options inherited from parent commands

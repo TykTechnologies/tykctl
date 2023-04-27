@@ -29,6 +29,7 @@ tykctl cloud environments fetch --team=<teamID> --org=<orgID>
 ### Options
 
 ```
+      --get strings     Get a value from the object using dot-notation
   -h, --help            help for fetch
   -o, --output string   Format you want to use can be table,json (default "table")
 ```

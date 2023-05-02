@@ -61,6 +61,7 @@ const (
 	envValue               = "envVar"
 	delete                 = "delete"
 	purge                  = "purge"
+	confirm                = "confirm"
 )
 
 var cloudRoles = []string{"ara_admin", "org_admin", "team_admin", "team_member"}

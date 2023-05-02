@@ -19,8 +19,20 @@ func NewDeleteDeployment(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(false, deleteDeploymentFlag).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
-			if !factory.Prompt.PerformActionPrompt() {
-				return nil
+			confirmed, err := cmd.Flags().GetBool(confirm)
+			if err != nil {
+				return err
+			}
+
+			if !confirmed {
+				performAction, err := factory.Prompt.PerformActionPrompt("deployment")
+				if err != nil {
+					return err
+				}
+
+				if !performAction {
+					return nil
+				}
 			}
 
 			deployment, err := validateFlagsAndDeleteDeployment(ctx, factory.Client, factory.Config, args[0], cmd.Flags())
@@ -72,6 +84,7 @@ func deleteDeployment(ctx context.Context, client internal.CloudClient, orgID, t
 }
 
 func deleteDeploymentFlag(f *pflag.FlagSet) {
-	f.String(delete, "", "mark deployment as deleted")
-	f.String(purge, "", "purge deployment from storage")
+	f.BoolP(delete, "d", false, "mark deployment as deleted")
+	f.BoolP(purge, "p", false, "purge deployment from storage")
+	f.BoolP(confirm, "c", false, "delete the deployment without a confirmation prompt")
 }

@@ -65,17 +65,18 @@ func (mr *MockCloudPromptMockRecorder) OrgPrompt(orgs interface{}) *gomock.Call 
 }
 
 // PerformActionPrompt mocks base method.
-func (m *MockCloudPrompt) PerformActionPrompt() bool {
+func (m *MockCloudPrompt) PerformActionPrompt(object string) (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PerformActionPrompt")
+	ret := m.ctrl.Call(m, "PerformActionPrompt", object)
 	ret0, _ := ret[0].(bool)
-	return ret0
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // PerformActionPrompt indicates an expected call of PerformActionPrompt.
-func (mr *MockCloudPromptMockRecorder) PerformActionPrompt() *gomock.Call {
+func (mr *MockCloudPromptMockRecorder) PerformActionPrompt(object interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PerformActionPrompt", reflect.TypeOf((*MockCloudPrompt)(nil).PerformActionPrompt))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PerformActionPrompt", reflect.TypeOf((*MockCloudPrompt)(nil).PerformActionPrompt), object)
 }
 
 // RegionPrompt mocks base method.

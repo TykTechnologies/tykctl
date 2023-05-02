@@ -16,7 +16,7 @@ func NewSurveyPrompt() *SurveyPrompt {
 	return &SurveyPrompt{}
 }
 
-func (s *SurveyPrompt) YesNoPrompt() bool {
+func (s *SurveyPrompt) PerformActionPrompt() bool {
 	return false
 }
 

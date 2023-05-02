@@ -8,5 +8,5 @@ type CloudPrompt interface {
 	OrgPrompt(orgs []cloud.Organisation) (*cloud.Organisation, error)
 	TeamPrompt(teams []cloud.Team) (*cloud.Team, error)
 	EnvPrompt(envs []cloud.Loadout) (*cloud.Loadout, error)
-	YesNoPrompt() bool
+	PerformActionPrompt() bool
 }

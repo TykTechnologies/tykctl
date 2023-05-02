@@ -62,16 +62,16 @@ func validateFlagsAndDeleteDeployment(ctx context.Context, client internal.Cloud
 		return nil, err
 	}
 
-	return deleteDeployment(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, deploymentID, deleteFlag, purgeFlag)
-}
-
-func deleteDeployment(ctx context.Context, client internal.CloudClient, orgID, teamID, envID, id string, delete, purge bool) (*cloud.Deployment, error) {
-	localVar := cloud.DeploymentsApiDestroyDeploymentOpts{
-		Delete: optional.NewBool(delete),
-		Purge:  optional.NewBool(purge),
+	localVar := &cloud.DeploymentsApiDestroyDeploymentOpts{
+		Delete: optional.NewBool(deleteFlag),
+		Purge:  optional.NewBool(purgeFlag),
 	}
 
-	deleteResponse, resp, err := client.DestroyDeployment(ctx, orgID, teamID, envID, id, &localVar)
+	return deleteDeployment(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, deploymentID, localVar)
+}
+
+func deleteDeployment(ctx context.Context, client internal.CloudClient, orgID, teamID, envID, id string, deploymentQuery *cloud.DeploymentsApiDestroyDeploymentOpts) (*cloud.Deployment, error) {
+	deleteResponse, resp, err := client.DestroyDeployment(ctx, orgID, teamID, envID, id, deploymentQuery)
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))
 	}

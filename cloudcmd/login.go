@@ -136,10 +136,8 @@ func GetUserInfo(ctx context.Context, client internal.CloudClient) (*internal.Us
 
 // / getUserRole returns the user role.
 func getUserRole(roles []internal.Role) (*internal.Role, error) {
-	roleList := []string{"org_admin", "team_admin", "team_member"}
-
 	for _, role := range roles {
-		contain := slices.Contains(roleList, role.Role)
+		contain := slices.Contains(cloudRoles, role.Role)
 		if contain {
 			return &role, nil
 		}

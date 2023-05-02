@@ -33,13 +33,12 @@ func NewCloudRbac(minAllowedUser Permission, config internal.UserConfig) CloudRb
 // this will prevent you from sending a request that will fail due to lack of permissions.
 func (c CloudRbac) CloudRbac(cmd *cobra.Command, args []string) error {
 	role := c.Config.GetCurrentUserRole()
-	allowedRoles := []string{"org_admin", "team_admin", "team_member"}
 
 	if role == "" {
 		return ErrorNoRoleFound
 	}
 
-	if !slices.Contains(allowedRoles, role) {
+	if !slices.Contains(cloudRoles, role) {
 		return fmt.Errorf("%s is invalid", role)
 	}
 

@@ -16,6 +16,10 @@ func NewSurveyPrompt() *SurveyPrompt {
 	return &SurveyPrompt{}
 }
 
+func (s *SurveyPrompt) YesNoPrompt() bool {
+	return false
+}
+
 func (s *SurveyPrompt) RegionPrompt(regions []string) (string, error) {
 	prompt := &survey.Select{
 		Message: "Select your home region",

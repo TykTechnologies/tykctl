@@ -197,6 +197,15 @@ func (c *CloudSdkClient) UpdateDeployment(ctx context.Context, body cloud.Deploy
 	return c.Client.DeploymentsApi.UpdateDeployment(ctx, body, orgID, teamID, envID, id, localVarOptionals)
 }
 
+func (c *CloudSdkClient) DestroyDeployment(ctx context.Context, oid, tid, lid, id string, localVarOptionals *cloud.DeploymentsApiDestroyDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2001{}, nil, err
+	}
+
+	return c.Client.DeploymentsApi.DestroyDeployment(ctx, oid, tid, lid, id, localVarOptionals)
+}
+
 func (c *CloudSdkClient) GetDeploymentZones(ctx context.Context) (*ZoneResponse, *resty.Response, error) {
 	err := c.runBeforeRestyExecute()
 	if err != nil {

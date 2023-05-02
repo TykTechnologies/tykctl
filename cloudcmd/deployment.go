@@ -41,6 +41,7 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 			NewDeploymentStatusCmd(factory),
 			NewRestartDeploymentCmd(factory),
 			NewUpdateDeployment(factory),
+			NewDeleteDeployment(factory),
 		)
 }
 

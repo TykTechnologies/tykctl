@@ -182,12 +182,12 @@ func validateCommonDeploymentFetchFlags(f *pflag.FlagSet, config internal.UserCo
 }
 
 func CreateDeploymentHeadersAndRows(deployments []cloud.Deployment) ([]string, [][]string) {
-	header := []string{"Name", "UID", "Kind", "Region", "State"}
+	header := []string{"Name", "UID", "Kind", "Region", "State", "Namespace"}
 	rows := make([][]string, 0)
 
 	for _, deployment := range deployments {
 		row := []string{
-			deployment.Name, deployment.UID, deployment.Kind, deployment.ZoneCode, deployment.State,
+			deployment.Name, deployment.UID, deployment.Kind, deployment.ZoneCode, deployment.State, deployment.Namespace,
 		}
 		rows = append(rows, row)
 	}

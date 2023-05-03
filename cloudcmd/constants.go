@@ -60,6 +60,7 @@ const (
 	set                    = "set"
 	envValue               = "envVar"
 	delete                 = "delete"
+	del                    = "del"
 	purge                  = "purge"
 	confirm                = "confirm"
 )

@@ -16,6 +16,7 @@ import (
 
 func NewDeleteDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(delete).
+		WithAliases([]string{del}).
 		WithFlagAdder(false, deleteDeploymentFlag).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {

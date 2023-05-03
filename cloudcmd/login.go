@@ -172,6 +172,19 @@ func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt intern
 		orgInit.Team = selectedTeam.UID
 	}
 
+	if selectedTeam == nil || len(selectedTeam.Loadouts) == 0 {
+		return &orgInit, nil
+	}
+
+	selectedEnv, err := prompt.EnvPrompt(selectedTeam.Loadouts)
+	if err != nil {
+		return nil, err
+	}
+
+	if selectedEnv != nil {
+		orgInit.Env = selectedEnv.UID
+	}
+
 	return &orgInit, nil
 }
 

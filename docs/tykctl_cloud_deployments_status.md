@@ -31,7 +31,7 @@ tykctl cloud deployments status <deployment uuid>
 ### Options inherited from parent commands
 
 ```
-      --config string   config file (default is $HOME/.tykctl.yaml)
+      --config string   Config file (default is $HOME/.tykctl.yaml)
       --env string      The environment to use
       --org string      The organization to use
       --team string     The team to use

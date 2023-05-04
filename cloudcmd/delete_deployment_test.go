@@ -19,7 +19,7 @@ func TestNewDeleteDeploymentFlags(t *testing.T) {
 		Config: nil,
 	}
 
-	cmd := NewDeleteDeployment(factory)
+	cmd := NewDeleteDeploymentCmd(factory)
 
 	flags := []internal.Flag{
 		{

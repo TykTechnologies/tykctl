@@ -14,37 +14,33 @@ import (
 	"github.com/TykTechnologies/tykctl/internal"
 )
 
-func NewDeleteDeployment(factory internal.CloudFactory) *cobra.Command {
-	return internal.NewCmd(delete).
-		WithAliases([]string{del}).
-		WithFlagAdder(false, deleteDeploymentFlag).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
-		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
-			confirmed, err := cmd.Flags().GetBool(confirm)
-			if err != nil {
-				return err
-			}
+func NewDeleteDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
+	depObject := DepObject{}
 
-			if !confirmed {
-				performAction, err := factory.Prompt.PerformActionPrompt("deployment")
-				if err != nil {
-					return err
-				}
+	return NewDeleteBaseCmd(factory, &depObject, Dep)
+}
 
-				if !performAction {
-					return nil
-				}
-			}
+type DepObject struct {
+	DepResponse *cloud.Deployment
+}
 
-			deployment, err := validateFlagsAndDeleteDeployment(ctx, factory.Client, factory.Config, args[0], cmd.Flags())
-			if err != nil {
-				return err
-			}
+func (d *DepObject) Delete(ctx context.Context, client internal.CloudClient, config internal.UserConfig, id string, f *pflag.FlagSet) error {
+	depResponse, err := validateFlagsAndDeleteDeployment(ctx, client, config, id, f)
+	if err != nil {
+		return err
+	}
 
-			cmd.Printf("deleted %s\n successfully", deployment.UID)
+	d.DepResponse = depResponse
 
-			return nil
-		})
+	return nil
+}
+
+func (d *DepObject) GetUID() string {
+	if d.DepResponse == nil {
+		return ""
+	}
+
+	return d.DepResponse.UID
 }
 
 func validateFlagsAndDeleteDeployment(ctx context.Context, client internal.CloudClient, config internal.UserConfig, deploymentID string, f *pflag.FlagSet) (*cloud.Deployment, error) {
@@ -87,5 +83,4 @@ func deleteDeployment(ctx context.Context, client internal.CloudClient, orgID, t
 func deleteDeploymentFlag(f *pflag.FlagSet) {
 	f.BoolP(delete, "d", false, "mark deployment as deleted")
 	f.BoolP(purge, "p", false, "purge deployment from storage")
-	f.BoolP(confirm, "c", false, "delete the deployment without a confirmation prompt")
 }

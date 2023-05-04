@@ -20,6 +20,7 @@ type CloudClient interface {
 	CreateEnv(ctx context.Context, env cloud.Loadout, orgID, teamID string) (cloud.InlineResponse2012, *http.Response, error)
 	GetEnvByID(ctx context.Context, orgID, teamID, envID string) (cloud.InlineResponse2012, *http.Response, error)
 	GetEnvs(ctx context.Context, orgID, teamID string) (cloud.InlineResponse20016, *http.Response, error)
+	DeleteEnv(ctx context.Context, oid, tid, id string, localVarOptionals *cloud.LoadoutsApiDeleteLoadoutOpts) (cloud.InlineResponse2012, *http.Response, error)
 	CreateDeployment(ctx context.Context, deployment cloud.Deployment, orgID, teamID, envID string) (cloud.InlineResponse2001, *http.Response, error)
 	GetEnvDeployments(ctx context.Context, oid, tid, lid string) (cloud.InlineResponse200, *http.Response, error)
 	GetDeploymentByID(ctx context.Context, orgID, teamID, envID, id string, localVarOptionals *cloud.DeploymentsApiGetDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error)

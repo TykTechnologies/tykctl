@@ -35,7 +35,7 @@ tykctl cloud init
 
 ### SEE ALSO
 
-* [tykctl cloud](tykctl_cloud.md)	 - Manage Tyk cloud resources (API Mannagement on the Cloud).
+* [tykctl cloud](tykctl_cloud.md)	 - Manage Tyk cloud resources (API Management on the Cloud).
 * [tykctl cloud teams create](tykctl_cloud_teams_create.md)	 - create a team in a given organization.
 * [tykctl cloud teams fetch](tykctl_cloud_teams_fetch.md)	 - fetch teams from a given organization.
 

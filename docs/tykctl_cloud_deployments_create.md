@@ -8,8 +8,6 @@ This is the parent command for
             creating either an edge or a home gateway. You must provide exactly one arg which can be either home or edge.
 
 Note: You will need to use the deploy flag if you want the deployment to be deployed after create.
-     
-     Example: tykctl deployments create home
 
 
 ### Examples

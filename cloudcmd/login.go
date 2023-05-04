@@ -21,9 +21,10 @@ const (
 	loginDesc = `
         This command will login into your cloud account and set the token in your config file.
        
-        Note: The token will only last for 30 minutes you will need to login again after 30 minutes.
+        Note: The token will only last for 30 minutes. You will need to login again after 30 minutes.
 		
         You will be prompted to provide your email and password to login if you use the interactive mode.
+
 		When using the cloud service you should always run this command first as each command will require a token.
 		
         For the staging server you will also need to provide nginx basic auth.

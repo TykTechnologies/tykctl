@@ -30,7 +30,7 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(deployments).
 		WithAliases([]string{dep}).
 		WithLongDescription(deploymentDesc).
-		WithDescription("parent command for all action you can perform in a deployment.").
+		WithDescription("parent command for all actions you can perform in a deployment.").
 		WithFlagAdder(true, addOrgFlag).
 		WithFlagAdder(true, addTeamFlag).
 		WithFlagAdder(true, addEnvFlag).

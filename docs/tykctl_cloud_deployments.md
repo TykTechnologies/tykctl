@@ -1,6 +1,6 @@
 ## tykctl cloud deployments
 
-parent command for all action you can perform in a deployment.
+parent command for all actions you can perform in a deployment.
 
 ### Synopsis
 

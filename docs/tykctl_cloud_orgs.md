@@ -1,11 +1,11 @@
 ## tykctl cloud orgs
 
-This is the parent command for all action that can be done to an organization.
+This is the parent command for all actions that can be done within an organization.
 
 ### Synopsis
 
 
-This is the parent command for all action that can be done to an organization.
+This is the parent command for all actions that can be done within an organization.
 The list of subcommand supported by this command are:
 
 1. tykctl cloud orgs fetch - list all you organizations.

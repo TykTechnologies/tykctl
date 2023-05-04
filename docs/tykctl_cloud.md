@@ -1,6 +1,6 @@
 ## tykctl cloud
 
-Manage Tyk cloud resources (API Mannagement on the Cloud).
+Manage Tyk cloud resources (API Management on the Cloud).
 
 ### Synopsis
 

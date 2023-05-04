@@ -26,7 +26,7 @@ This is the parent command to all environment operations.
 
 ### SEE ALSO
 
-* [tykctl cloud](tykctl_cloud.md)	 - Manage Tyk cloud resources (API Mannagement on the Cloud).
+* [tykctl cloud](tykctl_cloud.md)	 - Manage Tyk cloud resources (API Management on the Cloud).
 * [tykctl cloud environments create](tykctl_cloud_environments_create.md)	 - creates an environment in a given team.
 * [tykctl cloud environments fetch](tykctl_cloud_environments_fetch.md)	 - fetch environments from a given team.
 

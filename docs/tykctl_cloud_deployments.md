@@ -40,7 +40,7 @@ The supported commands are :
 
 ### SEE ALSO
 
-* [tykctl cloud](tykctl_cloud.md)	 - Manage Tyk cloud resources (API Mannagement on the Cloud).
+* [tykctl cloud](tykctl_cloud.md)	 - Manage Tyk cloud resources (API Management on the Cloud).
 * [tykctl cloud deployments create](tykctl_cloud_deployments_create.md)	 - This is the parent command for creating the edge or home deployment.
 * [tykctl cloud deployments deploy](tykctl_cloud_deployments_deploy.md)	 - deploy a home or edge gateway deployment given its uuid
 * [tykctl cloud deployments fetch](tykctl_cloud_deployments_fetch.md)	 - fetch deployment from an environment.

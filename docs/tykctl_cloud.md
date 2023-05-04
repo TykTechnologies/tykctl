@@ -35,7 +35,7 @@ tykctl cloud init
 
 * [tykctl](tykctl.md)	 - Tykctl is a cli that can be used to interact with tyk components (tyk cloud,tyk gateway and tyk dashboard.
 * [tykctl cloud deployments](tykctl_cloud_deployments.md)	 - parent command for all actions you can perform in a deployment.
-* [tykctl cloud environments](tykctl_cloud_environments.md)	 - parent command to all environment operations
+* [tykctl cloud environments](tykctl_cloud_environments.md)	 - parent command to all environment operations.
 * [tykctl cloud init](tykctl_cloud_init.md)	 - initialize the cli and set the default region and organization.
 * [tykctl cloud login](tykctl_cloud_login.md)	 - login to tyk cloud using password and email.
 * [tykctl cloud orgs](tykctl_cloud_orgs.md)	 - This is the parent command for all actions that can be done within an organization.

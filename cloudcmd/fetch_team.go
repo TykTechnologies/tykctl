@@ -32,7 +32,7 @@ func NewFetchTeamCmd(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(false, addOutPutFlags).
 		WithFlagAdder(false, getValues).
 		WithLongDescription(fetchTeamDesc).
-		WithDescription("fetch teams from a given organization.").
+		WithDescription("Fetch teams from a given organization.").
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).
 		WithExample("tykctl cloud teams fetch --output<json/table>").
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {

@@ -18,7 +18,7 @@ The list of subcommand supported by this command are:
 func NewOrgCommand(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(orgs).
 		WithAliases([]string{org, "organization", "organisation"}).
-		WithDescription("This is the parent command for all actions that can be done within an organization.").
+		WithDescription("Parent command for all actions that can be done within an organization.").
 		WithLongDescription(orgDesc).WithCommands(
 		NewOrgListCommand(factory))
 }

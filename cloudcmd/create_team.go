@@ -37,7 +37,7 @@ func NewCreateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(create).WithFlagAdder(false, createTeamFlags).
 		WithLongDescription(createTeamDesc).
 		WithFlagAdder(false, setValues).
-		WithDescription("create a team in a given organization.").
+		WithDescription("Create a team in a given organization.").
 		WithExample("tyckctl cloud teams create --name='first team' --org=<org uuid>").
 		AddPreRunFuncs(NewCloudRbac(OrgAdmin, factory.Config).CloudRbac).
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).

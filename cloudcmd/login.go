@@ -51,7 +51,7 @@ var (
 func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(login).
 		WithLongDescription(loginDesc).
-		WithDescription("login to tyk cloud using password and email.").
+		WithDescription("Login to tyk cloud using password and email.").
 		WithExample("tykctl cloud login --password=<your cloud password here> --email=<your email here>").
 		WithFlagAdder(false, addLoginFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {

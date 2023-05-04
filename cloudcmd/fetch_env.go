@@ -35,7 +35,7 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(false, addOutPutFlags).
 		WithFlagAdder(false, getValues).
 		WithLongDescription(fetchEnvDesc).
-		WithDescription("fetch environments from a given team.").
+		WithDescription("Fetch environments from a given team.").
 		WithExample("tykctl cloud environments fetch --team=<teamID> --org=<orgID>").
 		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {

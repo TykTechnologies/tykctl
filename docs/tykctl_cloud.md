@@ -7,11 +7,11 @@ Manage Tyk cloud resources (API Management on the Cloud).
 
 All the cloud operations use this as the parent command.
 
-It has the subcommand to do all the cloud operations such as creating a team,login and initialize the cloud.
+It has the subcommand to do all the cloud operations such as creating a team, login and initialize the cloud.
 
 To do anything on the cloud you need to first login:
 
-tykctl cloud login 
+tykctl cloud login
 
 You can also set the default parameters to your config by running:
 
@@ -33,12 +33,12 @@ tykctl cloud init
 
 ### SEE ALSO
 
-* [tykctl](tykctl.md)	 - Tykctl is a cli that can be used to interact with tyk components (tyk cloud,tyk gateway and tyk dashboard.
+* [tykctl](tykctl.md)	 - Tykctl is a cli that can be used to interact with tyk components (tyk cloud, tyk gateway and tyk dashboard.
 * [tykctl cloud deployments](tykctl_cloud_deployments.md)	 - parent command for all actions you can perform in a deployment.
 * [tykctl cloud environments](tykctl_cloud_environments.md)	 - parent command to all environment operations.
 * [tykctl cloud init](tykctl_cloud_init.md)	 - initialize the cli and set the default region and organization.
 * [tykctl cloud login](tykctl_cloud_login.md)	 - login to tyk cloud using password and email.
-* [tykctl cloud orgs](tykctl_cloud_orgs.md)	 - This is the parent command for all actions that can be done within an organization.
+* [tykctl cloud orgs](tykctl_cloud_orgs.md)	 - parent command for all actions that can be done within an organization.
 * [tykctl cloud teams](tykctl_cloud_teams.md)	 - parent command for all actions you can perform in a team.
 * [tykctl cloud zones](tykctl_cloud_zones.md)	 - fetch all the supported zones and what deployment they support.
 

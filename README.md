@@ -64,7 +64,7 @@ Check the full tykctl [documentation here](./docs/tykctl.md).
 *NOTE: To add a new tyk service to this repo create a new package with your cli code, the add it as a subcommand of the
 rootcmd in the sharedCmd package.*
 
-1. cloudcmd - This package contains all the code related to the cloud.It performs all the cloud operations.
+1. cloudcmd - This package contains all the code related to the cloud. It performs all the cloud operations.
 2. gatewaycmd - This package should contain code related to the gateway.
 3. sharedCmd - This package contains the RootCmd.Here is where you should add a service to the tykctl. For example to
    add

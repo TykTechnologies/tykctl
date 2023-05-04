@@ -37,3 +37,11 @@ func envValues(f *pflag.FlagSet) {
 func getEnvValues(f *pflag.FlagSet) {
 	f.StringSlice(envValue, []string{}, "get a deployment's environment variables using dot-notation")
 }
+
+func confirmFlag(f *pflag.FlagSet) {
+	f.BoolP(confirm, "c", false, "delete the deployment without a confirmation prompt")
+}
+
+func cascadeFlag(f *pflag.FlagSet) {
+	f.Bool(cascade, false, "delete the deployment without a confirmation prompt")
+}

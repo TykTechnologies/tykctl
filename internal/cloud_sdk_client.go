@@ -170,6 +170,15 @@ func (c *CloudSdkClient) StartDeployment(ctx context.Context, orgID, teamID, env
 	return c.Client.DeploymentsApi.StartDeployment(ctx, orgID, teamID, envID, id)
 }
 
+func (c *CloudSdkClient) DeleteEnv(ctx context.Context, oid, tid, id string, localVarOptionals *cloud.LoadoutsApiDeleteLoadoutOpts) (cloud.InlineResponse2012, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2012{}, nil, err
+	}
+
+	return c.Client.LoadoutsApi.DeleteLoadout(ctx, oid, tid, id, localVarOptionals)
+}
+
 func (c *CloudSdkClient) RestartDeployment(ctx context.Context, oid, tid, lid, id string) (cloud.InlineResponse2001, *http.Response, error) {
 	err := c.runBeforeExecute()
 	if err != nil {

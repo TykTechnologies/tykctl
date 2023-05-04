@@ -63,6 +63,7 @@ const (
 	del                    = "del"
 	purge                  = "purge"
 	confirm                = "confirm"
+	cascade                = "cascade"
 )
 
 var cloudRoles = []string{"ara_admin", "org_admin", "team_admin", "team_member"}

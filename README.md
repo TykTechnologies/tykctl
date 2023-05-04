@@ -64,17 +64,14 @@ Check the full tykctl [documentation here](./docs/tykctl.md).
 *NOTE: To add a new tyk service to this repo create a new package with your cli code, then add it as a subcommand of the
 rootcmd in the sharedCmd package.*
 
-1. cloudcmd - This package contains all the code related to the cloud. It performs all the cloud operations.
-2. gatewaycmd - This package should contain code related to the gateway.
+1. **cloudcmd** - This package contains all the code related to the cloud. It performs all the cloud operations.
+2. **gatewaycmd** - This package should contain code related to the gateway.
 3. sharedCmd - This package contains the RootCmd.Here is where you should add a service to the tykctl. For example to
-   add
-   the cloud service you should add:
-   `rootCmd.AddCommand(cloudcmd.NewCloudCommand())`.
-4. testutil - contains shared utility that can be used for testing the tykctl.
-5. util - contains the utility functions that can be shared by all the tyk service(e.g email validation).
-6. docs - contains the generated documentation for the cli.
-7. internal - contains mocks,cloud http clients and all the common functions that will be used within the cli.The file
-   labeled `command.go` contains a builder to build the cmd.
+   add the cloud service you should add: `rootCmd.AddCommand(cloudcmd.NewCloudCommand())`.
+4. **testutil** - contains shared utility that can be used for testing the tykctl.
+5. **util** - contains the utility functions that can be shared by all the tyk service(e.g email validation).
+6. **docs** - contains the generated documentation for the cli.
+7. **internal** - contains mocks,cloud http clients and all the common functions that will be used within the cli.The file labeled `command.go` contains a builder to build the cmd.
 
 ### License
 

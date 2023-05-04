@@ -61,7 +61,7 @@ Check the full tykctl [documentation here](./docs/tykctl.md).
 
 ### Project structure
 
-*NOTE: To add a new tyk service to this repo create a new package with your cli code, the add it as a subcommand of the
+*NOTE: To add a new tyk service to this repo create a new package with your cli code, then add it as a subcommand of the
 rootcmd in the sharedCmd package.*
 
 1. cloudcmd - This package contains all the code related to the cloud. It performs all the cloud operations.

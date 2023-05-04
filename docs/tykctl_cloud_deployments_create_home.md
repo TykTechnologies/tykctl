@@ -7,13 +7,13 @@ create a control plane in your home region.
  
 NOTE: Your home deployment zone has to be the same as your organization zone.
 
-This command creates an Home Deployment.
+This command creates a Home Deployment.
 
-NOTE: This does not deploy the deployment it just create it.You can use the deploy flag to deploy after create.You can also use the deploy command to deploy the created deployment.
+NOTE: This does not deploy the deployment, it just creates it. You can use the deploy flag to deploy after create. You can also use the deploy command to deploy the created deployment.
 
-You must pass the organization,team,zone and environment you want deploy this deployment.
+You must pass the organization, team, zone and environment you want to deploy for this deployment.
 
-If you do not pass the org,zone or environment we will use the ones on your config file.You can set the default org,team and environment by running:
+If you do not pass the org, zone or environment then we will use the ones on your config file. You can set the default org, team and environment by running:
 
 tykctl cloud init
 

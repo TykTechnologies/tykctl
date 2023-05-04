@@ -35,6 +35,7 @@ func NewCreateHomeDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(home).
 		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithLongDescription(createHomeDeploymentDesc).
+		WithFlagAdder(false, setValues).
 		WithFlagAdder(false, addHomeDeploymentFlag).
 		WithDescription("create a control plane in your home region.").
 		WithExample("tykctl cloud deployments create home --name='home-deployment'").

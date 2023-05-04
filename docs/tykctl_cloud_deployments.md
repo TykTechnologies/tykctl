@@ -4,7 +4,7 @@ parent command for all actions you can perform in a deployment.
 
 ### Synopsis
 
-This is the parent command to all deployment operation.Such as creating teams and fetching teams.
+This is the parent command to all deployment operations, such as creating teams and fetching teams.
 
   Note: All subcommands for this command must pass an --env, --team  and --org flag command.
 

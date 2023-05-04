@@ -1,6 +1,6 @@
 ## tykctl cloud teams
 
-parent command for all action you can perform in a team.
+parent command for all actions you can perform in a team.
 
 ### Synopsis
 

@@ -71,7 +71,7 @@ rootcmd in the sharedCmd package.*
 4. **testutil** - contains shared utility that can be used for testing the tykctl.
 5. **util** - contains the utility functions that can be shared by all the tyk service(e.g email validation).
 6. **docs** - contains the generated documentation for the cli.
-7. **internal** - contains mocks,cloud http clients and all the common functions that will be used within the cli.The file labeled `command.go` contains a builder to build the cmd.
+7. **internal** - contains mocks,cloud http clients and all the common functions that will be used within the cli. The file labeled `command.go` contains a builder to build the cmd.
 
 ### License
 

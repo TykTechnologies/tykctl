@@ -1,6 +1,6 @@
 ## tykctl
 
-Tykctl is a cli that can be used to interact with tyk components (tyk cloud,tyk gateway and tyk dashboard.
+Tykctl is a cli that can be used to interact with tyk components (tyk cloud, tyk gateway and tyk dashboard).
 
 ### Synopsis
 

@@ -8,8 +8,6 @@ This is the parent command for
             creating either an edge or a home gateway. You must provide exactly one arg which can be either home or edge.
 
 Note: You will need to use the deploy flag if you want the deployment to be deployed after create.
-     
-     Example: tykctl deployments create home
 
 
 ### Examples
@@ -39,7 +37,7 @@ tykctl deployments create home
 
 ### SEE ALSO
 
-* [tykctl cloud deployments](tykctl_cloud_deployments.md)	 - parent command for all action you can perform in a deployment.
+* [tykctl cloud deployments](tykctl_cloud_deployments.md)	 - parent command for all actions you can perform in a deployment.
 * [tykctl cloud deployments create edge](tykctl_cloud_deployments_create_edge.md)	 - will create the edge gateway in a given environment
 * [tykctl cloud deployments create home](tykctl_cloud_deployments_create_home.md)	 - create a control plane in your home region.
 

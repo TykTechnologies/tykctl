@@ -7,9 +7,9 @@ fetch environments from a given team.
 
 This command will fetch all the environment in a team.
 
-You must pass the --org and --team.If they are not passed we will use the default org and team set in your config file.
+You must pass the --org and --team. If they are not passed we will use the default org and team set in your config file.
 
-We support json and table as the output format.To set the output format use the --output<json/table> flag.
+We support json and table as the output format. To set the output format use the --output<json/table> flag.
 
 Sample usage of this command:
 
@@ -30,14 +30,14 @@ tykctl cloud environments fetch --team=<teamID> --org=<orgID>
 
 ```
       --get strings     Get a value from the object using dot-notation
-  -h, --help            help for fetch
-  -o, --output string   Format you want to use can be table,json (default "table")
+  -h, --help            Help for fetch
+  -o, --output string   Output format you want to use. Can be table or json (default "table")
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --config string   config file (default is $HOME/.tykctl.yaml)
+      --config string   Config file (default is $HOME/.tykctl.yaml)
       --org string      The organization to use
       --team string     The team to use
 ```

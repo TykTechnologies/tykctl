@@ -31,7 +31,7 @@ func NewCreateEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(create).
 		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithLongDescription(createEnvDesc).
-		WithDescription("creates an environment in a given team.").
+		WithDescription("Creates an environment in a given team.").
 		WithFlagAdder(false, createEnvironment).
 		WithFlagAdder(false, setValues).
 		WithExample("tyk cloud environments create --name='staging'").

@@ -7,7 +7,7 @@ import (
 	"github.com/TykTechnologies/tykctl/util"
 )
 
-const deploymentDesc = `This is the parent command to all deployment operation.Such as creating teams and fetching teams.
+const deploymentDesc = `This is the parent command to all deployment operation, such as creating teams and fetching teams.
 
   Note: All subcommands for this command must pass an --env, --team  and --org flag command.
 
@@ -30,7 +30,7 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(deployments).
 		WithAliases([]string{dep}).
 		WithLongDescription(deploymentDesc).
-		WithDescription("parent command for all action you can perform in a deployment.").
+		WithDescription("Parent command for all actions you can perform in a deployment.").
 		WithFlagAdder(true, addOrgFlag).
 		WithFlagAdder(true, addTeamFlag).
 		WithFlagAdder(true, addEnvFlag).

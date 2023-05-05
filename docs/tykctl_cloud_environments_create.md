@@ -5,14 +5,15 @@ creates an environment in a given team.
 ### Synopsis
 
 
-This command create an environment in a team.
+This command creates an environment in a team.
+
 You must pass the name of the environment.
 You must also set the org and team you want to create this environment in.
 If you don't pass the org and team we will use the one set in the config file.
 
 Sample usage:
 
-tyk cloud environments create --name="staging"
+tykctl cloud environments create --name="staging"
 
 
 ```
@@ -22,21 +23,21 @@ tykctl cloud environments create [flags]
 ### Examples
 
 ```
-tyk cloud environments create --name='staging'
+tykctl cloud environments create --name='staging'
 ```
 
 ### Options
 
 ```
-  -h, --help          help for create
-  -n, --name string   name for the environment you want to create.
-      --set strings   set a value for the object using dot-notation
+  -h, --help          Help for create
+  -n, --name string   Name for the environment you want to create
+      --set strings   Set a value for the object using dot-notation
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --config string   config file (default is $HOME/.tykctl.yaml)
+      --config string   Config file (default is $HOME/.tykctl.yaml)
       --org string      The organization to use
       --team string     The team to use
 ```

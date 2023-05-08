@@ -42,7 +42,7 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(fetchDeploymentDesc).
 		WithDescription("fetch deployment from an environment.").
 		WithExample("tykctl cloud deployments fetch").
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}, {Name: org, Persistent: false, Type: internal.Cloud}}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			if len(args) == 0 {
 				err := validateAndFetchEnvDeployments(cmd.Context(), factory.Client, factory.Config, cmd.Flags())

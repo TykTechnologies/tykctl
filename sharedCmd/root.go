@@ -3,6 +3,7 @@ package sharedCmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cobra"
@@ -14,6 +15,7 @@ import (
 	"github.com/TykTechnologies/tykctl/cloudcmd"
 	"github.com/TykTechnologies/tykctl/gatewaycmd"
 	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/util"
 
 	cc "github.com/ivanpirog/coloredcobra"
 )
@@ -31,11 +33,17 @@ tykctl cloud <subcommand here>
 `
 
 var (
-	controller        = "controller"
-	tykctl            = "tykctl"
-	defaultConfigFile = ".tykctl.yaml"
-	currentCloudUser  = "cloud.current_user"
-	currentCloudToken = "cloud.current_token"
+	controller            = "controller"
+	tykctl                = "tykctl"
+	currentCloudUser      = "cloud.current_user"
+	currentCloudToken     = "cloud.current_token"
+	defaultConfigDir      = ".tykctl"
+	coreConfigFileName    = "core_config.yaml"
+	coreConfig            = "core_config"
+	currentConfig         = "current_config"
+	config                = "config"
+	configDefaultFileName = "config_default.yaml"
+	configDefault         = "config_default"
 )
 
 func NewRootCmd() *cobra.Command {
@@ -46,7 +54,64 @@ func NewRootCmd() *cobra.Command {
 		WithCommands()
 }
 
+func createViper(dir, file string) (*viper.Viper, error) {
+	v := viper.New()
+	v.SetConfigName(file)
+	v.AddConfigPath(dir)
+	v.SetConfigType("yaml")
+	v.AutomaticEnv()
+	err := v.ReadInConfig()
+
+	return v, err
+}
+
+func createConfigFiles() error {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+
+	dir := filepath.Join(home, defaultConfigDir)
+	configDir := filepath.Join(dir, config)
+
+	err = util.CheckDirectory(configDir)
+	if err != nil {
+		return err
+	}
+
+	err = CreateFile(dir, coreConfigFileName)
+	if err != nil {
+		return err
+	}
+
+	v, err := createViper(dir, coreConfig)
+	if err != nil {
+		return err
+	}
+
+	currentConf := v.GetString(currentConfig)
+	if util.StringIsEmpty(currentConf) {
+		err = CreateFile(configDir, configDefaultFileName)
+		if err != nil {
+			return err
+		}
+
+		v.Set(currentConfig, configDefault)
+
+		return v.WriteConfig()
+	}
+
+	return nil
+}
+
 func Execute() {
+	err := createConfigFiles()
+	if err != nil {
+		os.Exit(1)
+	}
+
+	cobra.OnInitialize(initConfig)
+
 	conf := cloud.Configuration{
 		DefaultHeader: map[string]string{},
 	}
@@ -88,7 +153,7 @@ func Execute() {
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
 	rootCmd.AddCommand(NewCheckoutCmd())
 
-	err := rootCmd.Execute()
+	err = rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
@@ -98,22 +163,9 @@ func addGlobalPersistentFlags(f *pflag.FlagSet) {
 	f.StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tykctl.yaml)")
 }
 
-func init() {
-	file := defaultConfigFile
-
-	home, err := os.UserHomeDir()
-	if err != nil {
-		cobra.CheckErr(err)
-	}
-
-	err = CreateConfigFile(home, file)
-	cobra.CheckErr(err)
-	cobra.OnInitialize(initConfig)
-}
-
 // AddTokenAndBaseURL will add a user token from the configuration file to each request header.
 func AddTokenAndBaseURL(client *cloud.APIClient, conf *cloud.Configuration) error {
-	baseURL := viper.GetString(internal.CreateKeyFromPath("cloud", viper.GetString(currentCloudUser), controller))
+	baseURL := viper.GetString(internal.CreateKeyFromPath("cloud", controller))
 	client.ChangeBasePath(baseURL)
 
 	token := fmt.Sprintf("Bearer %s", viper.GetString(currentCloudToken))

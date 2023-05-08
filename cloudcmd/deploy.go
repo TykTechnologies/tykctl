@@ -33,7 +33,7 @@ tykctl cloud dep deploy <deployment id> --org=<org here> --team=<team here> --en
 func NewStartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(deploy).
 		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}, {Name: org, Persistent: false, Type: internal.Cloud}}).
 		WithLongDescription(deployDesc).
 		WithDescription("deploy a home or edge gateway deployment given its uuid").
 		WithExample("tykctl cloud dep deploy <deployment id> --org=<org here> --team=<team here> --env=<environment here> ").

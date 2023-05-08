@@ -16,13 +16,22 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
+		coreDir, err := getCoreDir()
+		cobra.CheckErr(err)
+
+		v, err := createViper(coreDir, coreConfig)
+		cobra.CheckErr(err)
+
+		currentConf := v.GetString(currentConfig)
+
 		cobra.CheckErr(err)
 		// Search config in home directory with name ".tykctl" (without extension).
-		viper.AddConfigPath(home)
+		dir, err := getDefaultConfigDir()
+		cobra.CheckErr(err)
+
+		viper.AddConfigPath(dir)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".tykctl")
+		viper.SetConfigName(currentConf)
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -32,8 +41,30 @@ func initConfig() {
 	}
 }
 
-// CreateConfigFile creates a file in a given directory is it does not exist.
-func CreateConfigFile(dir, file string) error {
+func getCoreDir() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	configDir := filepath.Join(home, defaultConfigDir)
+
+	return configDir, nil
+}
+
+func getDefaultConfigDir() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	configDir := filepath.Join(home, defaultConfigDir, config)
+
+	return configDir, nil
+}
+
+// CreateFile creates a file in a given directory is it does not exist.
+func CreateFile(dir, file string) error {
 	result := filepath.Join(dir, file)
 
 	_, err := os.Stat(result)

@@ -40,7 +40,7 @@ func NewCreateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 		WithDescription("Create a team in a given organization.").
 		WithExample("tyckctl cloud teams create --name='first team' --org=<org uuid>").
 		AddPreRunFuncs(NewCloudRbac(OrgAdmin, factory.Config).CloudRbac).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: false, Type: internal.Cloud}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			org := factory.Config.GetCurrentUserOrg()
 

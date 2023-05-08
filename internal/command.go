@@ -23,17 +23,15 @@ type Builder interface {
 	ExactArgs(argCount int, action func(context.Context, cobra.Command, []string) error) *cobra.Command
 	WithFlagAdder(persistent bool, adder func(*pflag.FlagSet)) Builder
 	WithBindFlagOnPreRun(flags []BindFlag) Builder
-	WithBindFlagWithCurrentUserContext([]BindFlag) Builder
 	WithAliases(aliases []string) Builder
 	WithValidArgs(args []string) Builder
 	AddPreRunFuncs(...func(cmd *cobra.Command, args []string) error) Builder
 }
 
 type builder struct {
-	cmd                     cobra.Command
-	runOnPreRun             []func(cmd *cobra.Command, args []string) error
-	bindOnPreRun            []BindFlag
-	bindWithContextOnPreRun []BindFlag
+	cmd          cobra.Command
+	runOnPreRun  []func(cmd *cobra.Command, args []string) error
+	bindOnPreRun []BindFlag
 }
 
 // NewCmd Creates a new command builder.
@@ -107,53 +105,21 @@ func (b *builder) WithBindFlagOnPreRun(flags []BindFlag) Builder {
 
 func (b *builder) bindFlagonPreRun() error {
 	for _, flag := range b.bindOnPreRun {
+		name := flag.Name
+		if flag.Type != "" {
+			name = fmt.Sprintf("%s.%s", flag.Type, flag.Name)
+		}
+
 		if flag.Persistent {
-			err := viper.BindPFlag(flag.Name, b.cmd.PersistentFlags().Lookup(flag.Name))
+			err := viper.BindPFlag(name, b.cmd.PersistentFlags().Lookup(flag.Name))
 			if err != nil {
 				return err
 			}
 		} else {
-			err := viper.BindPFlag(flag.Name, b.cmd.Flags().Lookup(flag.Name))
+			err := viper.BindPFlag(name, b.cmd.Flags().Lookup(flag.Name))
 			if err != nil {
 				return err
 			}
-		}
-	}
-
-	return nil
-}
-
-// WithBindFlagWithCurrentUserContext will help us get the current user flag since viper is initialized on cobra PreRun.
-func (b *builder) WithBindFlagWithCurrentUserContext(flags []BindFlag) Builder {
-	b.bindWithContextOnPreRun = append(b.bindWithContextOnPreRun, flags...)
-	return b
-}
-
-// bindFlagonPreRunWithCurrentContext which get the parameters from the current logged user
-// this will allow us to support different users in the config.
-func (b *builder) bindFlagonPreRunWithCurrentContext() error {
-	if len(b.bindWithContextOnPreRun) == 0 {
-		return nil
-	}
-
-	currentUser := viper.GetString(currentCloudUser)
-	if currentUser == "" {
-		return ErrCurrentUserNotFound
-	}
-
-	for _, flag := range b.bindWithContextOnPreRun {
-		currentUserCtx := fmt.Sprintf("cloud.%s.%s", currentUser, flag.Name)
-
-		var err error
-
-		if flag.Persistent {
-			err = viper.BindPFlag(currentUserCtx, b.cmd.PersistentFlags().Lookup(flag.Name))
-		} else {
-			err = viper.BindPFlag(currentUserCtx, b.cmd.Flags().Lookup(flag.Name))
-		}
-
-		if err != nil {
-			return err
 		}
 	}
 
@@ -174,11 +140,6 @@ func (b *builder) executePreRunFuncs(cmd *cobra.Command, args []string) error {
 
 func (b *builder) PreRun(cmd *cobra.Command, args []string) error {
 	err := b.bindFlagonPreRun()
-	if err != nil {
-		return err
-	}
-
-	err = b.bindFlagonPreRunWithCurrentContext()
 	if err != nil {
 		return err
 	}

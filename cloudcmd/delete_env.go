@@ -75,25 +75,3 @@ func deleteEnv(ctx context.Context, client internal.CloudClient, orgID, teamID, 
 
 	return deleteResponse.Payload, nil
 }
-
-func shouldDelete(prompt internal.CloudPrompt, object string, f *pflag.FlagSet) (bool, error) {
-	confirmed, err := f.GetBool(confirm)
-	if err != nil {
-		return false, err
-	}
-
-	if confirmed {
-		return true, nil
-	}
-
-	return prompt.PerformActionPrompt(object)
-}
-
-type CloudObjectType int64
-
-const (
-	Org CloudObjectType = iota
-	Team
-	Env
-	Dep
-)

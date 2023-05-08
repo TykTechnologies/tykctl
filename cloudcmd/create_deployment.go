@@ -36,7 +36,7 @@ func NewCreateDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(true, addDeploymentFlag).
 		WithExample("tykctl deployments create home").
 		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}, {Name: org, Persistent: false, Type: internal.Cloud}}).
 		WithCommands(
 			NewCreateHomeDeployment(factory),
 			NewCreateEdgeDeployment(factory),

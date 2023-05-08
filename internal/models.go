@@ -101,3 +101,10 @@ type LoginBody struct {
 	BasicAuthUserName string
 	BasicAuthPassword string
 }
+
+type ServiceType string
+
+const (
+	Cloud   ServiceType = "cloud"
+	Gateway             = "gateway"
+)

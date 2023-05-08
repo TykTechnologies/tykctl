@@ -28,10 +28,10 @@ tykctl cloud dep restart --org=<org here> --team=<team here> --env=<environment 
 // NewRestartDeploymentCmd will restart a home deployment or edge deployment given a uuid.
 func NewRestartDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(restart).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{
-			{Name: env, Persistent: false},
-			{Name: team, Persistent: false},
-			{Name: org, Persistent: false},
+		WithBindFlagOnPreRun([]internal.BindFlag{
+			{Name: env, Persistent: false, Type: internal.Cloud},
+			{Name: team, Persistent: false, Type: internal.Cloud},
+			{Name: org, Persistent: false, Type: internal.Cloud},
 		}).
 		WithLongDescription(restartDepDesc).
 		WithDescription("restart a home or edge gateway deployment given its uuid").

@@ -96,7 +96,7 @@ func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) erro
 
 // saveOrgInfoToConfig will save the organization details to the config file passed by the user.
 func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, userID string) error {
-	orgID := viper.GetString(internal.CreateKeyFromPath(cloudPath, userID, org))
+	orgID := viper.GetString(internal.CreateKeyFromPath(cloudPath, org))
 	if orgID == "" {
 		return ErrNoOrganization
 	}

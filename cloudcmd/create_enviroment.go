@@ -35,7 +35,7 @@ func NewCreateEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		WithFlagAdder(false, createEnvironment).
 		WithFlagAdder(false, setValues).
 		WithExample("tyk cloud environments create --name='staging'").
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			org := factory.Config.GetCurrentUserOrg()
 			team := factory.Config.GetCurrentUserTeam()

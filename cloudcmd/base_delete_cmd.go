@@ -18,15 +18,15 @@ func NewDeleteBaseCmd(factory internal.CloudFactory, deleteInterface DeleteInter
 	builder := internal.NewCmd(delete).
 		WithAliases([]string{del}).
 		WithFlagAdder(false, confirmFlag).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}})
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: false, Type: internal.Cloud}})
 
 	if objectType == Env {
-		builder.WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: team, Persistent: false}})
+		builder.WithBindFlagOnPreRun([]internal.BindFlag{{Name: team, Persistent: false, Type: internal.Cloud}})
 		builder.WithFlagAdder(false, cascadeFlag)
 	}
 
 	if objectType == Dep {
-		builder.WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}})
+		builder.WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false, Type: internal.Cloud}})
 		builder.WithFlagAdder(false, deleteDeploymentFlag)
 	}
 

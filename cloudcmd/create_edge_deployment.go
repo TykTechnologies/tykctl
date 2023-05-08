@@ -38,7 +38,7 @@ func NewCreateEdgeDeployment(factory internal.CloudFactory) *cobra.Command {
 		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithDescription("will create the edge gateway in a given environment").
 		WithExample("tykctl cloud deployments create edge --name='test deployment'").
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}, {Name: org, Persistent: false, Type: internal.Cloud}}).
 		WithFlagAdder(false, addEdgeDeploymentFlag).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			_, err := validateEdgeDeploymentFlagAndCreate(cmd.Context(), factory.Client, cmd.Flags(), factory.Config)

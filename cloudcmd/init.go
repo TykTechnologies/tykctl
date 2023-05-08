@@ -36,7 +36,7 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			userID := viper.GetString(currentCloudUser)
 			if userID == "" {
-				cmd.Println("Please login in first before running thid command")
+				cmd.Println("Please login in first before running this command")
 				return errors.New("you need to login to run this command")
 			}
 

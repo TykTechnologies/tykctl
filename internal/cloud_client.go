@@ -17,6 +17,7 @@ type CloudClient interface {
 	GetTeamByID(ctx context.Context, oid, tid string) (cloud.InlineResponse2011, *http.Response, error)
 	GetTeams(ctx context.Context, oid string) (cloud.InlineResponse20017, *http.Response, error)
 	UpdateTeam(ctx context.Context, team cloud.Team, orgID, teamID string) (cloud.InlineResponse2011, *http.Response, error)
+	DeleteTeam(ctx context.Context, oid, tid string, localVarOptionals *cloud.TeamsApiDeleteTeamOpts) (cloud.InlineResponse2011, *http.Response, error)
 	CreateEnv(ctx context.Context, env cloud.Loadout, orgID, teamID string) (cloud.InlineResponse2012, *http.Response, error)
 	GetEnvByID(ctx context.Context, orgID, teamID, envID string) (cloud.InlineResponse2012, *http.Response, error)
 	GetEnvs(ctx context.Context, orgID, teamID string) (cloud.InlineResponse20016, *http.Response, error)

@@ -103,6 +103,15 @@ func (c *CloudSdkClient) UpdateTeam(ctx context.Context, team cloud.Team, orgID,
 	return c.Client.TeamsApi.UpdateTeam(ctx, team, orgID, teamID)
 }
 
+func (c *CloudSdkClient) DeleteTeam(ctx context.Context, oid, tid string, localVarOptionals *cloud.TeamsApiDeleteTeamOpts) (cloud.InlineResponse2011, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2011{}, nil, err
+	}
+
+	return c.Client.TeamsApi.DeleteTeam(ctx, oid, tid, localVarOptionals)
+}
+
 // CreateEnv create an environment in a given team.
 func (c *CloudSdkClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgID, teamID string) (cloud.InlineResponse2012, *http.Response, error) {
 	err := c.runBeforeExecute()

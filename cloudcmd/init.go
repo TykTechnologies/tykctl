@@ -32,7 +32,7 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(initCloud).
 		WithLongDescription(initDesc).
 		WithExample("tykctl cloud init").
-		WithDescription("initialize the cli and set the default region and organization.").
+		WithDescription("Initialize the cli and set the default region and organization.").
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			userID := viper.GetString(currentCloudUser)
 			if userID == "" {

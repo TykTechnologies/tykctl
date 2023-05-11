@@ -34,6 +34,7 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 		AddPreRunFuncs(NewCloudRbac(TeamMember, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
 		WithFlagAdder(false, getValues).
+		WithFlagAdder(false, envFlags).
 		WithLongDescription(fetchEnvDesc).
 		WithDescription("Fetch environments from a given team.").
 		WithExample("tykctl cloud environments fetch --team=<teamID> --org=<orgID>").

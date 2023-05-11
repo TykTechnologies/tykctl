@@ -1,4 +1,4 @@
-package sharedCmd
+package internal
 
 import (
 	"os"
@@ -7,6 +7,17 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestGetAllConfig(t *testing.T) {
+	assert.FileExists(t, "./testdata/overwritten.yml")
+	assert.FileExists(t, "./testdata/config_default.yaml")
+	assert.FileExists(t, "./testdata/config_itachi.yml")
+	assert.FileExists(t, "./testdata/config_json.json")
+
+	configFiles, err := GetAllConfig("./testdata")
+	assert.Nil(t, err)
+	assert.ElementsMatch(t, []string{"config_default.yaml", "config_itachi.yml"}, configFiles)
+}
 
 func TestConfigFileNotOverWritten(t *testing.T) {
 	assert.FileExists(t, "./testdata/overwritten.yml")

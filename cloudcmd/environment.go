@@ -16,11 +16,9 @@ const environmentDesc = `This is the parent command to all environment operation
 func NewEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(environments).
 		WithAliases([]string{env}).
-		WithFlagAdder(true, addOrgFlag).
 		WithLongDescription(environmentDesc).
 		WithDescription("Parent command for all environment operations.").
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: true, Type: internal.Cloud}, {Name: team, Persistent: true, Type: internal.Cloud}}).
-		WithFlagAdder(true, addTeamFlag).
 		WithCommands(
 			NewCreateEnvironmentCmd(factory),
 			NewFetchEnvironmentCmd(factory),

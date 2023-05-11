@@ -10,6 +10,11 @@ func addOrgFlag(f *pflag.FlagSet) {
 	f.String(org, "", "The organization to use")
 }
 
+func envFlags(f *pflag.FlagSet) {
+	addTeamFlag(f)
+	addOrgFlag(f)
+}
+
 func addTeamFlag(f *pflag.FlagSet) {
 	f.String(team, "", "The team to use")
 }

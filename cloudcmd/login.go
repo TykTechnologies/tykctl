@@ -55,13 +55,13 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 		WithExample("tykctl cloud login --password=<your cloud password here> --email=<your email here>").
 		WithFlagAdder(false, addLoginFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := validateAndLogin(cmd.Context(), cmd.Flags())
+			err := getLoginValuesAndLogin(cmd.Context(), cmd.Flags())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
 
-			err = initUserConfigFile(ctx, factory)
+			err = InitUserConfigFile(ctx, factory)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -74,8 +74,8 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 		})
 }
 
-// initUserConfigFile will fetch the user profile,organization and save them to the file.
-func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) error {
+// InitUserConfigFile will fetch the user profile,organization and save them to the file.
+func InitUserConfigFile(ctx context.Context, factory internal.CloudFactory) error {
 	info, err := GetUserInfo(ctx, factory.Client)
 	if err != nil {
 		return err
@@ -261,27 +261,30 @@ func extractToken(resp *http.Response) (string, error) {
 	return fmt.Sprintf("%s.%s", token, cookieSignature), nil
 }
 
-// validateAndLogin validate cli flags and pass them to login.
-func validateAndLogin(ctx context.Context, f *pflag.FlagSet) error {
+func getLoginValuesAndLogin(ctx context.Context, f *pflag.FlagSet) error {
 	isInteractive, err := f.GetBool(interactive)
 	if err != nil {
 		return err
 	}
 
 	var loginBody *LoginBody
+
 	if isInteractive {
-		loginBody, err = loginInteractive(ctx)
-		if err != nil {
-			return err
-		}
+		loginBody, err = LoginInteractive()
 	} else {
 		loginBody, err = loginWithFlag(f)
-		if err != nil {
-			return err
-		}
 	}
 
-	err = util.ValidateEmail(loginBody.Email)
+	if err != nil {
+		return err
+	}
+
+	return ValidateAndLogin(ctx, loginBody)
+}
+
+// ValidateAndLogin validate cli flags and pass them to login.
+func ValidateAndLogin(ctx context.Context, loginBody *LoginBody) error {
+	err := util.ValidateEmail(loginBody.Email)
 	if err != nil {
 		return err
 	}
@@ -316,8 +319,8 @@ func loginWithFlag(f *pflag.FlagSet) (*LoginBody, error) {
 	}, nil
 }
 
-// loginInteractive will extract ask user to enter login details interactively.
-func loginInteractive(ctx context.Context) (*LoginBody, error) {
+// LoginInteractive will extract ask user to enter login details interactively.
+func LoginInteractive() (*LoginBody, error) {
 	email, err := internal.EmailPrompt()
 	if err != nil {
 		return nil, err

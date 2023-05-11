@@ -105,6 +105,7 @@ type LoginBody struct {
 type ServiceType string
 
 const (
-	Cloud   ServiceType = "cloud"
-	Gateway             = "gateway"
+	CloudService   ServiceType = "cloud"
+	GatewayService             = "gateway"
+	AllServices                = "all"
 )

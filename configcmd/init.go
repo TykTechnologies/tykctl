@@ -2,10 +2,8 @@ package configcmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"github.com/TykTechnologies/tykctl/internal"
 )
@@ -33,37 +31,29 @@ func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigE
 				return err
 			}
 
-			viper.SetConfigName(fmt.Sprintf("config_%s", pickedConfig))
-			use, err := prompt.PickServiceToUse(true)
+			service, err := prompt.PickServiceToUse(true)
 			if err != nil {
 				return err
 			}
 
-			if use == internal.Cloud || use == internal.All {
-				shouldLoginCloud, err := prompt.AskCloudLogin()
-				if err != nil {
-					return err
-				}
-
-				if shouldLoginCloud {
-					err = prompt.LoginCloud(ctx)
-					if err != nil {
-						return err
-					}
-
-					err = prompt.InitUserConfigFile(cmd.Context(), factory)
-					if err != nil {
-						return err
-					}
-				}
-			}
-
-			err = viper.WriteConfig()
-			if err != nil {
-				return err
-			}
-
-			cmd.Println(viper.ConfigFileUsed())
-			return nil
+			return loginToCloud(ctx, prompt, factory, service)
 		})
+}
+
+func loginToCloud(ctx context.Context, prompt internal.ConfigPrompt, factory internal.CloudFactory, service string) error {
+	if service == internal.Cloud || service == internal.All {
+		return nil
+	}
+
+	shouldLoginCloud, err := prompt.AskCloudLogin()
+	if err != nil || !shouldLoginCloud {
+		return err
+	}
+
+	err = prompt.LoginCloud(ctx)
+	if err != nil {
+		return err
+	}
+
+	return prompt.InitUserConfigFile(ctx, factory)
 }

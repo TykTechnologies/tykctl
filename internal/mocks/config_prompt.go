@@ -5,8 +5,10 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
+	internal "github.com/TykTechnologies/tykctl/internal"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -33,16 +35,75 @@ func (m *MockConfigPrompt) EXPECT() *MockConfigPromptMockRecorder {
 	return m.recorder
 }
 
-// PickConfig mocks base method.
-func (m *MockConfigPrompt) PickConfig(current string, availableConfigFiles []string) string {
+// AskCloudLogin mocks base method.
+func (m *MockConfigPrompt) AskCloudLogin() (bool, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PickConfig", current, availableConfigFiles)
-	ret0, _ := ret[0].(string)
+	ret := m.ctrl.Call(m, "AskCloudLogin")
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AskCloudLogin indicates an expected call of AskCloudLogin.
+func (mr *MockConfigPromptMockRecorder) AskCloudLogin() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AskCloudLogin", reflect.TypeOf((*MockConfigPrompt)(nil).AskCloudLogin))
+}
+
+// InitUserConfigFile mocks base method.
+func (m *MockConfigPrompt) InitUserConfigFile(ctx context.Context, factory internal.CloudFactory) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InitUserConfigFile", ctx, factory)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// PickConfig indicates an expected call of PickConfig.
-func (mr *MockConfigPromptMockRecorder) PickConfig(current, availableConfigFiles interface{}) *gomock.Call {
+// InitUserConfigFile indicates an expected call of InitUserConfigFile.
+func (mr *MockConfigPromptMockRecorder) InitUserConfigFile(ctx, factory interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PickConfig", reflect.TypeOf((*MockConfigPrompt)(nil).PickConfig), current, availableConfigFiles)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InitUserConfigFile", reflect.TypeOf((*MockConfigPrompt)(nil).InitUserConfigFile), ctx, factory)
+}
+
+// LoginCloud mocks base method.
+func (m *MockConfigPrompt) LoginCloud(ctx context.Context) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LoginCloud", ctx)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// LoginCloud indicates an expected call of LoginCloud.
+func (mr *MockConfigPromptMockRecorder) LoginCloud(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginCloud", reflect.TypeOf((*MockConfigPrompt)(nil).LoginCloud), ctx)
+}
+
+// PickConfig mocks base method.
+func (m *MockConfigPrompt) PickConfig(current string, availableConfigFiles []string, shouldInitialize bool) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PickConfig", current, availableConfigFiles, shouldInitialize)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PickConfig indicates an expected call of PickConfig.
+func (mr *MockConfigPromptMockRecorder) PickConfig(current, availableConfigFiles, shouldInitialize interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PickConfig", reflect.TypeOf((*MockConfigPrompt)(nil).PickConfig), current, availableConfigFiles, shouldInitialize)
+}
+
+// PickServiceToUse mocks base method.
+func (m *MockConfigPrompt) PickServiceToUse(shouldSave bool) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PickServiceToUse", shouldSave)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PickServiceToUse indicates an expected call of PickServiceToUse.
+func (mr *MockConfigPromptMockRecorder) PickServiceToUse(shouldSave interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PickServiceToUse", reflect.TypeOf((*MockConfigPrompt)(nil).PickServiceToUse), shouldSave)
 }

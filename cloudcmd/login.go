@@ -86,7 +86,7 @@ func InitUserConfigFile(ctx context.Context, factory internal.CloudFactory) erro
 		return err
 	}
 
-	err = saveOrgInfoToConfig(ctx, factory, info.ID)
+	err = saveOrgInfoToConfig(ctx, factory)
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func InitUserConfigFile(ctx context.Context, factory internal.CloudFactory) erro
 }
 
 // saveOrgInfoToConfig will save the organization details to the config file passed by the user.
-func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, userID string) error {
+func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory) error {
 	orgID := viper.GetString(internal.CreateKeyFromPath(cloudPath, org))
 	if orgID == "" {
 		return ErrNoOrganization
@@ -106,7 +106,7 @@ func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, use
 		return err
 	}
 
-	return internal.SaveMapToCloudUserContext(userID, orgInfo.OrgInitToMap())
+	return internal.SaveMapToCloudUserContext(orgInfo.OrgInitToMap())
 }
 
 // saveRoleToConfig will save the user role to the config file passed by the user.
@@ -116,7 +116,7 @@ func saveRoleToConfig(info *internal.UserInfo) error {
 		return err
 	}
 
-	return internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
+	return internal.SaveMapToCloudUserContext(role.RoleToMap())
 }
 
 // initUserProfile will auto fetch user info such as:

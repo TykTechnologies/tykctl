@@ -55,7 +55,7 @@ const (
 	get                    = "get"
 	set                    = "set"
 	envValue               = "envVar"
-	delete                 = "delete"
+	deleteCmd              = "delete"
 	del                    = "del"
 	purge                  = "purge"
 	confirm                = "confirm"

@@ -2,8 +2,10 @@ package configcmd
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/TykTechnologies/tykctl/internal"
 )
@@ -45,6 +47,8 @@ func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigE
 			if err != nil {
 				return err
 			}
+
+			viper.SetConfigName(fmt.Sprintf("config_%s", pickedConfig))
 
 			service, err := prompt.PickServiceToUse(true)
 			if err != nil {

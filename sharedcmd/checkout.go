@@ -1,4 +1,4 @@
-package sharedCmd
+package sharedcmd
 
 import (
 	"context"

@@ -2,7 +2,10 @@ package configcmd
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"reflect"
+	"regexp"
 
 	"github.com/AlecAivazis/survey/v2"
 	"golang.org/x/exp/slices"
@@ -122,7 +125,7 @@ func (i PickConfigPrompt) PickConfig(current string, availableConfigFiles []stri
 		Message: "Enter configuration name. Names start with a lower case letter and contain only \nlower case letters a-z, digits 0-9, and hyphens '-':",
 	}
 
-	err = survey.AskOne(namePrompt, &newFileName, survey.WithValidator(survey.Required))
+	err = survey.AskOne(namePrompt, &newFileName, survey.WithValidator(survey.Required), survey.WithValidator(validateFileName))
 	if err != nil {
 		return "", err
 	}
@@ -132,4 +135,35 @@ func (i PickConfigPrompt) PickConfig(current string, availableConfigFiles []stri
 	}
 
 	return newFileName, err
+}
+
+func validateFileName(val interface{}) error {
+	value := reflect.ValueOf(val)
+	if isZero(value) {
+		return errors.New("value is required")
+	}
+
+	valStr := fmt.Sprint(val)
+
+	if !nameMatch(valStr) {
+		return errors.New("invalid filename")
+	}
+
+	return nil
+}
+
+func nameMatch(file string) bool {
+	re := regexp.MustCompile(`^[a-z-]+$`)
+	return re.MatchString(file)
+}
+
+// isZero returns true if the passed value is the zero object.
+func isZero(v reflect.Value) bool {
+	switch v.Kind() {
+	case reflect.Slice, reflect.Map:
+		return v.Len() == 0
+	}
+
+	// compare the types directly with more general coverage
+	return reflect.DeepEqual(v.Interface(), reflect.Zero(v.Type()).Interface())
 }

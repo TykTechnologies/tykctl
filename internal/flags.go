@@ -50,7 +50,7 @@ func SaveMapToConfig(data map[string]string) error {
 
 // SaveMapToCloudUserContext takes a map and write it to configuration file in the cloud service context
 // under a certain user context.
-func SaveMapToCloudUserContext(userID string, data map[string]string) error {
+func SaveMapToCloudUserContext(data map[string]string) error {
 	for key, value := range data {
 		cloudKey := fmt.Sprintf("cloud.%s", key)
 		viper.Set(cloudKey, value)

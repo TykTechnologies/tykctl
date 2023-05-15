@@ -40,7 +40,7 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 				return errors.New("you need to login to run this command")
 			}
 
-			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg(), userID)
+			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -52,7 +52,7 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 		})
 }
 
-func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgID, userID string) error {
+func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgID string) error {
 	info, _, err := client.GetOrgInfo(ctx, orgID)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt intern
 		}
 	}
 
-	err = internal.SaveMapToCloudUserContext(userID, orgInit.OrgInitToMap())
+	err = internal.SaveMapToCloudUserContext(orgInit.OrgInitToMap())
 	if err != nil {
 		return err
 	}

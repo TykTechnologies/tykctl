@@ -8,24 +8,29 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	overWrittenFile = "./testdata/overwritten.yml"
+	testDataDir     = "./testdata"
+)
+
 func TestGetAllConfig(t *testing.T) {
-	assert.FileExists(t, "./testdata/overwritten.yml")
+	assert.FileExists(t, overWrittenFile)
 	assert.FileExists(t, "./testdata/config_default.yaml")
 	assert.FileExists(t, "./testdata/config_itachi.yml")
 	assert.FileExists(t, "./testdata/config_json.json")
 
-	configFiles, err := GetAllConfig("./testdata")
+	configFiles, err := GetAllConfig(testDataDir)
 	assert.Nil(t, err)
 	assert.ElementsMatch(t, []string{"config_default.yaml", "config_itachi.yml"}, configFiles)
 }
 
 func TestConfigFileNotOverWritten(t *testing.T) {
-	assert.FileExists(t, "./testdata/overwritten.yml")
+	assert.FileExists(t, overWrittenFile)
 
-	err := CreateFile("./testdata", "overwritten.yml")
+	err := CreateFile(testDataDir, "overwritten.yml")
 	assert.Nil(t, err)
 
-	content, err := os.ReadFile("./testdata/overwritten.yml")
+	content, err := os.ReadFile(overWrittenFile)
 	assert.Nil(t, err)
 	assert.Equal(t, "data: testdata", string(content))
 }
@@ -44,7 +49,7 @@ func TestCreateConfigFile(t *testing.T) {
 		{
 			name: "Test File created",
 			args: args{
-				dir:  "./testdata",
+				dir:  testDataDir,
 				file: "config.yml",
 			},
 			Error: nil,

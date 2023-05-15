@@ -22,10 +22,6 @@ Some features the tykctl provides include:
   brew install tykctl 
   ```
 
-For instructions on how to get
-the [github access token please follow this guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
-.
-
 #### Install our prebuilt binaries
 
 - We do have prebuilt [ binaries here](https://github.com/TykTechnologies/tykctl/releases).Download the latest binary

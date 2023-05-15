@@ -28,7 +28,7 @@ func NewUpdateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 		WithLongDescription(updateTeamDesc).
 		WithDescription("update a team given it's uuid").
 		WithExample("tyckctl cloud teams update <uuid> --name=<new name> --org=<org uuid>").
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: false, Type: internal.Cloud}}).
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			return nil
 		})

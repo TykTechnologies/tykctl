@@ -25,10 +25,11 @@ func TestCreateDeploymentHeadersAndRows(t *testing.T) {
 					State:       "success",
 					UID:         "cfa0151a-ece8-40cf-a3ff-022851e0537f",
 					ZoneCode:    "turkey",
+					Namespace:   "mere-methodology",
 				},
 			},
-			header: []string{"Name", "UID", "Kind", "Region", "State"},
-			rows:   [][]string{{"Deploy 1", "cfa0151a-ece8-40cf-a3ff-022851e0537f", "Gateway", "turkey", "success"}},
+			header: []string{"Name", "UID", "Kind", "Region", "State", "Namespace"},
+			rows:   [][]string{{"Deploy 1", "cfa0151a-ece8-40cf-a3ff-022851e0537f", "Gateway", "turkey", "success", "mere-methodology"}},
 		},
 	}
 	for _, tt := range tests {

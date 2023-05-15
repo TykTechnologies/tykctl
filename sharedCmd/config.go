@@ -1,13 +1,13 @@
 package sharedCmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/TykTechnologies/tykctl/internal"
 )
 
 // initConfig reads in config file and ENV variables if set.
@@ -16,13 +16,23 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
+		coreDir, err := internal.GetCoreDir()
+		cobra.CheckErr(err)
+
+		v, err := internal.CreateViper(coreDir, internal.CoreConfig)
+		cobra.CheckErr(err)
+
+		currentConf := v.GetString(internal.CurrentConfig)
+
 		cobra.CheckErr(err)
 		// Search config in home directory with name ".tykctl" (without extension).
-		viper.AddConfigPath(home)
+		dir, err := internal.GetDefaultConfigDir()
+		cobra.CheckErr(err)
+
+		viper.AddConfigPath(dir)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".tykctl")
+
+		viper.SetConfigName(fmt.Sprintf("config_%s", currentConf))
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -30,21 +40,4 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
-}
-
-// CreateConfigFile creates a file in a given directory is it does not exist.
-func CreateConfigFile(dir, file string) error {
-	result := filepath.Join(dir, file)
-
-	_, err := os.Stat(result)
-	if !errors.Is(err, os.ErrNotExist) {
-		return err
-	}
-
-	f, err := os.Create(result)
-	if err != nil {
-		return err
-	}
-
-	return f.Close()
 }

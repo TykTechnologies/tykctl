@@ -86,6 +86,54 @@ func (mr *MockCloudClientMockRecorder) CreateTeam(ctx, team, oid interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTeam", reflect.TypeOf((*MockCloudClient)(nil).CreateTeam), ctx, team, oid)
 }
 
+// DeleteEnv mocks base method.
+func (m *MockCloudClient) DeleteEnv(ctx context.Context, oid, tid, id string, localVarOptionals *cloud.LoadoutsApiDeleteLoadoutOpts) (cloud.InlineResponse2012, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteEnv", ctx, oid, tid, id, localVarOptionals)
+	ret0, _ := ret[0].(cloud.InlineResponse2012)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// DeleteEnv indicates an expected call of DeleteEnv.
+func (mr *MockCloudClientMockRecorder) DeleteEnv(ctx, oid, tid, id, localVarOptionals interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteEnv", reflect.TypeOf((*MockCloudClient)(nil).DeleteEnv), ctx, oid, tid, id, localVarOptionals)
+}
+
+// DeleteTeam mocks base method.
+func (m *MockCloudClient) DeleteTeam(ctx context.Context, oid, tid string, localVarOptionals *cloud.TeamsApiDeleteTeamOpts) (cloud.InlineResponse2011, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTeam", ctx, oid, tid, localVarOptionals)
+	ret0, _ := ret[0].(cloud.InlineResponse2011)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// DeleteTeam indicates an expected call of DeleteTeam.
+func (mr *MockCloudClientMockRecorder) DeleteTeam(ctx, oid, tid, localVarOptionals interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTeam", reflect.TypeOf((*MockCloudClient)(nil).DeleteTeam), ctx, oid, tid, localVarOptionals)
+}
+
+// DestroyDeployment mocks base method.
+func (m *MockCloudClient) DestroyDeployment(ctx context.Context, oid, tid, lid, id string, localVarOptionals *cloud.DeploymentsApiDestroyDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DestroyDeployment", ctx, oid, tid, lid, id, localVarOptionals)
+	ret0, _ := ret[0].(cloud.InlineResponse2001)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// DestroyDeployment indicates an expected call of DestroyDeployment.
+func (mr *MockCloudClientMockRecorder) DestroyDeployment(ctx, oid, tid, lid, id, localVarOptionals interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DestroyDeployment", reflect.TypeOf((*MockCloudClient)(nil).DestroyDeployment), ctx, oid, tid, lid, id, localVarOptionals)
+}
+
 // GetDeploymentByID mocks base method.
 func (m *MockCloudClient) GetDeploymentByID(ctx context.Context, orgID, teamID, envID, id string, localVarOptionals *cloud.DeploymentsApiGetDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
 	m.ctrl.T.Helper()

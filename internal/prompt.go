@@ -16,6 +16,20 @@ func NewSurveyPrompt() *SurveyPrompt {
 	return &SurveyPrompt{}
 }
 
+func (s *SurveyPrompt) PerformActionPrompt(object string) (bool, error) {
+	value := false
+	prompt := &survey.Confirm{
+		Message: fmt.Sprintf("Are you sure you want to delete this %s ? ", object),
+	}
+
+	err := survey.AskOne(prompt, &value)
+	if err != nil {
+		return false, err
+	}
+
+	return value, nil
+}
+
 func (s *SurveyPrompt) RegionPrompt(regions []string) (string, error) {
 	prompt := &survey.Select{
 		Message: "Select your home region",

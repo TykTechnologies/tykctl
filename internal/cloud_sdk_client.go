@@ -103,6 +103,15 @@ func (c *CloudSdkClient) UpdateTeam(ctx context.Context, team cloud.Team, orgID,
 	return c.Client.TeamsApi.UpdateTeam(ctx, team, orgID, teamID)
 }
 
+func (c *CloudSdkClient) DeleteTeam(ctx context.Context, oid, tid string, localVarOptionals *cloud.TeamsApiDeleteTeamOpts) (cloud.InlineResponse2011, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2011{}, nil, err
+	}
+
+	return c.Client.TeamsApi.DeleteTeam(ctx, oid, tid, localVarOptionals)
+}
+
 // CreateEnv create an environment in a given team.
 func (c *CloudSdkClient) CreateEnv(ctx context.Context, env cloud.Loadout, orgID, teamID string) (cloud.InlineResponse2012, *http.Response, error) {
 	err := c.runBeforeExecute()
@@ -170,6 +179,15 @@ func (c *CloudSdkClient) StartDeployment(ctx context.Context, orgID, teamID, env
 	return c.Client.DeploymentsApi.StartDeployment(ctx, orgID, teamID, envID, id)
 }
 
+func (c *CloudSdkClient) DeleteEnv(ctx context.Context, oid, tid, id string, localVarOptionals *cloud.LoadoutsApiDeleteLoadoutOpts) (cloud.InlineResponse2012, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2012{}, nil, err
+	}
+
+	return c.Client.LoadoutsApi.DeleteLoadout(ctx, oid, tid, id, localVarOptionals)
+}
+
 func (c *CloudSdkClient) RestartDeployment(ctx context.Context, oid, tid, lid, id string) (cloud.InlineResponse2001, *http.Response, error) {
 	err := c.runBeforeExecute()
 	if err != nil {
@@ -195,6 +213,15 @@ func (c *CloudSdkClient) UpdateDeployment(ctx context.Context, body cloud.Deploy
 	}
 
 	return c.Client.DeploymentsApi.UpdateDeployment(ctx, body, orgID, teamID, envID, id, localVarOptionals)
+}
+
+func (c *CloudSdkClient) DestroyDeployment(ctx context.Context, oid, tid, lid, id string, localVarOptionals *cloud.DeploymentsApiDestroyDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2001{}, nil, err
+	}
+
+	return c.Client.DeploymentsApi.DestroyDeployment(ctx, oid, tid, lid, id, localVarOptionals)
 }
 
 func (c *CloudSdkClient) GetDeploymentZones(ctx context.Context) (*ZoneResponse, *resty.Response, error) {

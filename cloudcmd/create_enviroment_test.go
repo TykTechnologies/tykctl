@@ -3,6 +3,7 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"testing"
@@ -25,20 +26,16 @@ func TestFlagsAreAddedToCreateEnvironment(t *testing.T) {
 		Client: m,
 		Prompt: prompt,
 	}
-	parentCmd := NewEnvironmentCmd(factory)
+
 	cmd := NewCreateEnvironmentCmd(factory)
-	parentCmd.AddCommand(cmd)
-
-	localFlags := []internal.Flag{{
-		Description: "Test team name is added.",
-		Name:        "name",
-		Shorthand:   "n",
-		Value:       "",
-		Default:     "",
-	}}
-	testutil.TestFlags(t, cmd.Flags(), localFlags)
-
-	inheritedFlags := []internal.Flag{
+	localFlags := []internal.Flag{
+		{
+			Description: "Test team name is added.",
+			Name:        "name",
+			Shorthand:   "n",
+			Value:       "",
+			Default:     "",
+		},
 		{
 			Description: "Test team flag is added",
 			Name:        "team",
@@ -54,7 +51,7 @@ func TestFlagsAreAddedToCreateEnvironment(t *testing.T) {
 			Default:     "",
 		},
 	}
-	testutil.TestFlags(t, cmd.InheritedFlags(), inheritedFlags)
+	testutil.TestFlags(t, cmd.Flags(), localFlags)
 }
 
 func TestCreateEnvironment(t *testing.T) {
@@ -213,4 +210,36 @@ func generateEnvs(size int) []cloud.Loadout {
 	}
 
 	return loadouts
+}
+
+func TestNewCreateEnvironmentCmd(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	m := mock.NewMockCloudClient(ctrl)
+	prompt := mock.NewMockCloudPrompt(ctrl)
+	config := mock.NewMockUserConfig(ctrl)
+	factory := internal.CloudFactory{
+		Client: m,
+		Prompt: prompt,
+		Config: config,
+	}
+
+	config.EXPECT().GetCurrentUserOrg().Return("my-org")
+	config.EXPECT().GetCurrentUserTeam().Return("my-team")
+	config.EXPECT().GetCurrentUserRole().Return("org_admin")
+
+	m.EXPECT().CreateEnv(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(cloud.InlineResponse2012{
+		Error_:  "",
+		Payload: &cloud.Loadout{},
+		Status:  statusOK,
+	}, &http.Response{StatusCode: 201}, nil)
+
+	cmd := NewCreateEnvironmentCmd(factory)
+	cmd.SetArgs([]string{
+		fmt.Sprintf("--name=%s", "test name"),
+	})
+
+	err := cmd.Execute()
+	assert.Nil(t, err)
 }

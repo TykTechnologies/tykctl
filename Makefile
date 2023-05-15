@@ -5,7 +5,7 @@ generate-mocks:
 	go generate -v ./...
 
 lint:
-	golangci-lint run ./...
+	golangci-lint run ./...  --fix
 
 generate-docs:
 	cd docs && [ ! -e docs.md ] || rm docs.md && go run docs.go

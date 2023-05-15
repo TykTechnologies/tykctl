@@ -29,14 +29,14 @@ This command should ideally be run after the login command.
 `
 
 func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
-	return internal.NewCmd(initCloud).
+	return internal.NewCmd(internal.Init).
 		WithLongDescription(initDesc).
 		WithExample("tykctl cloud init").
 		WithDescription("Initialize the cli and set the default region and organization.").
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			userID := viper.GetString(currentCloudUser)
 			if userID == "" {
-				cmd.Println("Please login in first before running thid command")
+				cmd.Println("Please login in first before running this command")
 				return errors.New("you need to login to run this command")
 			}
 

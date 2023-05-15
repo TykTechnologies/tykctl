@@ -12,8 +12,10 @@ import (
 	"github.com/TykTechnologies/cloud-sdk/cloud"
 	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
 	"github.com/TykTechnologies/tykctl/cloudcmd"
+	"github.com/TykTechnologies/tykctl/configcmd"
 	"github.com/TykTechnologies/tykctl/gatewaycmd"
 	"github.com/TykTechnologies/tykctl/internal"
+	"github.com/TykTechnologies/tykctl/util"
 
 	cc "github.com/ivanpirog/coloredcobra"
 )
@@ -33,27 +35,98 @@ tykctl cloud <subcommand here>
 var (
 	controller        = "controller"
 	tykctl            = "tykctl"
-	defaultConfigFile = ".tykctl.yaml"
-	currentCloudUser  = "cloud.current_user"
 	currentCloudToken = "cloud.current_token"
+
+	configDefault = "default"
 )
 
 func NewRootCmd() *cobra.Command {
-	return internal.NewCmd(tykctl).
+	builder := internal.NewCmd(tykctl).
 		WithLongDescription(rootDesc).
 		WithDescription("Tykctl is a cli that can be used to interact with tyk components (tyk cloud,tyk gateway and tyk dashboard.").
-		WithFlagAdder(true, addGlobalPersistentFlags).
-		WithCommands()
+		WithFlagAdder(true, addGlobalPersistentFlags)
+
+	return builder.WithCommands()
 }
 
-func Execute() {
+func createConfigFiles() error {
+	dir, err := internal.GetCoreDir()
+	if err != nil {
+		return err
+	}
+
+	configDir, err := internal.GetDefaultConfigDir()
+	if err != nil {
+		return err
+	}
+
+	err = util.CheckDirectory(configDir)
+	if err != nil {
+		return err
+	}
+
+	err = internal.CreateFile(dir, internal.CoreConfigFileName)
+
+	if err != nil {
+		return err
+	}
+
+	v, err := internal.CreateViper(dir, internal.CoreConfig)
+	if err != nil {
+		return err
+	}
+
+	activeConf := v.GetString(internal.CurrentConfig)
+	if util.StringIsEmpty(activeConf) {
+		activeConf = configDefault
+		v.Set(internal.CurrentConfig, activeConf)
+	}
+
+	err = internal.CreateConfigFile(configDir, activeConf)
+	if err != nil {
+		return err
+	}
+
+	return v.WriteConfig()
+}
+
+func configCloud() internal.CloudFactory {
 	conf := cloud.Configuration{
 		DefaultHeader: map[string]string{},
 	}
+
 	sdkClient := internal.NewCloudSdkClient(&conf)
+	cloudFactory := internal.CloudFactory{
+		Client: sdkClient,
+		Prompt: internal.NewSurveyPrompt(),
+		Config: internal.ViperConfig{},
+	}
 
 	sdkClient.AddBeforeExecuteFunc(AddTokenAndBaseURL)
 	sdkClient.AddBeforeRestyExecute(AddTokenAndBaseURLToResty)
+
+	return cloudFactory
+}
+
+func configGateway() internal.ApimClient {
+	apiConfig := apim.Configuration{
+		DefaultHeader: make(map[string]string),
+		Debug:         false,
+		Servers:       apim.ServerConfigurations{},
+	}
+	client := apim.NewAPIClient(&apiConfig)
+	apimClient := internal.ApimClient{Client: client}
+
+	return apimClient
+}
+
+func Execute() {
+	err := createConfigFiles()
+	if err != nil {
+		os.Exit(1)
+	}
+
+	cobra.OnInitialize(initConfig)
 
 	rootCmd := NewRootCmd()
 
@@ -68,52 +141,49 @@ func Execute() {
 		FlagsDescr:    cc.HiBlue,
 	})
 
-	cloudFactory := internal.CloudFactory{
-		Client: sdkClient,
-		Prompt: internal.NewSurveyPrompt(),
-		Config: internal.ViperConfig{},
+	v, err := internal.CreateCoreViper()
+	if err != nil {
+		return
 	}
 
-	rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
+	cloudFactory := configCloud()
 
-	apiConfig := apim.Configuration{
-		DefaultHeader: make(map[string]string),
-		Debug:         false,
-		Servers:       apim.ServerConfigurations{},
+	service := v.GetString(internal.CurrentService)
+	switch service {
+	case internal.Cloud:
+		rootCmd.AddCommand(cloudcmd.CloudCommands(cloudFactory)...)
+		rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
+	case internal.Gateway:
+		apimClient := configGateway()
+		rootCmd.AddCommand(gatewaycmd.GatewayCommands(apimClient)...)
+		rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
+	default:
+		rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
+
+		apimClient := configGateway()
+		rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
 	}
-	client := apim.NewAPIClient(&apiConfig)
-	apimClient := internal.ApimClient{Client: client}
 
-	rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())
 	rootCmd.AddCommand(NewCheckoutCmd())
 
-	err := rootCmd.Execute()
+	configPrompt := configcmd.PickConfigPrompt{}
+	fileConfig := internal.FileConfigEntry{}
+	rootCmd.AddCommand(configcmd.NewConfigCmd(configPrompt, fileConfig, cloudFactory))
+
+	err = rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
 func addGlobalPersistentFlags(f *pflag.FlagSet) {
-	f.StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tykctl.yaml)")
-}
-
-func init() {
-	file := defaultConfigFile
-
-	home, err := os.UserHomeDir()
-	if err != nil {
-		cobra.CheckErr(err)
-	}
-
-	err = CreateConfigFile(home, file)
-	cobra.CheckErr(err)
-	cobra.OnInitialize(initConfig)
+	f.StringVar(&cfgFile, "config", "", "config file (default is $HOME/.tykctl/config/config_default.yaml)")
 }
 
 // AddTokenAndBaseURL will add a user token from the configuration file to each request header.
 func AddTokenAndBaseURL(client *cloud.APIClient, conf *cloud.Configuration) error {
-	baseURL := viper.GetString(internal.CreateKeyFromPath("cloud", viper.GetString(currentCloudUser), controller))
+	baseURL := viper.GetString(internal.CreateKeyFromPath("cloud", controller))
 	client.ChangeBasePath(baseURL)
 
 	token := fmt.Sprintf("Bearer %s", viper.GetString(currentCloudToken))

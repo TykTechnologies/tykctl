@@ -12,7 +12,14 @@ import (
 // NewGatewayCommand  creates the gateway service parent command.
 func NewGatewayCommand(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(shared.Gateway).
-		WithCommands(
-			reload.NewReloadCmd(apimClient),
-			keys.NewKeysCmd(apimClient))
+		WithCommands(GatewayCommands(apimClient)...)
+}
+
+func GatewayCommands(apimClient internal.ApimClient) []*cobra.Command {
+	commands := []*cobra.Command{
+		reload.NewReloadCmd(apimClient),
+		keys.NewKeysCmd(apimClient),
+	}
+
+	return commands
 }

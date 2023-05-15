@@ -18,6 +18,7 @@ type Flag struct {
 type BindFlag struct {
 	Name       string
 	Persistent bool
+	Type       ServiceType
 }
 
 // SaveToConfig writes data to the config file provided by --config.
@@ -51,7 +52,7 @@ func SaveMapToConfig(data map[string]string) error {
 // under a certain user context.
 func SaveMapToCloudUserContext(userID string, data map[string]string) error {
 	for key, value := range data {
-		cloudKey := fmt.Sprintf("cloud.%s.%s", userID, key)
+		cloudKey := fmt.Sprintf("cloud.%s", key)
 		viper.Set(cloudKey, value)
 	}
 

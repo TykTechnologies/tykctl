@@ -17,7 +17,9 @@ func NewCheckoutCmd() *cobra.Command {
 		WithDescription("Sets tykctl to present commands within the context of the chosen service.").
 		WithLongDescription(checkoutLongDescription).
 		WithExample("tykctl checkout cloud").
-		WithValidArgs([]string{internal.Cloud, internal.Gateway}).
+		WithExample("tykctl checkout all").
+		WithExample("tykctl checkout gateway").
+		WithValidArgs([]string{internal.Cloud, internal.Gateway, internal.All}).
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			v, err := internal.CreateCoreViper()
 			if err != nil {

@@ -15,4 +15,5 @@ const (
 	Certs    = "certs"
 	OrgID    = "orgId"
 	CertID   = "certID"
+	Switch   = "switch"
 )

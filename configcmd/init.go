@@ -8,8 +8,23 @@ import (
 	"github.com/TykTechnologies/tykctl/internal"
 )
 
+const configInitDesc = `
+ This command will initialize an existing or a new configuration file.
+
+The configuration file you initialize with this command will be made the active config and will be used as the --config flag value
+if you do not pass it when running the commands.
+
+The command will also allow you to select the service that you want to activate.
+
+If you decide to activate all services or the cloud service you will be prompted you login to the cloud and the token will be saved in the file you have initialised.
+
+`
+
 func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigEntry, factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(internal.Init).
+		WithExample("tykctl config init").
+		WithLongDescription(configInitDesc).
+		WithDescription("initialize a new or existing configuration file").
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			configFiles, err := configEntry.GetAllConfig(false)
 			if err != nil {

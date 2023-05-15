@@ -9,21 +9,31 @@ import (
 	"github.com/TykTechnologies/tykctl/internal"
 )
 
+const fetchConfigDesc = `
+This command will fetch and list all the configuration files in your config directory.
+
+The currently active config will be green in color.
+`
+
 func newConfigFetchCmd(configEntry internal.ConfigEntry) *cobra.Command {
-	return internal.NewCmd(shared.Fetch).NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-		config, err := configEntry.GetAllConfig(true)
-		if err != nil {
-			return err
-		}
+	return internal.NewCmd(shared.Fetch).
+		WithExample("tykctl config fetch").
+		WithLongDescription(fetchConfigDesc).
+		WithDescription("this command will list all the config file you have created").
+		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
+			config, err := configEntry.GetAllConfig(true)
+			if err != nil {
+				return err
+			}
 
-		activeConfig, err := configEntry.GetCurrentActiveConfig()
-		if err != nil {
-			return err
-		}
+			activeConfig, err := configEntry.GetCurrentActiveConfig()
+			if err != nil {
+				return err
+			}
 
-		internal.PrintList("", config, activeConfigIndex(config, activeConfig))
-		return nil
-	})
+			internal.PrintList("", config, activeConfigIndex(config, activeConfig))
+			return nil
+		})
 }
 
 func activeConfigIndex(files []string, active string) []int {

@@ -17,11 +17,24 @@ import (
 	"github.com/TykTechnologies/tykctl/util"
 )
 
+const updateDepDesc = `
+will update the values of a deployment given its uuid.
+
+Note: To redeploy the deployment you update set the --deploy flag as true.
+
+You must pass the organization,team,zone and environment the deployment belongs to.
+
+Use the set from to change the deployment value using the json dot notation.
+`
+
 func NewUpdateDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(update).
 		WithFlagAdder(false, setValues).
 		WithFlagAdder(false, envValues).
+		WithLongDescription(updateDepDesc).
 		WithFlagAdder(false, updateDeploymentFlag).
+		WithDescription("update the values of a deployment").
+		WithExample("tykctl cloud dep update <dep uuid> --set 'Name=itachi'").
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			deployment, err := validateDeploymentFlagsAndUpdate(ctx, factory.Client, factory.Config, cmd.Flags(), args[0])
 			if err != nil {

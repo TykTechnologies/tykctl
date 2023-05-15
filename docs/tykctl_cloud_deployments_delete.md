@@ -1,31 +1,18 @@
-## tykctl cloud deployments status
+## tykctl cloud deployments delete
 
-output the status of a deployment given its uuid.
-
-### Synopsis
-
-
-This command will output the status of a deployment given its uuid.
-You will receive an error if the deployment does not exist.
-
-Sample usage for this command:
-tykctl cloud deployments status b5c503e8-c632-4ce0-9629-b0ee3e3c2c62 
 
 
 ```
-tykctl cloud deployments status [flags]
-```
-
-### Examples
-
-```
-tykctl cloud deployments status <deployment uuid>
+tykctl cloud deployments delete [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for status
+  -c, --confirm   delete the deployment without a confirmation prompt
+  -d, --delete    mark deployment as deleted
+  -h, --help      help for delete
+  -p, --purge     purge deployment from storage
 ```
 
 ### Options inherited from parent commands

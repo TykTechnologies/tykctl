@@ -41,7 +41,7 @@ func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigE
 }
 
 func loginToCloud(ctx context.Context, prompt internal.ConfigPrompt, factory internal.CloudFactory, service string) error {
-	if service == internal.Cloud || service == internal.All {
+	if service != internal.Cloud && service != internal.All {
 		return nil
 	}
 

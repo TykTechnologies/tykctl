@@ -21,7 +21,7 @@ func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigE
 				return err
 			}
 
-			pickedConfig, err := prompt.PickConfig(currentActiveConfig, configFiles)
+			pickedConfig, err := prompt.PickConfig(currentActiveConfig, configFiles, true)
 			if err != nil {
 				return err
 			}

@@ -9,5 +9,6 @@ import (
 func NewConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigEntry, factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(internal.Config).
 		WithCommands(newInitConfigCmd(prompt, configEntry, factory),
-			newConfigFetchCmd(configEntry))
+			newConfigFetchCmd(configEntry),
+			newSwitchConfigCmd(prompt, configEntry))
 }

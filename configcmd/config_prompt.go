@@ -71,10 +71,20 @@ func (i PickConfigPrompt) PickServiceToUse(shouldSave bool) (string, error) {
 	return selected, err
 }
 
-func (i PickConfigPrompt) PickConfig(current string, availableConfigFiles []string) (string, error) {
+func (i PickConfigPrompt) PickConfig(current string, availableConfigFiles []string, shouldInitialize bool) (string, error) {
 	currentTrimmed := internal.ConfigFileDisplayName(current)
-	currentSelection := fmt.Sprintf("Re-initialize the current configuration [%s] with new settings", currentTrimmed)
-	selections := []string{currentSelection, "Create a new configuration"}
+
+	firstSelection := "Re-initialize the current configuration [%s] with new settings"
+	newFile := "Create a new configuration"
+	existing := "Switch to and re-initialize existing configuration: %s"
+	if !shouldInitialize {
+		firstSelection = "Continue using the current configuration [%s]"
+		newFile = "Create and switch to a new configuration file"
+		existing = "Switch to existing configuration: %s"
+	}
+	currentSelection := fmt.Sprintf(firstSelection, currentTrimmed)
+
+	selections := []string{currentSelection, newFile}
 
 	indexAvailableConfigFiles := []string{currentTrimmed, "Create a new configuration"}
 
@@ -85,7 +95,7 @@ func (i PickConfigPrompt) PickConfig(current string, availableConfigFiles []stri
 		}
 
 		indexAvailableConfigFiles = append(indexAvailableConfigFiles, fileTrimmed)
-		otherSelection := fmt.Sprintf("Switch to and re-initialize existing configuration: %s", fileTrimmed)
+		otherSelection := fmt.Sprintf(existing, fileTrimmed)
 		selections = append(selections, otherSelection)
 	}
 

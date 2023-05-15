@@ -7,4 +7,5 @@ const (
 	Keys    = "keys"
 	OutPut  = "output"
 	Table   = "table"
+	Switch  = "switch"
 )

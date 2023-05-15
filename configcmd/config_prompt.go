@@ -77,11 +77,13 @@ func (i PickConfigPrompt) PickConfig(current string, availableConfigFiles []stri
 	firstSelection := "Re-initialize the current configuration [%s] with new settings"
 	newFile := "Create a new configuration"
 	existing := "Switch to and re-initialize existing configuration: %s"
+
 	if !shouldInitialize {
 		firstSelection = "Continue using the current configuration [%s]"
 		newFile = "Create and switch to a new configuration file"
 		existing = "Switch to existing configuration: %s"
 	}
+
 	currentSelection := fmt.Sprintf(firstSelection, currentTrimmed)
 
 	selections := []string{currentSelection, newFile}

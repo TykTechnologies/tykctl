@@ -5,10 +5,39 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/jedib0t/go-pretty/v6/list"
 	"github.com/olekukonko/tablewriter"
 	"github.com/tidwall/gjson"
+	"golang.org/x/exp/slices"
+
+	"github.com/TykTechnologies/tykctl/util"
 )
+
+func PrintList(title string, items []string, highlight []int) {
+	if !util.StringIsEmpty(title) {
+		fmt.Printf("%s:\n", title)
+		fmt.Println(strings.Repeat("-", len(title)+1))
+	}
+
+	l := list.NewWriter()
+
+	for _, item := range items {
+		l.AppendItem(item)
+	}
+
+	for index, line := range strings.Split(l.Render(), "\n") {
+		if slices.Contains(highlight, index) {
+			colored := fmt.Sprintf("\x1b[%dm%s\x1b[0m", 32, line)
+			fmt.Println(colored)
+
+			continue
+		}
+
+		fmt.Println(line)
+	}
+}
 
 // Printable will print the data as a table on the terminal.
 func Printable(headers []string, data [][]string) {

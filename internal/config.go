@@ -99,7 +99,7 @@ type ConfigEntry interface {
 	GetCurrentActiveConfig() (string, error)
 	GetDefaultConfigDir() (string, error)
 	GetCoreDir() (string, error)
-	GetAllConfig() ([]string, error)
+	GetAllConfig(useDisplayMode bool) ([]string, error)
 	CreateConfigFile(fileName string, makeActive bool) error
 }
 
@@ -145,13 +145,25 @@ func (f FileConfigEntry) GetCoreDir() (string, error) {
 	return GetCoreDir()
 }
 
-func (f FileConfigEntry) GetAllConfig() ([]string, error) {
+func (f FileConfigEntry) GetAllConfig(useDisplayMode bool) ([]string, error) {
 	configDir, err := f.GetDefaultConfigDir()
 	if err != nil {
 		return nil, err
 	}
 
-	return GetAllConfig(configDir)
+	config, err := GetAllConfig(configDir)
+	if err != nil || !useDisplayMode {
+		return config, err
+	}
+
+	var configFilesInDisplayMode []string
+
+	for _, file := range config {
+		fileTrimmed := ConfigFileDisplayName(file)
+		configFilesInDisplayMode = append(configFilesInDisplayMode, fileTrimmed)
+	}
+
+	return configFilesInDisplayMode, nil
 }
 
 // CreateFile creates a file in a given directory is it does not exist.
@@ -169,4 +181,11 @@ func CreateFile(dir, file string) error {
 	}
 
 	return f.Close()
+}
+
+func ConfigFileDisplayName(fileName string) string {
+	trimmedPrefix := strings.TrimPrefix(fileName, "config_")
+	extension := filepath.Ext(trimmedPrefix)
+
+	return strings.TrimSuffix(trimmedPrefix, extension)
 }

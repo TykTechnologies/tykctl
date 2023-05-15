@@ -11,7 +11,7 @@ import (
 func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigEntry, factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(internal.Init).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			configFiles, err := configEntry.GetAllConfig()
+			configFiles, err := configEntry.GetAllConfig(false)
 			if err != nil {
 				return err
 			}

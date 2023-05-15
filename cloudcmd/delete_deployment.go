@@ -54,7 +54,7 @@ func validateFlagsAndDeleteDeployment(ctx context.Context, client internal.Cloud
 		return nil, err
 	}
 
-	deleteFlag, err := f.GetBool(delete)
+	deleteFlag, err := f.GetBool(deleteCmd)
 	if err != nil {
 		return nil, err
 	}
@@ -81,6 +81,6 @@ func deleteDeployment(ctx context.Context, client internal.CloudClient, orgID, t
 }
 
 func deleteDeploymentFlag(f *pflag.FlagSet) {
-	f.BoolP(delete, "d", false, "mark deployment as deleted")
+	f.BoolP(deleteCmd, "d", false, "mark deployment as deleted")
 	f.BoolP(purge, "p", false, "purge deployment from storage")
 }

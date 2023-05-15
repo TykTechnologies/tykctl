@@ -15,7 +15,7 @@ type DeleteInterface interface {
 }
 
 func NewDeleteBaseCmd(factory internal.CloudFactory, deleteInterface DeleteInterface, objectType CloudObjectType) *cobra.Command {
-	builder := internal.NewCmd(delete).
+	builder := internal.NewCmd(deleteCmd).
 		WithAliases([]string{del}).
 		WithFlagAdder(false, confirmFlag).
 		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: false, Type: internal.Cloud}})

@@ -3,8 +3,6 @@ package configcmd
 import (
 	"context"
 	"fmt"
-	"path/filepath"
-	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	"golang.org/x/exp/slices"
@@ -74,14 +72,14 @@ func (i PickConfigPrompt) PickServiceToUse(shouldSave bool) (string, error) {
 }
 
 func (i PickConfigPrompt) PickConfig(current string, availableConfigFiles []string) (string, error) {
-	currentTrimmed := ConfigFileDisplayName(current)
+	currentTrimmed := internal.ConfigFileDisplayName(current)
 	currentSelection := fmt.Sprintf("Re-initialize the current configuration [%s] with new settings", currentTrimmed)
 	selections := []string{currentSelection, "Create a new configuration"}
 
 	indexAvailableConfigFiles := []string{currentTrimmed, "Create a new configuration"}
 
 	for _, file := range availableConfigFiles {
-		fileTrimmed := ConfigFileDisplayName(file)
+		fileTrimmed := internal.ConfigFileDisplayName(file)
 		if currentTrimmed == fileTrimmed {
 			continue
 		}
@@ -122,11 +120,4 @@ func (i PickConfigPrompt) PickConfig(current string, availableConfigFiles []stri
 	}
 
 	return newFileName, err
-}
-
-func ConfigFileDisplayName(fileName string) string {
-	trimmedPrefix := strings.TrimPrefix(fileName, "config_")
-	extension := filepath.Ext(trimmedPrefix)
-
-	return strings.TrimSuffix(trimmedPrefix, extension)
 }

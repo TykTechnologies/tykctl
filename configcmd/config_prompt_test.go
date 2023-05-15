@@ -2,7 +2,7 @@ package configcmd
 
 import "testing"
 
-func Test_nameMatch(t *testing.T) {
+func TestNameMatch(t *testing.T) {
 	tests := []struct {
 		name string
 		file string

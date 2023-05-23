@@ -131,7 +131,7 @@ func TestValidateFlagsAndCreateTeam(t *testing.T) {
 			defer ctrl.Finish()
 			m := mock.NewMockCloudClient(ctrl)
 			m.EXPECT().CreateTeam(gomock.Any(), gomock.Any(), gomock.Any()).Times(tt.numberOfTimeToCallMockFunc).Return(tt.mockResponse, tt.mockHTTPResponse, tt.mockError)
-			team, err := validateFlagsAndCreateTeam(context.Background(), m, tt.teamName, tt.org)
+			team, err := validateFlagsAndCreateTeam(context.Background(), m, tt.teamName, tt.org, nil)
 			assert.Equal(t, tt.ExpectedError, err)
 			assert.Equal(t, tt.expectedTeamResponse, team)
 		})

@@ -29,18 +29,18 @@ This command should ideally be run after the login command.
 `
 
 func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
-	return internal.NewCmd(initCloud).
+	return internal.NewCmd(internal.Init).
 		WithLongDescription(initDesc).
 		WithExample("tykctl cloud init").
-		WithDescription("initialize the cli and set the default region and organization.").
+		WithDescription("Initialize the cli and set the default region and organization.").
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			userID := viper.GetString(currentCloudUser)
 			if userID == "" {
-				cmd.Println("Please login in first before running thid command")
+				cmd.Println("Please login in first before running this command")
 				return errors.New("you need to login to run this command")
 			}
 
-			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg(), userID)
+			err := SetupPrompt(cmd.Context(), factory.Client, factory.Prompt, factory.Config.GetCurrentUserOrg())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -52,7 +52,7 @@ func NewInitCmd(factory internal.CloudFactory) *cobra.Command {
 		})
 }
 
-func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgID, userID string) error {
+func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt internal.CloudPrompt, orgID string) error {
 	info, _, err := client.GetOrgInfo(ctx, orgID)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func SetupPrompt(ctx context.Context, client internal.CloudClient, prompt intern
 		}
 	}
 
-	err = internal.SaveMapToCloudUserContext(userID, orgInit.OrgInitToMap())
+	err = internal.SaveMapToCloudUserContext(orgInit.OrgInitToMap())
 	if err != nil {
 		return err
 	}

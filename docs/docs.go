@@ -10,11 +10,11 @@ import (
 
 	"github.com/TykTechnologies/tykctl/cloudcmd"
 	"github.com/TykTechnologies/tykctl/internal"
-	"github.com/TykTechnologies/tykctl/sharedCmd"
+	"github.com/TykTechnologies/tykctl/sharedcmd"
 )
 
 func main() {
-	rootCmd := sharedCmd.NewRootCmd()
+	rootCmd := sharedcmd.NewRootCmd()
 	factory := internal.CloudFactory{
 		Client: nil,
 		Prompt: nil,

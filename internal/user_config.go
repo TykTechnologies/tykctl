@@ -19,17 +19,17 @@ var _ UserConfig = (*ViperConfig)(nil)
 type ViperConfig struct{}
 
 func (v ViperConfig) GetCurrentUserOrg() string {
-	return viper.GetString(CreateKeyFromPath(cloudPath, viper.GetString(currentCloudUser), org))
+	return viper.GetString(CreateKeyFromPath(cloudPath, org))
 }
 
 func (v ViperConfig) GetCurrentUserTeam() string {
-	return viper.GetString(CreateKeyFromPath(cloudPath, viper.GetString(currentCloudUser), team))
+	return viper.GetString(CreateKeyFromPath(cloudPath, team))
 }
 
 func (v ViperConfig) GetCurrentUserEnv() string {
-	return viper.GetString(CreateKeyFromPath(cloudPath, viper.GetString(currentCloudUser), env))
+	return viper.GetString(CreateKeyFromPath(cloudPath, env))
 }
 
 func (v ViperConfig) GetCurrentUserRole() string {
-	return viper.GetString(CreateKeyFromPath(cloudPath, viper.GetString(currentCloudUser), userRole))
+	return viper.GetString(CreateKeyFromPath(cloudPath, userRole))
 }

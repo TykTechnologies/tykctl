@@ -5,20 +5,20 @@
 class Tykctl < Formula
   desc ""
   homepage ""
-  version "0.0.26"
+  version "0.0.31"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.26/tykctl_0.0.26_Darwin_x86_64.tar.gz"
-      sha256 "f880e5800522d895620a6338d8a18b4cfc51f98d616fe5b1d33c27cc9fcfbae6"
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.31/tykctl_0.0.31_Darwin_x86_64.tar.gz"
+      sha256 "5e31f829dcac2f5057f75cb091f99e0a8636c5c17c0f41aa5f91ff4406dc4a4d"
 
       def install
         bin.install "tykctl"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.26/tykctl_0.0.26_Darwin_arm64.tar.gz"
-      sha256 "05e65a864ce212a070d4a9312551aff55c16c5bb845bf7934eecc9bf43b98b89"
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.31/tykctl_0.0.31_Darwin_arm64.tar.gz"
+      sha256 "4c9e6078301b08e16814cf557ab30f1a5f57cd1a2ba6365a4f6f8d1f67fd1a89"
 
       def install
         bin.install "tykctl"
@@ -28,16 +28,16 @@ class Tykctl < Formula
 
   on_linux do
     if Hardware::CPU.intel?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.26/tykctl_0.0.26_Linux_x86_64.tar.gz"
-      sha256 "320028aebd8a02732aef2a8e5f6887322cfb106a16e4a0c77984193d22d28dbf"
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.31/tykctl_0.0.31_Linux_x86_64.tar.gz"
+      sha256 "56c91ed40d4cbdfa0888891d5935c971cc25de6ced8e731c4c356278b99dc837"
 
       def install
         bin.install "tykctl"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.26/tykctl_0.0.26_Linux_arm64.tar.gz"
-      sha256 "ff6518d588618d9f4ed976d9ab8105b1d2e5cfdffc29659dc9946127bed2c120"
+      url "https://github.com/TykTechnologies/tykctl/releases/download/v0.0.31/tykctl_0.0.31_Linux_arm64.tar.gz"
+      sha256 "c8e4652f90a434bc9d8b3a35f8198bb8a0aa75fb4f9bed5e32438b2eabf0d56f"
 
       def install
         bin.install "tykctl"

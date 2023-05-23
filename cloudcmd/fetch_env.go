@@ -33,16 +33,19 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
 		AddPreRunFuncs(NewCloudRbac(TeamMember, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
+		WithFlagAdder(false, getValues).
+		WithFlagAdder(false, envFlags).
 		WithLongDescription(fetchEnvDesc).
-		WithDescription("fetch environments from a given team.").
+		WithDescription("Fetch environments from a given team.").
 		WithExample("tykctl cloud environments fetch --team=<teamID> --org=<orgID>").
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}, {Name: team, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			org := factory.Config.GetCurrentUserOrg()
 			team := factory.Config.GetCurrentUserTeam()
 			if len(args) == 0 {
@@ -51,9 +54,16 @@ func NewFetchEnvironmentCmd(factory internal.CloudFactory) *cobra.Command {
 					cmd.PrintErrln(err)
 					return err
 				}
+
 				return nil
 			}
-			err = validateFlagsAndPrintEnvByID(cmd.Context(), factory.Client, outPut, org, team, args[0])
+
+			getVal, err := cmd.Flags().GetStringSlice(get)
+			if err != nil {
+				return err
+			}
+
+			err = validateFlagsAndPrintEnvByID(cmd.Context(), factory.Client, outPut, org, team, args[0], getVal)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -89,7 +99,7 @@ func validateFlagsAndPrintEnvs(ctx context.Context, client internal.CloudClient,
 	return internal.PrintJSON(envs)
 }
 
-func validateFlagsAndPrintEnvByID(ctx context.Context, client internal.CloudClient, output, orgID, teamID, envID string) error {
+func validateFlagsAndPrintEnvByID(ctx context.Context, client internal.CloudClient, output, orgID, teamID, envID string, getValues []string) error {
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
@@ -108,6 +118,11 @@ func validateFlagsAndPrintEnvByID(ctx context.Context, client internal.CloudClie
 
 	env, err := GetEnvByID(ctx, client, orgID, teamID, envID)
 	if err != nil {
+		return err
+	}
+
+	if len(getValues) > 0 {
+		err = internal.HandleGets(env, getValues)
 		return err
 	}
 

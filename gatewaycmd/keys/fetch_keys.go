@@ -17,8 +17,7 @@ func NewFetchKeysCmd(apimClient internal.ApimClient) *cobra.Command {
 		WithFlagAdder(false, shared.AddOutPutFlags).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
 			shared.AddGatewaySecret(apimClient.Client.GetConfig())
-			shared.AddGatewayServers(apimClient.Client.GetConfig())
-			return nil
+			return shared.AddGatewayServers(apimClient.Client.GetConfig())
 		}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(shared.OutPut)

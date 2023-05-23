@@ -1,8 +1,7 @@
 ara-client-sdk/.idea
 .idea/
 dist/
-
-dist/
+dist
 tempDir
 tempDir/
 tykctl

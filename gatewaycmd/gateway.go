@@ -3,9 +3,13 @@ package gatewaycmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/TykTechnologies/tykctl/gatewaycmd/keys"
+	"github.com/TykTechnologies/tykctl/gatewaycmd/api"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/reload"
+	"github.com/TykTechnologies/tykctl/gatewaycmd/templates"
+
+	"github.com/TykTechnologies/tykctl/gatewaycmd/keys"
 	"github.com/TykTechnologies/tykctl/gatewaycmd/shared"
+
 	"github.com/TykTechnologies/tykctl/internal"
 )
 
@@ -19,6 +23,8 @@ func GatewayCommands(apimClient internal.ApimClient) []*cobra.Command {
 	commands := []*cobra.Command{
 		reload.NewReloadCmd(apimClient),
 		keys.NewKeysCmd(apimClient),
+		templates.NewTemplateCmd(),
+		api.NewApisCmd(apimClient),
 	}
 
 	return commands

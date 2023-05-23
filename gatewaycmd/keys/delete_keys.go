@@ -16,8 +16,7 @@ func NewDeleteKeyCmd(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(shared.Delete).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
 			shared.AddGatewaySecret(apimClient.Client.GetConfig())
-			shared.AddGatewayServers(apimClient.Client.GetConfig())
-			return nil
+			return shared.AddGatewayServers(apimClient.Client.GetConfig())
 		}).
 		ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			_, err := deleteKeyByID(ctx, apimClient.Client.KeysAPI, args[0])

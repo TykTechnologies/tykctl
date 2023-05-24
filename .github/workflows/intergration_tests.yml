@@ -1,5 +1,4 @@
 name: Run integration tests
-
 on:
   push:
     branches:
@@ -19,5 +18,4 @@ jobs:
 
       - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - name: Build and Install tykctl
-        run: |
-           - echo $PATH
+        run: echo $PATH

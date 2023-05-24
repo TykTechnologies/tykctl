@@ -20,4 +20,4 @@ jobs:
       - name: Build and Install tykctl
         run: |
             go build && mv tykctl /usr/local/bin 
-            pwd
+            tykctl -h

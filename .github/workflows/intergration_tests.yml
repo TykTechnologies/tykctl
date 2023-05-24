@@ -18,7 +18,7 @@ jobs:
           go-version: '1.19'
 
       - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
-      - name: Install tykctl
+      - name: Build and Install tykctl
         run: |
-           - go install
+           - go build && mv tykctl /usr/local/bin/ && chmod +x /usr/local/bin/tykctl
            - tykctl -h

@@ -22,4 +22,4 @@ jobs:
       - name: Build and Install tykctl
         run: |
             go build && mv tykctl /usr/local/bin 
-            cd testsuite && venom run  -v
+            cd testsuite && pwd &&venom run  -v

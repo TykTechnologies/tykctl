@@ -1,8 +1,6 @@
 package shared
 
 import (
-	"errors"
-
 	"github.com/spf13/viper"
 
 	"github.com/TykTechnologies/gateway-sdk/pkg/apim"
@@ -22,7 +20,7 @@ func AddGatewaySecret(config *apim.Configuration) {
 func AddGatewayServers(config *apim.Configuration) error {
 	urls := viper.GetStringSlice(gatewayUrls)
 	if len(urls) == 0 {
-		return errors.New("you have not set the url to connect to your gateway in your config")
+		urls = append(urls, "http://localhost:8080")
 	}
 
 	for _, url := range urls {

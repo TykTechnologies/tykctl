@@ -31,5 +31,4 @@ jobs:
         run: |
             go build && mv tykctl /usr/local/bin 
             tykctl ctx gateway.secret foo
-            tykctl ctx gateway.urls foo
             cd testsuite && ls -a &&venom run  -v

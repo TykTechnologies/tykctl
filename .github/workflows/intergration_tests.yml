@@ -25,6 +25,7 @@ jobs:
           cd tyk-gateway-docker 
           docker-compose up -d
           cd ..
+          curl http://localhost:8080/hello -i
 
       - name: Build and Install tykctl
         run: |

@@ -1,16 +1,16 @@
 # Tykctl
 
-Tykctl is a command line tool that can be used to interact with tyk cloud.
+Tykctl is a command line tool to interact with Tyk Cloud, Tyk Self-Managed and Tyk OSS (open source).
 
 ## Overview
 
-Some features the tykctl provides include:
+Some features `tykctl cloud` provides include:
 
-1. Ability to login to tyk cloud.
-2. Fetching all your organizations from tyk cloud.
-3. Creating teams in you tyk cloud organization.
-4. Create environments in your team.
-5. Deploy control plane and edge gateways.
+1. Ability to login to Tyk Cloud.
+2. Fetching all your organizations from Tyk Cloud.
+3. Creating teams in your Tyk Cloud organization.
+4. Create environments for your team.
+5. Deploy Tyk Cloud Control Plane and Cloud Data Planes (which are gateways in Tyk Cloud).
 
 ## Install
 
@@ -24,15 +24,15 @@ Some features the tykctl provides include:
 
 #### Install our prebuilt binaries
 
-- We do have prebuilt [ binaries here](https://github.com/TykTechnologies/tykctl/releases).Download the latest binary
-  for your OS unzip it and store in `$GOPATH/bin` directory
+- We do have prebuilt [binaries here](https://github.com/TykTechnologies/tykctl/releases). Download the latest binary
+  for your OS unzip it and store it in `$GOPATH/bin` directory
     - Binaries offered:
         - Linux
-        - MacOS - Note for MacOS it recommended that you use Homebrew for easier updates.
+        - MacOS - Note for MacOS it is recommended that you use Homebrew for easier updates.
 
 #### Build from source (Linux,macOS)
 
-If you want to test the latest changes this is the best way to install tykctl.
+If you want to test the latest changes this is the best way to install `tykctl`.
 
 ##### Requirements
 
@@ -50,7 +50,7 @@ Check the full tykctl [documentation here](./docs/tykctl.md).
 ### Roadmap
 
 - [x] Tyk cloud
-- [ ] Adding verbose flag
+- [ ] Adding a verbose flag
 - [ ] Adding a loading indicator
 - [ ] Tyk Gateway
 - [ ] Tyk dashboard

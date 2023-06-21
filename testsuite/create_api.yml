@@ -1,0 +1,9 @@
+name: Title of TestSuite
+testcases:
+  - name: Test fetching gateway apis return code 0
+    steps:
+      - type: exec
+        script: tykctl gateway apis fetch
+        assertions:
+          - result.code ShouldEqual 0
+

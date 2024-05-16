@@ -35,7 +35,12 @@ func generateTemplates(dir string) error {
 		return err
 	}
 
-	return generateKeys(dir)
+	err = generateKeys(dir)
+	if err != nil {
+		return err
+	}
+
+	return generatePolicy(dir)
 }
 
 func generateApis(dir string) error {
@@ -54,6 +59,10 @@ func generateApis(dir string) error {
 
 func generateKeys(dir string) error {
 	return SaveTemplateToFile("lean-key", dir, createLeanKeyTemplate())
+}
+
+func generatePolicy(dir string) error {
+	return SaveTemplateToFile("lean-policy", dir, createLeanPolicy())
 }
 
 func outPutFileFlags(f *pflag.FlagSet) {

@@ -18,7 +18,10 @@ func NewDeleteCerts(apimClient internal.ApimClient) *cobra.Command {
 		WithFlagAdder(false, deleteCertFlags).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
 			shared.AddGatewaySecret(apimClient.Client.GetConfig())
-			shared.AddGatewayServers(apimClient.Client.GetConfig())
+			err := shared.AddGatewayServers(apimClient.Client.GetConfig())
+			if err != nil {
+				return err
+			}
 
 			return cmd.MarkFlagRequired(shared.OrgID)
 		}).ExactArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {

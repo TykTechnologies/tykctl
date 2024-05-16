@@ -18,7 +18,10 @@ func NewFetchCertsCmd(apimClient internal.ApimClient) *cobra.Command {
 		WithFlagAdder(false, fetchCertFlags).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
 			shared.AddGatewaySecret(apimClient.Client.GetConfig())
-			shared.AddGatewayServers(apimClient.Client.GetConfig())
+			err := shared.AddGatewayServers(apimClient.Client.GetConfig())
+			if err != nil {
+				return err
+			}
 
 			return cmd.MarkFlagRequired(shared.OrgID)
 		}).MaximumArgs(1000, func(ctx context.Context, cmd cobra.Command, args []string) error {

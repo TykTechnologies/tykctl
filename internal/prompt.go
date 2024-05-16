@@ -158,7 +158,6 @@ func ServerPrompt() (string, string, error) {
 		return "", "", err
 	}
 	return answers.Server, answers.Secret, nil
-
 }
 
 func EmailPrompt() (string, error) {

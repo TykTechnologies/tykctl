@@ -38,7 +38,7 @@ func NewDeleteCerts(apimClient internal.ApimClient) *cobra.Command {
 	})
 }
 
-func deleteCerts(ctx context.Context, api apim.CertsAPI, orgID string, certID string) (*apim.ApiStatusMessage, error) {
+func deleteCerts(ctx context.Context, api apim.CertsAPI, orgID, certID string) (*apim.ApiStatusMessage, error) {
 	status, resp, err := api.DeleteCertsExecute(api.DeleteCerts(ctx).CertID(certID).OrgId(orgID))
 	if err != nil {
 		return nil, errors.New(internal.ExtractErrorMessage(err))

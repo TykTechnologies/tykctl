@@ -162,7 +162,6 @@ func Execute() {
 
 		apimClient := configGateway()
 		rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
-
 	}
 
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())

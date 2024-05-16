@@ -14,15 +14,24 @@ import (
 
 func NewFetchApisCmd(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(shared.Fetch).
+		WithFlagAdder(false, shared.AddOutPutFlags).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
 			shared.AddGatewaySecret(apimClient.Client.GetConfig())
 			return shared.AddGatewayServers(apimClient.Client.GetConfig())
 		}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			if len(args) == 0 {
+				outPut, err := cmd.Flags().GetString(shared.OutPut)
+				if err != nil {
+					return err
+				}
 				apis, err := getApis(ctx, apimClient.Client.APIsAPI)
 				if err != nil {
 					return err
+				}
+				if outPut == shared.Table {
+					internal.Printable(createApisHeadersAndRows(apis))
+					return nil
 				}
 
 				return internal.PrintJSON(apis)
@@ -40,7 +49,7 @@ func NewFetchApisCmd(apimClient internal.ApimClient) *cobra.Command {
 func getApis(ctx context.Context, apisAPI apim.APIsAPI) ([]apim.APIDefinition, error) {
 	apis, resp, err := apisAPI.ListApisExecute(apisAPI.ListApis(ctx))
 	if err != nil {
-		return nil, errors.New(internal.ExtractErrorMessage(err))
+		return nil, err
 	}
 
 	if resp.StatusCode != http.StatusOK {
@@ -61,4 +70,19 @@ func getApisByID(ctx context.Context, apisAPI apim.APIsAPI, apiID string) (*apim
 	}
 
 	return api, nil
+}
+
+// createApisHeadersAndRows create headers and rows to be used in creating apis table.
+func createApisHeadersAndRows(apis []apim.APIDefinition) ([]string, [][]string) {
+	header := []string{"ID", "Name", "Org ID"}
+	rows := make([][]string, 0)
+
+	for _, api := range apis {
+		row := []string{
+			api.GetApiId(), api.GetName(), api.GetOrgId(),
+		}
+		rows = append(rows, row)
+	}
+
+	return header, rows
 }

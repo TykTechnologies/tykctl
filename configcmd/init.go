@@ -55,8 +55,36 @@ func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigE
 				return err
 			}
 
+			err = AddGatewayURL(prompt, service)
+			if err != nil {
+				return err
+			}
+
 			return loginToCloud(ctx, prompt, factory, service)
 		})
+}
+
+func AddGatewayURL(prompt internal.ConfigPrompt, service string) error {
+	if service != internal.GatewayService && service != internal.All {
+		return nil
+	}
+
+	shouldSetServer, err := prompt.AskGatewayURL()
+	if err != nil || !shouldSetServer {
+		return err
+	}
+
+	url, secret, err := prompt.SetGatewayURL()
+	if err != nil {
+		return err
+	}
+
+	err = internal.SaveValueToConfig("gateway.urls", []string{url})
+	if err != nil {
+		return err
+	}
+
+	return internal.SaveValueToConfig("gateway.secret", secret)
 }
 
 func loginToCloud(ctx context.Context, prompt internal.ConfigPrompt, factory internal.CloudFactory, service string) error {

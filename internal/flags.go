@@ -33,6 +33,18 @@ func SaveToConfig(key, value string) error {
 	return nil
 }
 
+// SaveValueToConfig saves a list to the current config file.
+func SaveValueToConfig(key string, value interface{}) error {
+	viper.Set(key, value)
+
+	err := viper.WriteConfig()
+	if err != nil {
+		return fmt.Errorf(configErrorMessage, err.Error())
+	}
+
+	return nil
+}
+
 // SaveMapToConfig takes a map and write it to configuration file.
 // the map keys are used as the keys in the config file.
 func SaveMapToConfig(data map[string]string) error {

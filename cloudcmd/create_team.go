@@ -36,29 +36,38 @@ var (
 func NewCreateTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(create).WithFlagAdder(false, createTeamFlags).
 		WithLongDescription(createTeamDesc).
-		WithDescription("create a team in a given organization.").
+		WithFlagAdder(false, setValues).
+		WithDescription("Create a team in a given organization.").
 		WithExample("tyckctl cloud teams create --name='first team' --org=<org uuid>").
 		AddPreRunFuncs(NewCloudRbac(OrgAdmin, factory.Config).CloudRbac).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: false, Type: internal.Cloud}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			org := factory.Config.GetCurrentUserOrg()
+
 			teamName, err := cmd.Flags().GetString(name)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
-			team, err := validateFlagsAndCreateTeam(ctx, factory.Client, teamName, org)
+
+			setVal, err := cmd.Flags().GetStringSlice(set)
+			if err != nil {
+				return err
+			}
+
+			team, err := validateFlagsAndCreateTeam(ctx, factory.Client, teamName, org, setVal)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			cmd.Println(fmt.Sprintf("team %s created successfully", team.UID))
 			return nil
 		})
 }
 
 // validateFlagsAndCreateTeam validate that org and name are not empty and send request to create a team.
-func validateFlagsAndCreateTeam(ctx context.Context, client internal.CloudClient, teamName, orgID string) (*cloud.Team, error) {
+func validateFlagsAndCreateTeam(ctx context.Context, client internal.CloudClient, teamName, orgID string, sets []string) (*cloud.Team, error) {
 	if util.StringIsEmpty(orgID) {
 		return nil, ErrorOrgRequired
 	}
@@ -67,7 +76,17 @@ func validateFlagsAndCreateTeam(ctx context.Context, client internal.CloudClient
 		return nil, ErrorNameRequired
 	}
 
-	team := cloud.Team{Name: teamName}
+	team := cloud.Team{
+		Name: teamName,
+		ExtraContext: &cloud.MetaDataStore{
+			Data: map[string]map[string]interface{}{},
+		},
+	}
+
+	err := internal.HandleSets(&team, sets)
+	if err != nil {
+		return nil, err
+	}
 
 	createdTeam, err := CreateTeam(ctx, client, team, orgID)
 	if err != nil {

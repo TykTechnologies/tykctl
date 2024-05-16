@@ -12,6 +12,7 @@ const (
 
 func NewApisCmd(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(apis).
+		WithAliases([]string{"api"}).
 		WithCommands(NewFetchApisCmd(apimClient),
 			NewDeleteApisCmd(apimClient),
 			NewCreateAPICmd(apimClient))

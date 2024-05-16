@@ -7,7 +7,7 @@ import (
 	"github.com/TykTechnologies/tykctl/util"
 )
 
-const deploymentDesc = `This is the parent command to all deployment operation.Such as creating teams and fetching teams.
+const deploymentDesc = `This is the parent command to all deployment operation, such as creating teams and fetching teams.
 
   Note: All subcommands for this command must pass an --env, --team  and --org flag command.
 
@@ -30,7 +30,7 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(deployments).
 		WithAliases([]string{dep}).
 		WithLongDescription(deploymentDesc).
-		WithDescription("parent command for all action you can perform in a deployment.").
+		WithDescription("Parent command for all actions you can perform in a deployment.").
 		WithFlagAdder(true, addOrgFlag).
 		WithFlagAdder(true, addTeamFlag).
 		WithFlagAdder(true, addEnvFlag).
@@ -39,23 +39,23 @@ func NewDeployment(factory internal.CloudFactory) *cobra.Command {
 			NewFetchDeploymentCmd(factory),
 			NewStartDeploymentCmd(factory),
 			NewDeploymentStatusCmd(factory),
-			NewRestartDeploymentCmd(factory))
+			NewRestartDeploymentCmd(factory),
+			NewUpdateDeployment(factory),
+			NewDeleteDeploymentCmd(factory),
+		)
 }
 
 func validateCommonDeploymentFlags(config internal.UserConfig) (*DeploymentFlags, error) {
+	envFlags, err := validateCommonEnvFlags(config)
+	if err != nil {
+		return nil, err
+	}
+
 	var deploymentFlag DeploymentFlags
-
-	deploymentFlag.OrgID = config.GetCurrentUserOrg()
-	if util.StringIsEmpty(deploymentFlag.OrgID) {
-		return nil, ErrorOrgRequired
-	}
-
-	deploymentFlag.TeamID = config.GetCurrentUserTeam()
-	if util.StringIsEmpty(deploymentFlag.TeamID) {
-		return nil, ErrorTeamRequired
-	}
-
+	deploymentFlag.OrgID = envFlags.OrgID
+	deploymentFlag.TeamID = envFlags.TeamID
 	deploymentFlag.EnvID = config.GetCurrentUserEnv()
+
 	if util.StringIsEmpty(deploymentFlag.EnvID) {
 		return nil, ErrorEnvRequired
 	}
@@ -64,8 +64,6 @@ func validateCommonDeploymentFlags(config internal.UserConfig) (*DeploymentFlags
 }
 
 type DeploymentFlags struct {
-	OrgID  string
-	TeamID string
-	EnvID  string
-	OutPut string
+	EnvFlags
+	EnvID string
 }

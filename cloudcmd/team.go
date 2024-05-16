@@ -11,7 +11,7 @@ This command is the parent command to all team operations.
 
 The supported commands are :
 
-1. tykctl cloud teams fetch 
+1. tykctl cloud teams fetch.
 
 2. tykctl cloud teams create -create a team in an org.
 
@@ -24,10 +24,11 @@ tykctl cloud init
 
 func NewTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(teams).
+		WithAliases([]string{team}).
 		WithFlagAdder(true, addOrgFlag).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: true}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: true, Type: internal.Cloud}}).
 		WithLongDescription(teamDesc).
-		WithDescription("parent command for all action you can perform in a team.").
-		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: true}}).
+		WithDescription("Parent command for all actions you can perform in a team.").
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: true, Type: internal.Cloud}}).
 		WithCommands(NewCreateTeamCmd(factory), NewFetchTeamCmd(factory))
 }

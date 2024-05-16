@@ -21,9 +21,10 @@ const (
 	loginDesc = `
         This command will login into your cloud account and set the token in your config file.
        
-        Note: The token will only last for 30 minute you will need to login again after 30 minutes.
+        Note: The token will only last for 30 minutes. You will need to login again after 30 minutes.
 		
-        You will be prompted to provide your email and  password to login if you use the interactive mode.
+        You will be prompted to provide your email and password to login if you use the interactive mode.
+
 		When using the cloud service you should always run this command first as each command will require a token.
 		
         For the staging server you will also need to provide nginx basic auth.
@@ -50,17 +51,17 @@ var (
 func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(login).
 		WithLongDescription(loginDesc).
-		WithDescription("login to tyk cloud using password and email.").
+		WithDescription("Login to tyk cloud using password and email.").
 		WithExample("tykctl cloud login --password=<your cloud password here> --email=<your email here>").
 		WithFlagAdder(false, addLoginFlags).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
-			err := validateAndLogin(cmd.Context(), cmd.Flags())
+			err := getLoginValuesAndLogin(cmd.Context(), cmd.Flags())
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
 
-			err = initUserConfigFile(ctx, factory)
+			err = InitUserConfigFile(ctx, factory)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
@@ -73,8 +74,8 @@ func NewLoginCommand(factory internal.CloudFactory) *cobra.Command {
 		})
 }
 
-// initUserConfigFile will fetch the user profile,organization and save them to the file.
-func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) error {
+// InitUserConfigFile will fetch the user profile,organization and save them to the file.
+func InitUserConfigFile(ctx context.Context, factory internal.CloudFactory) error {
 	info, err := GetUserInfo(ctx, factory.Client)
 	if err != nil {
 		return err
@@ -85,7 +86,7 @@ func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) erro
 		return err
 	}
 
-	err = saveOrgInfoToConfig(ctx, factory, info.ID)
+	err = saveOrgInfoToConfig(ctx, factory)
 	if err != nil {
 		return err
 	}
@@ -94,8 +95,8 @@ func initUserConfigFile(ctx context.Context, factory internal.CloudFactory) erro
 }
 
 // saveOrgInfoToConfig will save the organization details to the config file passed by the user.
-func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, userID string) error {
-	orgID := viper.GetString(internal.CreateKeyFromPath(cloudPath, userID, org))
+func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory) error {
+	orgID := viper.GetString(internal.CreateKeyFromPath(cloudPath, org))
 	if orgID == "" {
 		return ErrNoOrganization
 	}
@@ -105,7 +106,7 @@ func saveOrgInfoToConfig(ctx context.Context, factory internal.CloudFactory, use
 		return err
 	}
 
-	return internal.SaveMapToCloudUserContext(userID, orgInfo.OrgInitToMap())
+	return internal.SaveMapToCloudUserContext(orgInfo.OrgInitToMap())
 }
 
 // saveRoleToConfig will save the user role to the config file passed by the user.
@@ -115,7 +116,7 @@ func saveRoleToConfig(info *internal.UserInfo) error {
 		return err
 	}
 
-	return internal.SaveMapToCloudUserContext(info.ID, role.RoleToMap())
+	return internal.SaveMapToCloudUserContext(role.RoleToMap())
 }
 
 // initUserProfile will auto fetch user info such as:
@@ -136,10 +137,8 @@ func GetUserInfo(ctx context.Context, client internal.CloudClient) (*internal.Us
 
 // / getUserRole returns the user role.
 func getUserRole(roles []internal.Role) (*internal.Role, error) {
-	roleList := []string{"org_admin", "team_admin", "team_member"}
-
 	for _, role := range roles {
-		contain := slices.Contains(roleList, role.Role)
+		contain := slices.Contains(cloudRoles, role.Role)
 		if contain {
 			return &role, nil
 		}
@@ -172,6 +171,19 @@ func initOrgInfo(ctx context.Context, client internal.CloudClient, prompt intern
 
 	if selectedTeam != nil {
 		orgInit.Team = selectedTeam.UID
+	}
+
+	if selectedTeam == nil || len(selectedTeam.Loadouts) == 0 {
+		return &orgInit, nil
+	}
+
+	selectedEnv, err := prompt.EnvPrompt(selectedTeam.Loadouts)
+	if err != nil {
+		return nil, err
+	}
+
+	if selectedEnv != nil {
+		orgInit.Env = selectedEnv.UID
 	}
 
 	return &orgInit, nil
@@ -249,27 +261,30 @@ func extractToken(resp *http.Response) (string, error) {
 	return fmt.Sprintf("%s.%s", token, cookieSignature), nil
 }
 
-// validateAndLogin validate cli flags and pass them to login.
-func validateAndLogin(ctx context.Context, f *pflag.FlagSet) error {
+func getLoginValuesAndLogin(ctx context.Context, f *pflag.FlagSet) error {
 	isInteractive, err := f.GetBool(interactive)
 	if err != nil {
 		return err
 	}
 
 	var loginBody *LoginBody
+
 	if isInteractive {
-		loginBody, err = loginInteractive(ctx)
-		if err != nil {
-			return err
-		}
+		loginBody, err = LoginInteractive()
 	} else {
 		loginBody, err = loginWithFlag(f)
-		if err != nil {
-			return err
-		}
 	}
 
-	err = util.ValidateEmail(loginBody.Email)
+	if err != nil {
+		return err
+	}
+
+	return ValidateAndLogin(ctx, loginBody)
+}
+
+// ValidateAndLogin validate cli flags and pass them to login.
+func ValidateAndLogin(ctx context.Context, loginBody *LoginBody) error {
+	err := util.ValidateEmail(loginBody.Email)
 	if err != nil {
 		return err
 	}
@@ -304,8 +319,8 @@ func loginWithFlag(f *pflag.FlagSet) (*LoginBody, error) {
 	}, nil
 }
 
-// loginInteractive will extract ask user to enter login details interactively.
-func loginInteractive(ctx context.Context) (*LoginBody, error) {
+// LoginInteractive will extract ask user to enter login details interactively.
+func LoginInteractive() (*LoginBody, error) {
 	email, err := internal.EmailPrompt()
 	if err != nil {
 		return nil, err

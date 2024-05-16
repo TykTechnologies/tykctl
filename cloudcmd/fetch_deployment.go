@@ -3,6 +3,7 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -36,10 +37,12 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
 		AddPreRunFuncs(NewCloudRbac(TeamMember, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
+		WithFlagAdder(false, getValues).
+		WithFlagAdder(false, getEnvValues).
 		WithLongDescription(fetchDeploymentDesc).
 		WithDescription("fetch deployment from an environment.").
 		WithExample("tykctl cloud deployments fetch").
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}, {Name: org, Persistent: false, Type: internal.Cloud}}).
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			if len(args) == 0 {
 				err := validateAndFetchEnvDeployments(cmd.Context(), factory.Client, factory.Config, cmd.Flags())
@@ -68,6 +71,22 @@ func validateAndFetchDeploymentByID(ctx context.Context, client internal.CloudCl
 
 	deployment, err := GetDeploymentByID(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, id)
 	if err != nil {
+		return err
+	}
+
+	getVals, err := f.GetStringSlice(get)
+	if err != nil {
+		return err
+	}
+
+	envVars, err := f.GetStringSlice(envValue)
+	if err != nil {
+		return err
+	}
+
+	values := combineGetsValues(getVals, envVars)
+	if len(values) > 0 {
+		err := internal.HandleGets(deployment, values)
 		return err
 	}
 
@@ -163,15 +182,24 @@ func validateCommonDeploymentFetchFlags(f *pflag.FlagSet, config internal.UserCo
 }
 
 func CreateDeploymentHeadersAndRows(deployments []cloud.Deployment) ([]string, [][]string) {
-	header := []string{"Name", "UID", "Kind", "Region", "State"}
+	header := []string{"Name", "UID", "Kind", "Region", "State", "Namespace"}
 	rows := make([][]string, 0)
 
 	for _, deployment := range deployments {
 		row := []string{
-			deployment.Name, deployment.UID, deployment.Kind, deployment.ZoneCode, deployment.State,
+			deployment.Name, deployment.UID, deployment.Kind, deployment.ZoneCode, deployment.State, deployment.Namespace,
 		}
 		rows = append(rows, row)
 	}
 
 	return header, rows
+}
+
+func combineGetsValues(getKeys, getEnvkeys []string) []string {
+	for _, key := range getEnvkeys {
+		fullKey := fmt.Sprintf("ExtraContext.Data.EnvData.%s", key)
+		getKeys = append(getKeys, fullKey)
+	}
+
+	return getKeys
 }

@@ -30,9 +30,10 @@ func NewFetchTeamCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
 		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
+		WithFlagAdder(false, getValues).
 		WithLongDescription(fetchTeamDesc).
-		WithDescription("fetch teams from a given organization.").
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: org, Persistent: false}}).
+		WithDescription("Fetch teams from a given organization.").
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: org, Persistent: false, Type: internal.Cloud}}).
 		WithExample("tykctl cloud teams fetch --output<json/table>").
 		MaximumArgs(1, func(ctx context.Context, cmd cobra.Command, args []string) error {
 			outPut, err := cmd.Flags().GetString(outPut)
@@ -49,11 +50,18 @@ func NewFetchTeamCmd(factory internal.CloudFactory) *cobra.Command {
 				}
 				return nil
 			}
-			err = FetchAndPrintTeamByID(ctx, factory.Client, outPut, org, args[0])
+
+			getVals, err := cmd.Flags().GetStringSlice(get)
+			if err != nil {
+				return err
+			}
+
+			err = FetchAndPrintTeamByID(ctx, factory.Client, outPut, org, args[0], getVals)
 			if err != nil {
 				cmd.PrintErrln(err)
 				return err
 			}
+
 			return nil
 		})
 }
@@ -82,7 +90,7 @@ func FetchAndPrintTeams(ctx context.Context, client internal.CloudClient, output
 }
 
 // FetchAndPrintTeamByID print a single team by uuid and print it as a table or json.
-func FetchAndPrintTeamByID(ctx context.Context, client internal.CloudClient, output, orgID, teamID string) error {
+func FetchAndPrintTeamByID(ctx context.Context, client internal.CloudClient, output, orgID, teamID string, getValues []string) error {
 	if output != table && output != jsonFormat {
 		return ErrorOutPutFormat
 	}
@@ -93,6 +101,11 @@ func FetchAndPrintTeamByID(ctx context.Context, client internal.CloudClient, out
 
 	team, err := GetTeamByID(ctx, client, orgID, teamID)
 	if err != nil {
+		return err
+	}
+
+	if len(getValues) > 0 {
+		err = internal.HandleGets(team, getValues)
 		return err
 	}
 

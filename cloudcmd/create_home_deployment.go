@@ -35,10 +35,11 @@ func NewCreateHomeDeployment(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(home).
 		AddPreRunFuncs(NewCloudRbac(TeamAdmin, factory.Config).CloudRbac).
 		WithLongDescription(createHomeDeploymentDesc).
+		WithFlagAdder(false, setValues).
 		WithFlagAdder(false, addHomeDeploymentFlag).
 		WithDescription("create a control plane in your home region.").
 		WithExample("tykctl cloud deployments create home --name='home-deployment'").
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}, {Name: org, Persistent: false, Type: internal.Cloud}}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			_, err := validateHomeDeploymentFlagAndCreate(cmd.Context(), factory.Client, cmd.Flags(), factory.Config)
 			if err != nil {
@@ -81,6 +82,11 @@ func validateHomeDeploymentFlagAndCreate(ctx context.Context, client internal.Cl
 	deployment.Kind = controlPlane
 
 	deployHome, err := f.GetBool(deploy)
+	if err != nil {
+		return nil, err
+	}
+
+	err = handleDeploymentDynamicVars(deployment, f)
 	if err != nil {
 		return nil, err
 	}

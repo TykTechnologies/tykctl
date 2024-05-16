@@ -23,7 +23,7 @@ tykctl cloud deployments status b5c503e8-c632-4ce0-9629-b0ee3e3c2c62
 func NewDeploymentStatusCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(status).
 		AddPreRunFuncs(NewCloudRbac(TeamMember, factory.Config).CloudRbac).
-		WithBindFlagWithCurrentUserContext([]internal.BindFlag{{Name: env, Persistent: false}, {Name: team, Persistent: false}, {Name: org, Persistent: false}}).
+		WithBindFlagOnPreRun([]internal.BindFlag{{Name: env, Persistent: false, Type: internal.Cloud}, {Name: team, Persistent: false, Type: internal.Cloud}, {Name: org, Persistent: false, Type: internal.Cloud}}).
 		WithExample("tykctl cloud deployments status <deployment uuid>").
 		WithLongDescription(deploymentStatusDesc).
 		WithDescription("output the status of a deployment given its uuid.").

@@ -11,4 +11,5 @@ const (
 	OutPut   = "output"
 	Table    = "table"
 	Generate = "generate"
+	Switch   = "switch"
 )

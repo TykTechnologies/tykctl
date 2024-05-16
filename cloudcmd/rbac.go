@@ -31,15 +31,14 @@ func NewCloudRbac(minAllowedUser Permission, config internal.UserConfig) CloudRb
 
 // CloudRbac is a will run during preRun to check if a role is allowed to perform an action
 // this will prevent you from sending a request that will fail due to lack of permissions.
-func (c CloudRbac) CloudRbac(cmd *cobra.Command, args []string) error {
+func (c CloudRbac) CloudRbac(_ *cobra.Command, _ []string) error {
 	role := c.Config.GetCurrentUserRole()
-	allowedRoles := []string{"org_admin", "team_admin", "team_member"}
 
 	if role == "" {
 		return ErrorNoRoleFound
 	}
 
-	if !slices.Contains(allowedRoles, role) {
+	if !slices.Contains(cloudRoles, role) {
 		return fmt.Errorf("%s is invalid", role)
 	}
 

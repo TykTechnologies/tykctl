@@ -19,8 +19,7 @@ archives:
       386: i386
       amd64: x86_64
 brews:
-  -
-    tap:
+  - tap:
       owner: TykTechnologies
       name: tykctl
     commit_author:

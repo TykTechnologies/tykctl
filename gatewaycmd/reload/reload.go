@@ -24,8 +24,8 @@ func NewReloadCmd(apimClient internal.ApimClient) *cobra.Command {
 		WithFlagAdder(false, reloadFlags).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
 			shared.AddGatewaySecret(apimClient.Client.GetConfig())
-			shared.AddGatewayServers(apimClient.Client.GetConfig())
-			return nil
+
+			return shared.AddGatewayServers(apimClient.Client.GetConfig())
 		}).
 		NoArgs(func(ctx context.Context, cmd cobra.Command) error {
 			block, err := cmd.Flags().GetBool(block)

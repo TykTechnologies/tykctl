@@ -3,6 +3,7 @@ package cloudcmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/TykTechnologies/cloud-sdk/cloud"
+	"github.com/TykTechnologies/tykctl/internal"
 	mock "github.com/TykTechnologies/tykctl/internal/mocks"
 )
 
@@ -189,4 +191,43 @@ func TestCreateEnvHeadersAndRows(t *testing.T) {
 			assert.Equalf(t, tt.rows, returnedRows, "CreateEnvHeadersAndRows(%v)", tt.Envs)
 		})
 	}
+}
+
+func TestNewFetchEnvironmentCmd(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	m := mock.NewMockCloudClient(ctrl)
+	prompt := mock.NewMockCloudPrompt(ctrl)
+	config := mock.NewMockUserConfig(ctrl)
+	factory := internal.CloudFactory{
+		Client: m,
+		Prompt: prompt,
+		Config: config,
+	}
+
+	config.EXPECT().GetCurrentUserOrg().Return("my-org")
+	config.EXPECT().GetCurrentUserTeam().Return("my-team")
+	config.EXPECT().GetCurrentUserRole().Return("org_admin")
+	m.EXPECT().GetEnvs(gomock.Any(), gomock.Any(), gomock.Any()).Return(cloud.InlineResponse20016{
+		Error_: "",
+		Payload: &cloud.Loadouts{
+			Loadouts: []cloud.Loadout{
+				{
+					Blocked: false,
+					Name:    "env test",
+					OID:     "34",
+					UID:     "itachi",
+				},
+			},
+		},
+		Status: statusOK,
+	}, &http.Response{StatusCode: 200}, nil)
+
+	cmd := NewFetchEnvironmentCmd(factory)
+	cmd.SetArgs([]string{
+		fmt.Sprintf("-o=%s", "json"),
+	})
+
+	err := cmd.Execute()
+	assert.Nil(t, err)
 }

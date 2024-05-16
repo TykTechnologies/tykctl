@@ -50,7 +50,6 @@ func NewUpdateDeployment(factory internal.CloudFactory) *cobra.Command {
 
 			if deployAfterUpdate {
 				_, err = validateFlagsAndStartDeployment(ctx, factory.Client, factory.Config, deployment.UID)
-
 				if err != nil {
 					return err
 				}

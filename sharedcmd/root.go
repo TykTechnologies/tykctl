@@ -66,7 +66,6 @@ func createConfigFiles() error {
 	}
 
 	err = internal.CreateFile(dir, internal.CoreConfigFileName)
-
 	if err != nil {
 		return err
 	}

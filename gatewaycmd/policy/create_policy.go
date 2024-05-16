@@ -22,7 +22,10 @@ func NewCreatePolicyCmd(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(shared.Create).
 		AddPreRunFuncs(func(cmd *cobra.Command, args []string) error {
 			shared.AddGatewaySecret(apimClient.Client.GetConfig())
-			shared.AddGatewayServers(apimClient.Client.GetConfig())
+			err := shared.AddGatewayServers(apimClient.Client.GetConfig())
+			if err != nil {
+				return err
+			}
 
 			return cmd.MarkFlagRequired(file)
 		}).

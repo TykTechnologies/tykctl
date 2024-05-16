@@ -19,11 +19,18 @@ import (
 func NewGatewayCommand(apimClient internal.ApimClient) *cobra.Command {
 	return internal.NewCmd(shared.Gateway).
 		WithCommands(
-			reload.NewReloadCmd(apimClient),
-			api.NewApisCmd(apimClient),
-			templates.NewTemplateCmd(),
-			keys.NewKeysCmd(apimClient),
-			policy.NewPolicyCmd(apimClient),
-			certs.NewCertsCmd(apimClient),
+			GatewayCommands(apimClient)...,
 		)
+}
+
+func GatewayCommands(apimClient internal.ApimClient) []*cobra.Command {
+	commands := []*cobra.Command{
+		reload.NewReloadCmd(apimClient),
+		api.NewApisCmd(apimClient),
+		templates.NewTemplateCmd(),
+		keys.NewKeysCmd(apimClient),
+		policy.NewPolicyCmd(apimClient),
+		certs.NewCertsCmd(apimClient),
+	}
+	return commands
 }

@@ -155,10 +155,10 @@ func Execute() {
 		rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
 	case internal.Gateway:
 		apimClient := configGateway()
+		rootCmd.AddCommand(gatewaycmd.GatewayCommands(apimClient)...)
 		rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
 	default:
 		rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
-
 		apimClient := configGateway()
 		rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
 	}

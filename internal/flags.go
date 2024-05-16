@@ -22,7 +22,19 @@ type BindFlag struct {
 }
 
 // SaveToConfig writes data to the config file provided by --config.
-func SaveToConfig(key, value string) error {
+func SaveToConfig(key string, value string) error {
+	viper.Set(key, value)
+
+	err := viper.WriteConfig()
+	if err != nil {
+		return fmt.Errorf(configErrorMessage, err.Error())
+	}
+
+	return nil
+}
+
+// SaveValueToConfig saves a list to the current config file
+func SaveValueToConfig(key string, value interface{}) error {
 	viper.Set(key, value)
 
 	err := viper.WriteConfig()

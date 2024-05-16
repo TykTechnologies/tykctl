@@ -32,5 +32,6 @@ func GatewayCommands(apimClient internal.ApimClient) []*cobra.Command {
 		policy.NewPolicyCmd(apimClient),
 		certs.NewCertsCmd(apimClient),
 	}
+
 	return commands
 }

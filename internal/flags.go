@@ -33,7 +33,7 @@ func SaveToConfig(key string, value string) error {
 	return nil
 }
 
-// SaveValueToConfig saves a list to the current config file
+// SaveValueToConfig saves a list to the current config file.
 func SaveValueToConfig(key string, value interface{}) error {
 	viper.Set(key, value)
 

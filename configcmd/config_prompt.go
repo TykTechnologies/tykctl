@@ -18,7 +18,7 @@ var _ internal.ConfigPrompt = (*PickConfigPrompt)(nil)
 
 type PickConfigPrompt struct{}
 
-func (i PickConfigPrompt) AskGatewayUrl() (bool, error) {
+func (i PickConfigPrompt) AskGatewayURL() (bool, error) {
 	value := false
 	prompt := &survey.Confirm{
 		Message: "Would you like to configure your gateway environment?",
@@ -29,7 +29,7 @@ func (i PickConfigPrompt) AskGatewayUrl() (bool, error) {
 	return value, err
 }
 
-func (i PickConfigPrompt) SetGatewayUrl() (string, string, error) {
+func (i PickConfigPrompt) SetGatewayURL() (string, string, error) {
 	return internal.ServerPrompt()
 }
 

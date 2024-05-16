@@ -9,6 +9,6 @@ type ConfigPrompt interface {
 	AskCloudLogin() (bool, error)
 	LoginCloud(ctx context.Context) error
 	InitUserConfigFile(ctx context.Context, factory CloudFactory) error
-	AskGatewayUrl() (bool, error)
-	SetGatewayUrl() (string, string, error)
+	AskGatewayURL() (bool, error)
+	SetGatewayURL() (string, string, error)
 }

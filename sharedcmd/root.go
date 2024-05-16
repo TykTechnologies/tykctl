@@ -159,8 +159,10 @@ func Execute() {
 		rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
 	default:
 		rootCmd.AddCommand(cloudcmd.NewCloudCommand(cloudFactory))
+
 		apimClient := configGateway()
 		rootCmd.AddCommand(gatewaycmd.NewGatewayCommand(apimClient))
+
 	}
 
 	rootCmd.AddCommand(cloudcmd.NewCtxCmd())

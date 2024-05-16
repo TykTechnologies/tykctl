@@ -69,15 +69,16 @@ func AddGatewayUrl(prompt internal.ConfigPrompt, service string) error {
 		return nil
 	}
 
-	shouldSetServer, err := prompt.AskGatewayUrl()
+	shouldSetServer, err := prompt.AskGatewayURL()
 	if err != nil || !shouldSetServer {
 		return err
 	}
 
-	url, secret, err := prompt.SetGatewayUrl()
+	url, secret, err := prompt.SetGatewayURL()
 	if err != nil {
 		return err
 	}
+
 	err = internal.SaveValueToConfig("gateway.urls", []string{url})
 	if err != nil {
 		return err

@@ -157,6 +157,7 @@ func ServerPrompt() (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
+
 	return answers.Server, answers.Secret, nil
 }
 

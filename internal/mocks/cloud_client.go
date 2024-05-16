@@ -310,6 +310,22 @@ func (mr *MockCloudClientMockRecorder) StartDeployment(ctx, orgID, teamID, envID
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StartDeployment", reflect.TypeOf((*MockCloudClient)(nil).StartDeployment), ctx, orgID, teamID, envID, id)
 }
 
+// UpdateDeployment mocks base method.
+func (m *MockCloudClient) UpdateDeployment(ctx context.Context, body cloud.Deployment, orgID, teamID, envID, id string, localVarOptionals *cloud.DeploymentsApiUpdateDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateDeployment", ctx, body, orgID, teamID, envID, id, localVarOptionals)
+	ret0, _ := ret[0].(cloud.InlineResponse2001)
+	ret1, _ := ret[1].(*http.Response)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// UpdateDeployment indicates an expected call of UpdateDeployment.
+func (mr *MockCloudClientMockRecorder) UpdateDeployment(ctx, body, orgID, teamID, envID, id, localVarOptionals interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDeployment", reflect.TypeOf((*MockCloudClient)(nil).UpdateDeployment), ctx, body, orgID, teamID, envID, id, localVarOptionals)
+}
+
 // UpdateTeam mocks base method.
 func (m *MockCloudClient) UpdateTeam(ctx context.Context, team cloud.Team, orgID, teamID string) (cloud.InlineResponse2011, *http.Response, error) {
 	m.ctrl.T.Helper()

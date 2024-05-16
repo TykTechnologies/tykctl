@@ -1,7 +1,10 @@
 package internal
 
 import (
+	"encoding/json"
+	"errors"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -57,4 +60,22 @@ func AddSetValues(jsonString string, sets []string) (string, error) {
 	}
 
 	return jsonString, nil
+}
+
+func HandleSets(object interface{}, sets []string) error {
+	if reflect.ValueOf(object).Kind() != reflect.Ptr {
+		return errors.New("out put must be a pointer")
+	}
+
+	bytes, err := json.Marshal(object)
+	if err != nil {
+		return err
+	}
+
+	values, err := AddSetValues(string(bytes), sets)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal([]byte(values), object)
 }

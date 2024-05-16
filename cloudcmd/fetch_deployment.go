@@ -36,6 +36,7 @@ func NewFetchDeploymentCmd(factory internal.CloudFactory) *cobra.Command {
 	return internal.NewCmd(fetch).
 		AddPreRunFuncs(NewCloudRbac(TeamMember, factory.Config).CloudRbac).
 		WithFlagAdder(false, addOutPutFlags).
+		WithFlagAdder(false, getValues).
 		WithLongDescription(fetchDeploymentDesc).
 		WithDescription("fetch deployment from an environment.").
 		WithExample("tykctl cloud deployments fetch").
@@ -68,6 +69,16 @@ func validateAndFetchDeploymentByID(ctx context.Context, client internal.CloudCl
 
 	deployment, err := GetDeploymentByID(ctx, client, deploymentFlags.OrgID, deploymentFlags.TeamID, deploymentFlags.EnvID, id)
 	if err != nil {
+		return err
+	}
+
+	getVals, err := f.GetStringSlice(get)
+	if err != nil {
+		return err
+	}
+
+	if len(getVals) > 0 {
+		err := internal.HandleGets(deployment, getVals)
 		return err
 	}
 

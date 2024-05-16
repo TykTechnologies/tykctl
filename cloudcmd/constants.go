@@ -56,4 +56,6 @@ const (
 	userRole               = "role"
 	currentCloudUser       = "cloud.current_user"
 	currentCloudToken      = "cloud.current_token"
+	get                    = "get"
+	set                    = "set"
 )

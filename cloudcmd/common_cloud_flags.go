@@ -21,3 +21,11 @@ func addEnvFlag(f *pflag.FlagSet) {
 func addOutPutFlags(f *pflag.FlagSet) {
 	f.StringP(outPut, "o", "table", "Format you want to use can be table,json")
 }
+
+func getValues(f *pflag.FlagSet) {
+	f.StringSlice(get, []string{}, "Get a value from the object using dot-notation")
+}
+
+func setValues(f *pflag.FlagSet) {
+	f.StringSlice(set, []string{}, "set a value for the object using dot-notation")
+}

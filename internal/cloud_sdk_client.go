@@ -188,6 +188,15 @@ func (c *CloudSdkClient) GetDeploymentStatus(ctx context.Context, orgID, teamID,
 	return c.Client.DeploymentsApi.GetDeploymentStatus(ctx, orgID, teamID, envID, deploymentID)
 }
 
+func (c *CloudSdkClient) UpdateDeployment(ctx context.Context, body cloud.Deployment, orgID, teamID, envID, id string, localVarOptionals *cloud.DeploymentsApiUpdateDeploymentOpts) (cloud.InlineResponse2001, *http.Response, error) {
+	err := c.runBeforeExecute()
+	if err != nil {
+		return cloud.InlineResponse2001{}, nil, err
+	}
+
+	return c.Client.DeploymentsApi.UpdateDeployment(ctx, body, orgID, teamID, envID, id, localVarOptionals)
+}
+
 func (c *CloudSdkClient) GetDeploymentZones(ctx context.Context) (*ZoneResponse, *resty.Response, error) {
 	err := c.runBeforeRestyExecute()
 	if err != nil {
@@ -240,7 +249,6 @@ func (c *CloudSdkClient) GetOrgInfo(ctx context.Context, orgID string) (*OrgInfo
 	if err != nil {
 		return nil, nil, err
 	}
-
 	var orgInfo OrgInfo
 	request := c.dashboardClient.R().SetHeader(contentType, applicationJSON).SetResult(&orgInfo)
 	request.SetContext(ctx)

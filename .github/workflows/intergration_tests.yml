@@ -1,0 +1,34 @@
+name: Run integration tests
+on:
+  push:
+    branches:
+      - "venom"
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    env:
+      GOPRIVATE: github.com/TykTechnologies
+      GH_ACCESS_TOKEN: ${{ secrets.ORG_GH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v3
+        with:
+          stable: 'false'
+          go-version: '1.19'
+
+      - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+      - name: Install venom
+        run: curl https://github.com/ovh/venom/releases/download/v1.0.1/venom.linux-amd64 -L -o /usr/local/bin/venom && chmod +x /usr/local/bin/venom
+      - name: Pull tyk-gateway docker container
+        run: |
+          git clone https://github.com/TykTechnologies/tyk-gateway-docker.git
+          cd tyk-gateway-docker 
+          docker-compose up -d
+          cd ..
+          curl http://localhost:8080/hello -i
+
+      - name: Build and Install tykctl
+        run: |
+            go build && mv tykctl /usr/local/bin 
+            tykctl ctx gateway.secret foo
+            cd testsuite && ls -a &&venom run  -v

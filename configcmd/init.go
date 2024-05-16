@@ -55,7 +55,7 @@ func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigE
 				return err
 			}
 
-			err = AddGatewayUrl(prompt, service)
+			err = AddGatewayURL(prompt, service)
 			if err != nil {
 				return err
 			}
@@ -64,7 +64,7 @@ func newInitConfigCmd(prompt internal.ConfigPrompt, configEntry internal.ConfigE
 		})
 }
 
-func AddGatewayUrl(prompt internal.ConfigPrompt, service string) error {
+func AddGatewayURL(prompt internal.ConfigPrompt, service string) error {
 	if service != internal.GatewayService && service != internal.All {
 		return nil
 	}

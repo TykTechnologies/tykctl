@@ -31,7 +31,7 @@ jobs:
       - name: Configure Git for private modules
         env:
           TOKEN: ${{ steps.app-token.outputs.token }}
-        run: git config --global url.https://${TOKEN}@github.com/.insteadOf https://github.com/
+        run: git config --global url.https://x-access-token:${TOKEN}@github.com/.insteadOf https://github.com/
       - uses: actions/checkout@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3

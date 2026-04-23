@@ -135,6 +135,32 @@ func (s *SurveyPrompt) EnvPrompt(envs []cloud.Loadout) (*cloud.Loadout, error) {
 	return &envs[selectedIndex], nil
 }
 
+func ServerPrompt() (string, string, error) {
+	qs := []*survey.Question{
+		{
+			Name:     "server",
+			Prompt:   &survey.Input{Message: "Enter server url"},
+			Validate: survey.Required,
+		}, {
+			Name:     "secret",
+			Prompt:   &survey.Input{Message: "Enter gateway secret"},
+			Validate: survey.Required,
+		},
+	}
+
+	answers := struct {
+		Server string `survey:"server"` // survey will match the question and field names
+		Secret string `survey:"secret"` // or you can tag fields to match a specific name
+	}{}
+
+	err := survey.Ask(qs, &answers)
+	if err != nil {
+		return "", "", err
+	}
+
+	return answers.Server, answers.Secret, nil
+}
+
 func EmailPrompt() (string, error) {
 	email := ""
 	prompt := &survey.Input{
